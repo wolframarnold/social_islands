@@ -1,4 +1,8 @@
 TrustExchange::Application.routes.draw do
+  get "services/linkedin"
+
+  get "services/facebook"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -55,4 +59,14 @@ TrustExchange::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
+
+  # Omniauth routes
+  match '/auth/:provider/callback' => 'sessions#create'
+  match '/auth/failure' => 'sessions#failure'
+  match 'sign_out' => 'sessions#destroy'
+
+  match '/linkedin' => 'services#linkedin'
+  #match '/facebook' => 'services#facebook'
+
+  root :to => "pages#home"
 end

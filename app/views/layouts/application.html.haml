@@ -1,0 +1,29 @@
+!!!
+%html
+
+  %head
+    %title
+      = page_title
+    %meta{"http-equiv"=>"Content-Type", :content=>"text/html; charset=utf-8"}/
+    %link{ :rel => "shortcut icon", :href => "/favicon.ico", :type => "image/x-icon" }
+    = stylesheet_link_tag 'application'
+    = javascript_include_tag 'application'
+    = csrf_meta_tag
+    = yield(:head)
+
+  %body{class: body_class}
+    #container
+      .row
+        .span-24.spacer
+
+      .login
+        .span-12
+          - flash.each do |key,val|
+            - unless val.blank?
+              %div{class: key}
+                = val
+
+        %div
+          = render 'shared/login_area'
+
+      = yield
