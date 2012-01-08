@@ -3,9 +3,11 @@ class ServicesController < ApplicationController
   before_filter :authenticate!
 
   def linkedin
-    client = LinkedIn::Client.new
-    client.authorize_from_access(current_user.token,current_user.secret)
-
+    @linkedin_profile = current_user.linkedin_profile
+    if @linkedin_profile.nil?
+      @linkedin_profile = current_user.linkedin_profile.build
+      @linkedin_profile.fetch_profile
+    end
   end
 
   def facebook

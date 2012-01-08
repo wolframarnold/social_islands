@@ -9,4 +9,6 @@ class User
   key :token, String
   key :secret, String
 
+  one :linkedin_profile
+
 end

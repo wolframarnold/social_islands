@@ -1,23 +1,41 @@
-#require 'pp'
-#
 class LinkedinProfile
 
   include MongoMapper::Document
 
-  key :first_name, String
-  key :last_name, String
-  key :name, String
-  key :email, String
-  key :avatar, String
-  key :uid, String
+  belongs_to :user
 
   timestamps!
 
-#  FIELDS = %w[first-name last-name headline location industry
-#              current-status current-share num-connections num-connections-capped
-#              summary specialties interests positions educations
-#              num-recommenders phone-numbers twitter-accounts im-accounts date-of-birth
-#              main-address member-url-resources picture-url api-standard-profile-request]
+  FIELDS = %w[first-name last-name location
+              phone-numbers twitter-accounts im-accounts date-of-birth
+              main-address
+              member-url-resources picture-url
+              api-standard-profile-request site-standard-profile-request
+
+              industry
+              headline
+              summary skills positions educations specialties interests
+              associations
+
+              num-connections num-connections-capped num-recommenders
+
+              current-status current-share recommendations-received
+             ]
+
+  STRUCTURED_FIELDS = %w[positions educations skills recommendations-received
+                         current_share date_of_birth associations
+                         api_standard_profile_request location
+                         member_url_resources phone_numbers twitter_accounts
+  ]
+
+  def fetch_profile
+    client = LinkedIn::Client.new
+    client.authorize_from_access(user.token,user.secret)
+
+    client.profile(:fields => FIELDS)
+
+  end
+
 #
 #
 #  def self.format_response(data)
