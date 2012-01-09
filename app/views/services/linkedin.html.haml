@@ -2,3 +2,11 @@
   Welcome #{current_user.name}
   = image_tag('linked_in_32.png')
 
+.span-12
+  %h2 Particulars
+
+  %table
+    - LinkedinProfile::PERSONAL_FIELDS.each do |field|
+      %tr
+        %td= field.humanize
+        %td= @linkedin_profile.send(field.underscore) if @linkedin_profile.respond_to?(field.underscore)

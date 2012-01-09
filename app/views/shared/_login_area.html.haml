@@ -3,7 +3,7 @@
     = current_user.name
     -#= image_tag provider_logo
   %div
-    = image_tag current_user.image
+    = image_tag current_user.image || 'dummy_user_48.png'
   %div
     = link_to "Sign out", sign_out_path
 - else
