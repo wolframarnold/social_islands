@@ -11,4 +11,11 @@ describe '#from_json' do
     mash.should == LinkedIn::Mash.new(twitter_accounts: [LinkedIn::Mash.new(provider_account_id: '1234', provider_account_name: 'joesmith')])
   end
 
+  it 'removes :total=>0 even if there is no :all key, such as for an empty array' do
+    json = {im_accounts: {_total: 0}}.to_json
+    mash = LinkedIn::Mash.from_json(json)
+    mash.should have_key(:im_accounts)
+    mash.im_accounts.should == []
+  end
+
 end

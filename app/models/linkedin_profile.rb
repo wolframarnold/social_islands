@@ -47,11 +47,11 @@ class LinkedinProfile
     end
   end
 
-#
-#
-#  def self.format_response(data)
-#    pp data
-#    nil
-#  end
-#
+  def completeness
+    total = FIELDS.size
+    actual = FIELDS.count {|field| attr = field.underscore; self.respond_to?(attr) && self.send(attr).present? }
+    (actual * 100) / total
+  end
+
 end
+

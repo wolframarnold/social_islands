@@ -11,10 +11,10 @@ module LinkedIn
 
     def convert_value_with_normalizing_arrays(val, duping=false)
       if val.is_a?(Hash) &&
-         val.length == 2 &&
-         val.has_key?('values') && val.has_key?('_total')
+         val.keys.sort == %w(_total values) ||  # 2 keys: _total and values indicate array
+         val == {'_total' => 0}  # Empty arrays are missing the 'values' key
       then
-        val = val['values']
+        val = val['values'] || []
       end
       convert_value_without_normalizing_arrays val, duping
     end
