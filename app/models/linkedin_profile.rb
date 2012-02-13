@@ -20,7 +20,7 @@ class LinkedinProfile
                           ]
 
   SOCIAL_FIELDS = %w[num-connections num-connections-capped num-recommenders
-                     current-status current-share recommendations-received]
+                     current-share recommendations-received]
 
   FIELDS = PERSONAL_FIELDS + PROFESSIONAL_FIELDS + SOCIAL_FIELDS
 
@@ -31,10 +31,7 @@ class LinkedinProfile
   ]
 
   def fetch_profile
-    client = LinkedIn::Client.new
-    client.authorize_from_access(user.token,user.secret)
-
-    assign_attribute_hash client.profile(:fields => FIELDS)
+    assign_attribute_hash @li_client.profile(:fields => FIELDS)
   end
 
   def assign_attribute_hash mash
@@ -51,6 +48,10 @@ class LinkedinProfile
     total = FIELDS.size
     actual = FIELDS.count {|field| attr = field.underscore; self.respond_to?(attr) && self.send(attr).present? }
     (actual * 100) / total
+  end
+
+  def li_client
+    @li_client ||= LinkedIn::Client.new.tap {|c| c.authorize_from_access(user.token,user.secret) }
   end
 
 end

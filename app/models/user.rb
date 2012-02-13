@@ -9,6 +9,8 @@ class User
   key :token, String
   key :secret, String
 
+  timestamps!
+
   one :linkedin_profile
 
 end
