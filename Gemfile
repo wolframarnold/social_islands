@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.3'
+gem 'rails', '3.1.4'
 
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
@@ -22,9 +22,11 @@ gem 'haml', '~> 3.1.4'
 gem 'haml-rails', '~> 0.3.4'
 gem 'flutie', '~> 1.3.3'
 gem 'bourbon', '~> 1.2.0'
-gem 'omniauth', '~> 1.0.1'
+gem 'omniauth', '~> 1.0.3'
+gem 'omniauth-facebook', '~> 1.2.0'
 gem 'omniauth-linkedin', '~> 0.0.6'
 gem 'linkedin', '~> 0.3.6'
+gem 'koala', '~> 1.4.0'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

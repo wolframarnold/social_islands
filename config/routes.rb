@@ -2,6 +2,7 @@ TrustExchange::Application.routes.draw do
   get "services/linkedin"
 
   get "services/facebook"
+  get "services/facebook/edges" => 'services#facebook_edges'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -66,7 +67,7 @@ TrustExchange::Application.routes.draw do
   match 'sign_out' => 'sessions#destroy'
 
   match '/linkedin' => 'services#linkedin'
-  #match '/facebook' => 'services#facebook'
+  match '/facebook' => 'services#facebook'
 
   root :to => "pages#home"
 end

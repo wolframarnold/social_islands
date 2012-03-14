@@ -12,6 +12,16 @@ class ServicesController < ApplicationController
   end
 
   def facebook
+    @facebook_profile = current_user.facebook_profile
+    if @facebook_profile.nil?
+      @facebook_profile = current_user.build_facebook_profile
+      @facebook_profile.get_nodes_and_edges
+      @facebook_profile.save!
+    end
+  end
+
+  def facebook_edges
+    @facebook_profile = current_user.facebook_profile
   end
 
 end
