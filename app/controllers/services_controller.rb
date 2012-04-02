@@ -18,6 +18,7 @@ class ServicesController < ApplicationController
       @facebook_profile.get_nodes_and_edges
       @facebook_profile.save!
     end
+    #Resque.push('viz', :class => 'com.socialislands.viz.App', :args => {facebook_profile_id: @facebook_profile.id})
   end
 
   def facebook_edges

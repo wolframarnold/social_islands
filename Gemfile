@@ -27,6 +27,7 @@ gem 'omniauth-facebook', '~> 1.2.0'
 gem 'omniauth-linkedin', '~> 0.0.6'
 gem 'linkedin', '~> 0.3.6'
 gem 'koala', '~> 1.4.0'
+gem 'resque', '~> 1.20.0'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

@@ -8,19 +8,24 @@
   %p
     Go to
     = link_to 'Connections (Edges)', services_facebook_edges_path
+  -#
+  -#%table
+  -#  %tbody
+  -#    %tr
+  -#      %th #
+  -#      %th UID
+  -#      %th Name
+  -#      %th Image
+  -#      %th Sex
+  -#      %th Likes Count
+  -#      %th Mutual Friends Count
+  -#    - @facebook_profile.friends.each_with_index do |friend,i|
+  -#      %tr
+  -#        %td #{i}.
+  -#        - %w(uid name pic_square sex likes_count mutual_friend_count).each do |attr|
+  -#          %td= attr=='pic_square' ? image_tag(friend[attr],alt:friend['name']) : friend[attr]
 
-  %table
-    %tbody
-      %tr
-        %th #
-        %th UID
-        %th Name
-        %th Image
-        %th Sex
-        %th Likes Count
-        %th Mutual Friends Count
-      - @facebook_profile.friends.each_with_index do |friend,i|
-        %tr
-          %td #{i}.
-          - %w(uid name pic_square sex likes_count mutual_friend_count).each do |attr|
-            %td= attr=='pic_square' ? image_tag(friend[attr],alt:friend['name']) : friend[attr]
+.row
+  #graph
+  #sigma-example
+
