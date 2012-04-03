@@ -17,8 +17,11 @@ class ServicesController < ApplicationController
       @facebook_profile = current_user.build_facebook_profile
       @facebook_profile.get_nodes_and_edges
       @facebook_profile.save!
+
+      # NOTE: The args parameters MUST be AN ARRAY, for Jesque to pick it up correctly. It apparently
+      # cannot handle hashes.
+      Resque.push('viz', :class => 'com.socialislands.viz.VizWorker', :args => [current_user.id])
     end
-    #Resque.push('viz', :class => 'com.socialislands.viz.App', :args => {facebook_profile_id: @facebook_profile.id})
   end
 
   def facebook_edges

@@ -24,7 +24,7 @@ $ ->
       });
 
   # import GEXF file
-  sigInst.parseGexf('/test2.gexf')
+  sigInst.parseGexf('/graph.gexf')
 
   # Draw the graph :
   sigInst.draw()
