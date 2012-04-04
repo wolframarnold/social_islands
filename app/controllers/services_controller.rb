@@ -28,4 +28,8 @@ class ServicesController < ApplicationController
     @facebook_profile = current_user.facebook_profile
   end
 
+  def facebook_graph
+    render :text => current_user.facebook_profile.graph, :content_type => 'application/gexf+xml', :layout => false
+  end
+
 end

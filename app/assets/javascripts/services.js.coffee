@@ -24,7 +24,7 @@ $ ->
       });
 
   # import GEXF file
-  sigInst.parseGexf('/graph.gexf')
+  sigInst.parseGexf('/services/facebook/graph.gexf')
 
   # Draw the graph :
   sigInst.draw()
