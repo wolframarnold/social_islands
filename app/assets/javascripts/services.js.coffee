@@ -20,7 +20,7 @@ $ ->
       minEdgeSize: 0.2,
       maxEdgeSize: 0.2
       }).mouseProperties({
-        maxRatio: 32
+        maxRatio: 4
       });
 
   # import GEXF file

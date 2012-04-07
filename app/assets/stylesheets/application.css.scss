@@ -4,6 +4,7 @@
  * the top of the compiled file, but it's generally better to create a new file per style scope.
 */
 
+
 @import "flutie";
 @import "bourbon";
 
@@ -69,9 +70,4 @@ $i: 1;
 
 .last {
     margin-right: 0;
-}
-
-#graph {
-  width: 800px;
-  height: 400px;
 }
