@@ -6,15 +6,21 @@
 
   .sidebar
     This is the sidebar
-    %div.label.group1
+    -#- @groups.each do |group|
+    -#  %div.label{:style => group.color}
+    -#    %span.button XXXX
+    -#    %input
+    -#    %input{type: 'hidden', value: group.index}
+
+    %div.label.group1{:style => "background-color: cyan;"}
       %span.button XXXX
       %input
       %input{type: 'hidden', value: '1'}
-    %div.label.group2
+    %div.label.group2{:style => "background-color: red;"}
       %span.button XXXX
       %input
       %input{type: 'hidden', value: '2'}
-    %div.label.group3
+    %div.label.group3{:style => "background-color: blue;"}
       %span.button XXXX
       %input
       %input{type: 'hidden', value: '3'}

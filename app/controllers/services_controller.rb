@@ -17,6 +17,7 @@ class ServicesController < ApplicationController
       @facebook_profile = current_user.build_facebook_profile
       @facebook_profile.get_nodes_and_edges
       @facebook_profile.save!
+      #@group = @facebook_profile.groups
 
       # NOTE: The args parameters MUST be AN ARRAY, for Jesque to pick it up correctly. It apparently
       # cannot handle hashes.
@@ -36,6 +37,8 @@ class ServicesController < ApplicationController
     @facebook_profile = current_user.facebook_profile
     labels = @facebook_profile.labels
     labels[params[:groupId]] = params[:labelText]
+    # OPTIMIZE: Don't save the whole profile (huge!). Only update the labels hash.
+    # Use Mongo's $set?
     if @facebook_profile.save
       head 200
     else
