@@ -4,6 +4,7 @@ TrustExchange::Application.routes.draw do
   get "services/facebook"
   get "services/facebook/edges" => 'services#facebook_edges'
   get "services/facebook/graph.gexf" => 'services#facebook_graph'
+  post "services/facebook/label" => 'services#facebook_label'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

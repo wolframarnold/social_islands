@@ -8,6 +8,7 @@ class FacebookProfile
 
   key :friends, Array
   key :edges,   Array
+  key :labels,  Hash
   timestamps!
 
   def get_nodes_and_edges

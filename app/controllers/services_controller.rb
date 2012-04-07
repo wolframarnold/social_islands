@@ -32,4 +32,15 @@ class ServicesController < ApplicationController
     render :text => current_user.facebook_profile.graph, :content_type => 'application/gexf+xml', :layout => false
   end
 
+  def facebook_label
+    @facebook_profile = current_user.facebook_profile
+    labels = @facebook_profile.labels
+    labels[params[:groupId]] = params[:labelText]
+    if @facebook_profile.save
+      head 200
+    else
+      head 500
+    end
+  end
+
 end
