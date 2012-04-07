@@ -7,6 +7,7 @@ $ ->
 
   window.sigInst = sigma.init(document.getElementById('graph'))
 
+
   sigInst.drawingProperties({
     defaultLabelColor: '#fff',
     defaultLabelSize: 14,
@@ -26,7 +27,27 @@ $ ->
   # import GEXF file
   sigInst.parseGexf('/services/facebook/graph.gexf')
 
-  # Draw the graph :
+  window.testNode = sigInst.iterNodes ((n) ->
+    n
+  ), ["595045215"]
+
+  window.colorTable = new Array()
+  sigInst.iterNodes (node) ->
+    colorTable[parseInt(node.attr.attributes[4].val)] = node.color
+    #console.log node.attr.attributes[4].val, 'color', node.color
+    $('.group1').first().css('background-color', colorTable[0])
+    $('.group2').first().css('background-color', colorTable[1])
+    $('.group3').first().css('background-color', colorTable[2])
+    $('.group4').first().css('background-color', colorTable[3])
+    $('.group5').first().css('background-color', colorTable[4])
+    $('.group6').first().css('background-color', colorTable[5])
+    $('.group7').first().css('background-color', colorTable[6])
+    $('.group8').first().css('background-color', colorTable[7])
+    $('.group9').first().css('background-color', colorTable[8])
+
+
+
+# Draw the graph :
   sigInst.draw()
 
   $('.button').click ->
@@ -37,10 +58,13 @@ $ ->
     $(this).addClass('pressed')
     console.log 'selected: ', selected
     highlightGroup(selected);
+    if selected == 8
+      rotate()
+
+
 
   $('.label input').blur(sendLabel)
   $('.label input').change(sendLabel)
-
 
 sendLabel = ->
   labelText = $(this).val()
@@ -57,12 +81,23 @@ sendLabel = ->
 #    console.log event
 #    console.log this
 
+rotate = ->
+  sigInst.iterNodes (node) ->
+    tmp = node.x
+    #console.log "before", node.x, node.y
+    node.x = node.y
+    node.y = -tmp
+  sigInst.draw()  # maybe there is a lighter weight method to refresh just the affected nodes
+
 
 highlightGroup = (idx) ->
   console.log "highlight group #", idx
   sigInst.iterNodes (node) ->
-    if parseInt(node.attr.attributes[4].val) == idx
+    groupID = parseInt(node.attr.attributes[4].val)
+    if groupID == idx
       node.color = '#FFFFFF'
+    else
+      node.color = colorTable[groupID]
   sigInst.draw()  # maybe there is a lighter weight method to refresh just the affected nodes
 
 
