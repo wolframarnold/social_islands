@@ -106,8 +106,9 @@ $ ->
 sendLabel = ->
   window.testPointer = this
   labelText = $(this).val()
-  console.log $(this)
-  idx = $(this).next('input').val()
+  idx = this.id
+  console.log $(this), idx
+  #idx = $(this).next('input').val()
   #  console.log labelText, ', idx: ', idx
   $.post '/services/facebook/label', {groupId: idx, labelText: labelText}, ->
     console.log "success/failure"

@@ -39,11 +39,11 @@ class ServicesController < ApplicationController
     labels[params[:groupId]] = params[:labelText]
     # OPTIMIZE: Don't save the whole profile (huge!). Only update the labels hash.
     # Use Mongo's $set?
-    if @facebook_profile.save
-      head 200
-    else
-      head 500
-    end
+    #if @facebook_profile.save
+    #  head 200
+    #else
+    #  head 500
+    #end
   end
 
 end
