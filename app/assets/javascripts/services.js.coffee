@@ -7,6 +7,7 @@ $ ->
 
   window.sigInst = sigma.init(document.getElementById('graph'))
 
+  window.testPointer = null
 
   sigInst.drawingProperties({
     defaultLabelColor: '#fff',
@@ -18,8 +19,8 @@ $ ->
     }).graphProperties({
       minNodeSize: 0.5,
       maxNodeSize: 5,
-      minEdgeSize: 0.2,
-      maxEdgeSize: 0.2
+      minEdgeSize: 0.3,
+      maxEdgeSize: 0.3
       }).mouseProperties({
         maxRatio: 4
       });
@@ -50,16 +51,52 @@ $ ->
 # Draw the graph :
   sigInst.draw()
 
+  window.highLightedGroup = -1
+  window.tthis = null
   $('.button').click ->
-    selected = 0
-    $('.button').each (idx, elem) =>  # fat arrow binds this to outside context of
-      selected = idx if elem == this
-      $(elem).removeClass('pressed')
-    $(this).addClass('pressed')
-    console.log 'selected: ', selected
-    highlightGroup(selected);
-    if selected == 8
+    console.log this
+    selected = this.id
+    console.log "selected id: ", selected
+    if selected < 8    #this is groupID
+      if window.highLightedGroup > -1   # a group already hightlighted, dehighlight first
+        console.log "dehighlight first"
+        deHighlightGroup()
+        $($('.button')[window.highLightedGroup]).removeClass('pressed')
+      if window.highLightedGroup != selected # a different group is selected
+        console.log "a new group is selected, old: #", window.highLightedGroup, " new: #", selected
+        $(this).addClass('pressed')
+        highlightGroup(parseInt(selected));
+        window.highLightedGroup = selected
+      else
+        console.log "deselecting"
+        window.highLightedGroup = -1
+    if selected == 'Rotate'
+      console.log "Rotating..."
       rotate()
+    if window.highLightedGroup > -1       #If a valid group is selected, test if moving button is clicked
+      if selected == 'MoveLeft'
+        moveLeft(parseInt(window.highLightedGroup))
+      if selected == 'MoveRight'
+        moveRight(parseInt(window.highLightedGroup))
+      if selected == 'MoveUp'
+        moveUp(parseInt(window.highLightedGroup))
+      if selected == 'MoveDown'
+        moveDown(parseInt(window.highLightedGroup))
+    sigInst.draw()
+
+#  $('.button').click ->
+#    selected = 0
+#    $('.button').each (idx, elem) =>  # fat arrow binds this to outside context of
+#      selected = idx if elem == this
+#      $(elem).removeClass('pressed')
+#    $(this).addClass('pressed')
+#    console.log 'selected: ', selected
+#    highlightGroup(selected);
+#    if selected == 8
+#      rotate()
+#    if selected == 9
+#      moveRight(1)
+#    sigInst.draw()
 
 
 
@@ -67,7 +104,9 @@ $ ->
   $('.label input').change(sendLabel)
 
 sendLabel = ->
+  window.testPointer = this
   labelText = $(this).val()
+  console.log $(this)
   idx = $(this).next('input').val()
   #  console.log labelText, ', idx: ', idx
   $.post '/services/facebook/label', {groupId: idx, labelText: labelText}, ->
@@ -87,17 +126,52 @@ rotate = ->
     #console.log "before", node.x, node.y
     node.x = node.y
     node.y = -tmp
-  sigInst.draw()  # maybe there is a lighter weight method to refresh just the affected nodes
 
-
-highlightGroup = (idx) ->
-  console.log "highlight group #", idx
+moveLeft = (idx) ->
+  console.log "move to right group #", idx
   sigInst.iterNodes (node) ->
     groupID = parseInt(node.attr.attributes[4].val)
     if groupID == idx
+      node.x -= 50
+
+moveRight = (idx) ->
+  console.log "move to right group #", idx
+  sigInst.iterNodes (node) ->
+    groupID = parseInt(node.attr.attributes[4].val)
+    if groupID == idx
+      node.x += 50
+
+moveUp = (idx) ->
+  console.log "move to right group #", idx
+  sigInst.iterNodes (node) ->
+    groupID = parseInt(node.attr.attributes[4].val)
+    if groupID == idx
+      node.y -= 50
+
+moveDown = (idx) ->
+  console.log "move to right group #", idx
+  sigInst.iterNodes (node) ->
+    groupID = parseInt(node.attr.attributes[4].val)
+    if groupID == idx
+      node.y += 50
+
+
+highlightGroup = (idx) ->
+  console.log "inside highlightgroup for group #", idx
+  numNode = 0
+  sigInst.iterNodes (node) ->
+    groupID = parseInt(node.attr.attributes[4].val)
+#    console.log groupID
+    if groupID == idx
       node.color = '#FFFFFF'
+      numNode += 1
     else
       node.color = colorTable[groupID]
-  sigInst.draw()  # maybe there is a lighter weight method to refresh just the affected nodes
+  console.log "done highlighing, total nodes affected ", numNode
 
+deHighlightGroup = ->
+  console.log "de-highlight groups"
+  sigInst.iterNodes (node) ->
+    groupID = parseInt(node.attr.attributes[4].val)
+    node.color = colorTable[groupID]
 

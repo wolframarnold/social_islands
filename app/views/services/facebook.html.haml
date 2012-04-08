@@ -13,38 +13,46 @@
     -#    %input{type: 'hidden', value: group.index}
 
     %div.label.group1{:style => "background-color: cyan;"}
-      %span.button XXXX
-      %input
+      %span.button{id: 0} XXXX
+      %input{label: 'input1', id: 'input1'}
       %input{type: 'hidden', value: '1'}
     %div.label.group2{:style => "background-color: red;"}
-      %span.button XXXX
+      %span.button{id: 1} XXXX
       %input
       %input{type: 'hidden', value: '2'}
     %div.label.group3{:style => "background-color: blue;"}
-      %span.button XXXX
+      %span.button{id: 2} XXXX
       %input
       %input{type: 'hidden', value: '3'}
     %div.label.group4{:style => "background-color: black;"}
-      %span.button XXXX
+      %span.button{id: 3} XXXX
       %input
       %input{type: 'hidden', value: '4'}
     %div.label.group5{:style => "background-color: black;"}
-      %span.button XXXX
+      %span.button{id: 4} XXXX
       %input
       %input{type: 'hidden', value: '5'}
     %div.label.group6{:style => "background-color: black;"}
-      %span.button XXXX
+      %span.button{id: 5} XXXX
       %input
       %input{type: 'hidden', value: '6'}
     %div.label.group7{:style => "background-color: black;"}
-      %span.button XXXX
+      %span.button{id: 6} XXXX
       %input
       %input{type: 'hidden', value: '7'}
     %div.label.group8{:style => "background-color: black;"}
-      %span.button XXXX
+      %span.button{id: 7} XXXX
       %input
       %input{type: 'hidden', value: '8'}
     %div.label.group9{:style => "background-color: black;"}
-      %span.button Rotate
+      %span.button{id: 'Rotate'} Rotate
       %input
       %input{type: 'hidden', value: '9'}
+    %div.label.group11
+      %span.button{id: 'MoveLeft'} MoveLeft
+    %div.label.group12
+      %span.button{id: 'MoveRight'} MoveRight
+    %div.label.group13
+      %span.button{id: 'MoveUp'} MoveUp
+    %div.label.group14
+      %span.button{id: 'MoveDown'} MoveDown
