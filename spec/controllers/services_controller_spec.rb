@@ -38,4 +38,16 @@ describe ServicesController do
     end
   end
 
+  context "#facebook_label" do
+    let!(:fb_profile) {FactoryGirl.create(:facebook_profile, user: user)}
+
+    it 'updates/adds the label only' do
+
+      expect {
+        xhr :post, :facebook_label, {groupId: 12, labelText: 'Highschool friends'}
+      }.to change{fb_profile.reload.labels}.from({}).to({'12' => 'Highschool friends'})
+    end
+
+  end
+
 end
