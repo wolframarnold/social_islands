@@ -1,4 +1,4 @@
-TrustExchange::Application.routes.draw do
+SocialIslands::Application.routes.draw do
   get "services/linkedin"
 
   get "services/facebook"

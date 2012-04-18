@@ -4,4 +4,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-TrustExchange::Application.load_tasks
+SocialIslands::Application.load_tasks
