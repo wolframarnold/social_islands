@@ -94,6 +94,7 @@ GEM
       plucky (~> 0.4.0)
     multi_json (1.0.4)
     multipart-post (1.1.5)
+    newrelic_rpm (3.3.4)
     oauth (0.4.5)
     oauth2 (0.5.2)
       faraday (~> 0.7)
@@ -211,6 +212,7 @@ DEPENDENCIES
   koala (~> 1.4.0)
   linkedin (~> 0.3.6)
   mongo_mapper (~> 0.10.1)
+  newrelic_rpm
   omniauth (~> 1.0.3)
   omniauth-facebook (~> 1.2.0)
   omniauth-linkedin (~> 0.0.6)
