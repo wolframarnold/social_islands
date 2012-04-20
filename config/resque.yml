@@ -1,2 +1,3 @@
+production: <%= ENV['REDISTOGO_URL'] %>
 development: localhost:6379
 test: localhost:6379
