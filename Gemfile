@@ -28,6 +28,7 @@ gem 'omniauth-linkedin', '~> 0.0.6'
 gem 'linkedin', '~> 0.3.6'
 gem 'koala', '~> 1.4.0'
 gem 'resque', '~> 1.20.0'
+gem 'thin', '~> 1.3.1'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
@@ -46,5 +47,4 @@ group :test, :development do
   gem 'database_cleaner', '~> 0.7.0'
   gem 'spork', '~> 0.9.0.rc9'
   gem 'factory_girl_rails', '~> 1.4.0'
-  gem 'thin', '~> 1.3.1'
 end
