@@ -29,6 +29,7 @@ gem 'linkedin', '~> 0.3.6'
 gem 'koala', '~> 1.4.0'
 gem 'resque', '~> 1.20.0'
 gem 'thin', '~> 1.3.1'
+gem 'newrelic_rpm'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
