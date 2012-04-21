@@ -11,7 +11,6 @@ class User
 
   timestamps!
 
-  one :linkedin_profile
   one :facebook_profile
 
 end

@@ -62,8 +62,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   fb_app_id      = Rails.env.production? ? ENV['FACEBOOK_APP_ID'] : '398796910145811'
   fb_app_secret  = Rails.env.production? ? ENV['FACEBOOK_SECRET'] : '71e24820b766e844985e9ff92e1ba119'
 
+  # See https://developers.facebook.com/docs/reference/api/permissions/ for a list of scopes
   provider :facebook, fb_app_id, fb_app_secret, scope: fb_perms.join(',')
 
-  # See https://developers.facebook.com/docs/reference/api/permissions/ for a list of scopes
-  provider :linkedin,'zsgsnz2ig4i7', '1tqv4Nuv3H4RrvnW'
 end

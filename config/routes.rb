@@ -1,6 +1,4 @@
 SocialIslands::Application.routes.draw do
-  get "services/linkedin"
-
   get "services/facebook"
   get "services/facebook/edges" => 'services#facebook_edges'
   get "services/facebook/graph.gexf" => 'services#facebook_graph'
@@ -61,14 +59,13 @@ SocialIslands::Application.routes.draw do
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id(.:format)))'
+  # match ':controller(/:action(/:id))(.:format)'
 
   # Omniauth routes
   match '/auth/:provider/callback' => 'sessions#create'
   match '/auth/failure' => 'sessions#failure'
   match 'sign_out' => 'sessions#destroy'
 
-  match '/linkedin' => 'services#linkedin'
   match '/facebook' => 'services#facebook'
 
   root :to => "pages#home"

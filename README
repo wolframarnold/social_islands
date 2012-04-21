@@ -1,5 +1,5 @@
 Social Islands
 
-The idea is to download social networking data (the social graph) from LinkedIn and Facebook.
+Visualization of social groups of your Facebook network.
 
 Go to localhost:3000 and start logging in.

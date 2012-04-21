@@ -4,49 +4,49 @@ describe SessionsController do
 
   context '#create' do
     before do
-      request.env["omniauth.auth"] = OmniAuth.config.mock_auth[:linkedin]
+      request.env["omniauth.auth"] = OmniAuth.config.mock_auth[:facebook]
     end
 
     it 'has flash[:notice]' do
-      get :create, :provider => 'linkedin'
+      get :create, :provider => 'facebook'
       flash[:notice].should == 'Successfully logged in'
     end
 
-    it 'redirects to linkedin_path' do
-      get :create, :provider => 'linkedin'
-      response.should redirect_to(linkedin_path)
+    it 'redirects to facebook_path' do
+      get :create, :provider => 'facebook'
+      response.should redirect_to(facebook_path)
     end
 
     it 'should be signed_in' do
-      get :create, :provider => 'linkedin'
+      get :create, :provider => 'facebook'
       controller.should be_signed_in
     end
 
     it 'sets current_user' do
-      user = User.create!(uid: '123456790', provider: 'linkedin')
+      user = User.create!(uid: '123456790', provider: 'facebook')
 
-      get :create, :provider => 'linkedin'
+      get :create, :provider => 'facebook'
       controller.current_user.should == user
     end
 
     it 'creates a user if not found' do
       expect {
-        get :create, :provider => 'linkedin'
+        get :create, :provider => 'facebook'
       }.to change(User,:count).by(1)
     end
 
     it 'does not create a user if one exists' do
-      User.create!(uid: '123456790', provider: 'linkedin')
+      User.create!(uid: '123456790', provider: 'facebook')
 
       expect {
-        get :create, :provider => 'linkedin'
+        get :create, :provider => 'facebook'
       }.to_not change(User,:count)
     end
 
     it 'sets user_id in session' do
-      user = User.create!(uid: '123456790', provider: 'linkedin')
+      user = User.create!(uid: '123456790', provider: 'facebook')
 
-      get :create, :provider => 'linkedin'
+      get :create, :provider => 'facebook'
       session[:user_id].should == user.id.to_s
     end
 

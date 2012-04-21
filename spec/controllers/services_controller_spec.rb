@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ServicesController do
 
-  let!(:user) { FactoryGirl.create(:user) }
+  let!(:user) { FactoryGirl.create(:fb_user) }
 
   before do
     controller.stub!(:current_user).and_return(user)
@@ -11,13 +11,13 @@ describe ServicesController do
 
   context 'profile exists' do
 
-    let!(:linkedin_profile) { user.create_linkedin_profile }
+    let!(:facebook_profile) { user.create_facebook_profile }
 
-    it 'assigns @linkedin_profile' do
-      get :linkedin
+    it 'assigns @facebook_profile' do
+      get :facebook
 
-      linkedin_profile.should be_persisted
-      assigns[:linkedin_profile].should == linkedin_profile
+      facebook_profile.should be_persisted
+      assigns[:facebook_profile].should == facebook_profile
     end
 
   end
@@ -25,16 +25,16 @@ describe ServicesController do
   context 'profile does not exist' do
 
     before do
-      LinkedinProfile.any_instance.should_receive(:fetch_profile)
+      FacebookProfile.any_instance.should_receive(:get_nodes_and_edges)
     end
 
-    it 'creates a new linkedin_profile instance from the current user' do
+    it 'creates a new facebook_profile instance from the current user' do
       expect {
-        get :linkedin
-      }.to change(LinkedinProfile,:count)
+        get :facebook
+      }.to change(FacebookProfile,:count)
 
-      assigns[:linkedin_profile].should_not be_nil
-      assigns[:linkedin_profile].should be_persisted
+      assigns[:facebook_profile].should_not be_nil
+      assigns[:facebook_profile].should be_persisted
     end
   end
 

@@ -57,7 +57,7 @@ Spork.prefork do
   end
 
   OmniAuth.config.test_mode = true
-  OmniAuth.config.add_mock(:linkedin, {
+  OmniAuth.config.add_mock(:facebook, {
     info: {name: 'Joe Smith', image: 'http://example.com/joesmith.png'},
     credentials: {token: 'abcdefg', secret: 'hijklmnop'},
     uid: '123456790'

@@ -1,14 +1,5 @@
 FactoryGirl.define do
 
-  factory :user do
-    sequence(:uid) { |i| i}
-    name 'Joe Smith'
-    provider 'linkedin'
-    image 'http://example.com/joesmith.png'
-    token 'ABCDEF'
-    secret 'GHIJKLMN'
-  end
-
   factory :fb_user, class: User do
     sequence(:uid) { |i| i}
     name 'Joe Smith'
