@@ -1,7 +1,6 @@
 class User
   include MongoMapper::Document
-  plugin MongoMapper::Plugins::IdentityMap
-  
+
   key :uid, String
   key :provider, String
   key :image, String

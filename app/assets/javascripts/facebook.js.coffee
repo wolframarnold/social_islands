@@ -1,7 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
-
 $ ->
   sigRoot = $('#graph')
 
@@ -26,29 +22,9 @@ $ ->
       });
 
   # import GEXF file
-  sigInst.parseGexf('/services/facebook/graph.gexf')
+  sigInst.parseGexf('/facebook/graph.gexf')
 
-  window.testNode = sigInst.iterNodes ((n) ->
-    n
-  ), ["595045215"]
-
-  window.colorTable = new Array()
-  sigInst.iterNodes (node) ->
-    colorTable[parseInt(node.attr.attributes[4].val)] = node.color
-    #console.log node.attr.attributes[4].val, 'color', node.color
-    $('.group1').first().css('background-color', colorTable[0])
-    $('.group2').first().css('background-color', colorTable[1])
-    $('.group3').first().css('background-color', colorTable[2])
-    $('.group4').first().css('background-color', colorTable[3])
-    $('.group5').first().css('background-color', colorTable[4])
-    $('.group6').first().css('background-color', colorTable[5])
-    $('.group7').first().css('background-color', colorTable[6])
-    $('.group8').first().css('background-color', colorTable[7])
-    $('.group9').first().css('background-color', colorTable[8])
-
-
-
-# Draw the graph :
+  # Draw the graph :
   sigInst.draw()
 
   window.highLightedGroup = -1
@@ -98,10 +74,57 @@ $ ->
 #      moveRight(1)
 #    sigInst.draw()
 
+  # Show/hide rename link
+  $('.island-label').mouseenter ->
+    showLabelRenameLink $(this)
+  $('.island-label').mouseleave ->
+    hideLabelRenameLink $(this)
+
+  # Island label button click -- highlight group, inhibit form submission
+  $('.island-label button').click ->
+    $(this).parents('#button-group').find('button.island-show').removeClass('active')
+    $(this).toggleClass('active')
+    false
+
+  # Rename action
+  $('a.rename').click ->
+    showLabelEdit $(this)
+
+  # Finishing name update, either by submit or by blur (cancel)
+  $('.island-form').submit ->
+    formElem = $(this)
+    hideLabelEdit formElem
+    jqxhr = $.post '/facebook/label', formElem.serialize()
+    jqxhr.success ->
+      $('#alert-success').text("Update Successful").fadeIn(500).delay(1000).fadeOut(1000)
+      formElem.find('.island-label button').text(formElem.find('.island-label-edit input[type=text]').val())
+    jqxhr.error (xhr) ->
+      $('#alert-error').text("Server Error: " + JSON.parse(xhr.responseText).error).fadeIn(500).delay(1500).fadeOut(2000)
+    false
+
+  # ESC key when pressed in input box
+  $('.island-label-edit input[name*=name]').keyup (event) ->
+    if event.keyCode == 27 # ESC
+      hideLabelEdit $(this).parents('.island-form')
+
+  # Blur -- when clicking on rename of another intput box
+  $('.island-label-edit input[name*=name]').blur ->
+    hideLabelEdit $(this).parents('.island-form')
 
 
-  $('.label input').blur(sendLabel)
-  $('.label input').change(sendLabel)
+showLabelRenameLink = (elem) ->
+  elem.find('a.rename').show();
+
+hideLabelRenameLink = (elem) ->
+  elem.find('a.rename').hide();
+
+showLabelEdit = (a_elem) ->
+  a_elem.closest('.island-label').hide().
+  next('.island-label-edit').show().
+  find('input[name*=name]').focus()
+
+hideLabelEdit = (input_elem) ->
+  input_elem.find('.island-label-edit').hide().prev('.island-label').show()
 
 sendLabel = ->
   window.testPointer = this

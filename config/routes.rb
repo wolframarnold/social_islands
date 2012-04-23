@@ -1,8 +1,23 @@
 SocialIslands::Application.routes.draw do
-  get "services/facebook"
-  get "services/facebook/edges" => 'services#facebook_edges'
-  get "services/facebook/graph.gexf" => 'services#facebook_graph'
-  post "services/facebook/label" => 'services#facebook_label'
+
+  # Omniauth routes
+  match '/auth/:provider/callback' => 'sessions#create'
+  match '/auth/failure' => 'sessions#failure'
+  match 'sign_out' => 'sessions#destroy'
+  #
+  #get "facebook/visualize" => 'facebook#visualize'
+  #get "facebook/graph.gexf" => 'facebook#graph', :as => :facebook_graph
+  #post "facebook/label" => 'facebook#label'
+
+  resource :facebook_profile, path: 'facebook', only: 'show' do
+    collection do
+      get :graph
+      put :label
+    end
+  end
+
+  root :to => 'facebook_profiles#login'
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -61,12 +76,4 @@ SocialIslands::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
-  # Omniauth routes
-  match '/auth/:provider/callback' => 'sessions#create'
-  match '/auth/failure' => 'sessions#failure'
-  match 'sign_out' => 'sessions#destroy'
-
-  match '/facebook' => 'services#facebook'
-
-  root :to => "pages#home"
 end

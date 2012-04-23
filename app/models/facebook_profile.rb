@@ -8,7 +8,7 @@ class FacebookProfile
 
   key :friends, Array
   key :edges,   Array
-  key :labels,  Hash
+  many :labels
   key :graph,   String
   timestamps!
 

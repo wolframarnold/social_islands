@@ -1,73 +1,47 @@
-/*
- * This is a manifest file that'll automatically include all the stylesheets available in this directory
- * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
- * the top of the compiled file, but it's generally better to create a new file per style scope.
-*/
+@import "bootswatch/cyborg/variables";
 
+// Hack--sprite path in Bootswatch is wrong, override here
+$iconSpritePath:          asset-url("glyphicons-halflings.png", image);
+$iconWhiteSpritePath:     asset-url("glyphicons-halflings-white.png", image);
 
-@import "flutie";
-@import "bourbon";
+@import "bootstrap";
 
-// Emulate the blueprint grid, width 950px, 30px cols with 10px gutters
-$gw-column: 30px; // Column Width
-$gw-gutter: 10px;   // Gutter Width
+@import "bootswatch/cyborg/bootswatch";
+
+html {
+  height: 100%;
+}
+
+.btn.island-show:active, .btn.island-show.active {
+  border: #f5f5f5 solid 2px;
+}
 
 body {
-    background-color: #4b7399;
-    text-align: center; // hack for FF 3.x, IE, ...
+  position: relative;
+  height: 100%;
 }
 
-#container {
-    border: 1px solid black;
-    width: 970px;
-    @include linear-gradient(#f2ffff, #c8f7f7);
-    margin: 10px auto;
-    text-align: left;
+.full-height {
+  position: relative;
+  height: 100%;
 }
 
-@mixin centering {
-    margin-left:auto;  // for centering container...
-    margin-right:auto; // on surrounding canvans
-    text-align: left;  // fix side effect of centering hack for FF 3.x, IE, ...
+.rename {
+  font-size: smaller;
 }
 
-.row {
-    width: 950px;
-    @include box($orient: horizontal, $pack: center, $align: center);
-    @include centering;
+#alerts {
+  position: absolute;
+  top: 5px;
+  left: 35%;
+  width: 30%;
+  text-align: center;
 }
 
-.column {
-    width: 950px;
-    @include box($orient: vertical, $pack: start, $align: center);
-    @include centering;
-}
-
-.spacer {
-    height: 10px;
-}
-
-.login {
-    @extend .row;
-    @include box-pack(justify);
-}
-
-img {
-    margin: 0;
-}
-
-
-
-/* emulate  the blueprint grid, span-1 ... span-24 */
-$i: 1;
-@while $i < 25 {
-  .span-#{$i} {
-      width: grid-width(1 * $i);
-      @if $i < 24 { margin-right: $gw-gutter; }
-  }
-  $i: $i + 1;
-}
-
-.last {
-    margin-right: 0;
+#graph {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  bottom: 62px + 15px;  // top bar is 44 pix + 18 margin = 62
 }

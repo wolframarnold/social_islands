@@ -31,6 +31,8 @@ GEM
     addressable (2.2.7)
     arel (3.0.2)
     bootstrap-sass (2.0.2)
+    bootswatch-rails (0.0.11)
+      railties (>= 3.1)
     bson (1.6.2)
     bson_ext (1.6.2)
       bson (~> 1.6.2)
@@ -188,6 +190,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootstrap-sass (~> 2.0.2)
+  bootswatch-rails (~> 0.0.11)
   bson_ext (~> 1.6.2)
   coffee-rails (~> 3.2.1)
   database_cleaner (~> 0.7.2)

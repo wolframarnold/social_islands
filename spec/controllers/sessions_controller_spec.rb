@@ -12,9 +12,9 @@ describe SessionsController do
       flash[:notice].should == 'Successfully logged in'
     end
 
-    it 'redirects to facebook_path' do
+    it 'redirects to facebook_profile_path' do
       get :create, :provider => 'facebook'
-      response.should redirect_to(facebook_path)
+      response.should redirect_to(facebook_profile_path)
     end
 
     it 'should be signed_in' do

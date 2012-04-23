@@ -22,7 +22,7 @@ class SessionsController < ApplicationController
 
       # TODO: Secure this with fingerprint or use Devise
       session[:user_id] = user.id.to_s
-      redirect_to send("#{omni['provider']}_path")
+      redirect_to send("#{omni['provider']}_profile_path")
     end
   end
 
