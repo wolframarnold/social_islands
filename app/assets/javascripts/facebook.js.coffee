@@ -27,38 +27,38 @@ $ ->
   # Draw the graph :
   sigInst.draw()
 
-  window.highLightedGroup = -1
-  window.tthis = null
-  $('.button').click ->
-    console.log this
-    selected = this.id
-    console.log "selected id: ", selected
-    if selected < 8    #this is groupID
-      if window.highLightedGroup > -1   # a group already hightlighted, dehighlight first
-        console.log "dehighlight first"
-        deHighlightGroup()
-        $($('.button')[window.highLightedGroup]).removeClass('pressed')
-      if window.highLightedGroup != selected # a different group is selected
-        console.log "a new group is selected, old: #", window.highLightedGroup, " new: #", selected
-        $(this).addClass('pressed')
-        highlightGroup(parseInt(selected));
-        window.highLightedGroup = selected
-      else
-        console.log "deselecting"
-        window.highLightedGroup = -1
-    if selected == 'Rotate'
-      console.log "Rotating..."
-      rotate()
-    if window.highLightedGroup > -1       #If a valid group is selected, test if moving button is clicked
-      if selected == 'MoveLeft'
-        moveLeft(parseInt(window.highLightedGroup))
-      if selected == 'MoveRight'
-        moveRight(parseInt(window.highLightedGroup))
-      if selected == 'MoveUp'
-        moveUp(parseInt(window.highLightedGroup))
-      if selected == 'MoveDown'
-        moveDown(parseInt(window.highLightedGroup))
-    sigInst.draw()
+#  window.highLightedGroup = -1
+#  window.tthis = null
+#  $('.button').click ->
+#    console.log this
+#    selected = this.id
+#    console.log "selected id: ", selected
+#    if selected < 8    #this is groupID
+#      if window.highLightedGroup > -1   # a group already hightlighted, dehighlight first
+#        console.log "dehighlight first"
+#        deHighlightGroup()
+#        $($('.button')[window.highLightedGroup]).removeClass('pressed')
+#      if window.highLightedGroup != selected # a different group is selected
+#        console.log "a new group is selected, old: #", window.highLightedGroup, " new: #", selected
+#        $(this).addClass('pressed')
+#        highlightGroup(parseInt(selected));
+#        window.highLightedGroup = selected
+#      else
+#        console.log "deselecting"
+#        window.highLightedGroup = -1
+#    if selected == 'Rotate'
+#      console.log "Rotating..."
+#      rotate()
+#    if window.highLightedGroup > -1       #If a valid group is selected, test if moving button is clicked
+#      if selected == 'MoveLeft'
+#        moveLeft(parseInt(window.highLightedGroup))
+#      if selected == 'MoveRight'
+#        moveRight(parseInt(window.highLightedGroup))
+#      if selected == 'MoveUp'
+#        moveUp(parseInt(window.highLightedGroup))
+#      if selected == 'MoveDown'
+#        moveDown(parseInt(window.highLightedGroup))
+#    sigInst.draw()
 
 #  $('.button').click ->
 #    selected = 0
