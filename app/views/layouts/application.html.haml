@@ -10,7 +10,7 @@
     %meta{name: 'author', content: 'Wolfram Arnold, Weidong Yang'}
     %link{ :rel => "shortcut icon", :href => "/favicon.ico", :type => "image/x-icon" }
     = stylesheet_link_tag 'application', :medial => 'all'
-    = javascript_include_tag 'application'
+    = javascript_include_tag 'application', 'http://app.eventsourcehq.com/es.js'
     = csrf_meta_tag
     = yield(:head)
 

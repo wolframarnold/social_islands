@@ -3,8 +3,6 @@ $ ->
 
   window.sigInst = sigma.init(document.getElementById('graph'))
 
-  window.testPointer = null
-
   sigInst.drawingProperties({
     defaultLabelColor: '#fff',
     defaultLabelSize: 14,
@@ -21,11 +19,10 @@ $ ->
         maxRatio: 4
       });
 
-  # import GEXF file
-  sigInst.parseGexf('/facebook/graph.gexf')
-
-  # Draw the graph :
-  sigInst.draw()
+  if window.graph_ready is true
+    loadAndDrawGraph()
+  else
+    showModalSpinner(20)
 
 #  window.highLightedGroup = -1
 #  window.tthis = null
@@ -111,6 +108,8 @@ $ ->
   $('.island-label-edit input[name*=name]').blur ->
     hideLabelEdit $(this).parents('.island-form')
 
+  setupESHQ();
+
 
 showLabelRenameLink = (elem) ->
   elem.find('a.rename').show();
@@ -144,58 +143,97 @@ sendLabel = ->
 #    console.log event
 #    console.log this
 
-rotate = ->
-  sigInst.iterNodes (node) ->
-    tmp = node.x
-    #console.log "before", node.x, node.y
-    node.x = node.y
-    node.y = -tmp
+#rotate = ->
+#  sigInst.iterNodes (node) ->
+#    tmp = node.x
+#    #console.log "before", node.x, node.y
+#    node.x = node.y
+#    node.y = -tmp
+#
+#moveLeft = (idx) ->
+#  console.log "move to right group #", idx
+#  sigInst.iterNodes (node) ->
+#    groupID = parseInt(node.attr.attributes[4].val)
+#    if groupID == idx
+#      node.x -= 50
+#
+#moveRight = (idx) ->
+#  console.log "move to right group #", idx
+#  sigInst.iterNodes (node) ->
+#    groupID = parseInt(node.attr.attributes[4].val)
+#    if groupID == idx
+#      node.x += 50
+#
+#moveUp = (idx) ->
+#  console.log "move to right group #", idx
+#  sigInst.iterNodes (node) ->
+#    groupID = parseInt(node.attr.attributes[4].val)
+#    if groupID == idx
+#      node.y -= 50
+#
+#moveDown = (idx) ->
+#  console.log "move to right group #", idx
+#  sigInst.iterNodes (node) ->
+#    groupID = parseInt(node.attr.attributes[4].val)
+#    if groupID == idx
+#      node.y += 50
+#
+#
+#highlightGroup = (idx) ->
+#  console.log "inside highlightgroup for group #", idx
+#  numNode = 0
+#  sigInst.iterNodes (node) ->
+#    groupID = parseInt(node.attr.attributes[4].val)
+##    console.log groupID
+#    if groupID == idx
+#      node.color = '#FFFFFF'
+#      numNode += 1
+#    else
+#      node.color = colorTable[groupID]
+#  console.log "done highlighing, total nodes affected ", numNode
+#
+#deHighlightGroup = ->
+#  console.log "de-highlight groups"
+#  sigInst.iterNodes (node) ->
+#    groupID = parseInt(node.attr.attributes[4].val)
+#    node.color = colorTable[groupID]
 
-moveLeft = (idx) ->
-  console.log "move to right group #", idx
-  sigInst.iterNodes (node) ->
-    groupID = parseInt(node.attr.attributes[4].val)
-    if groupID == idx
-      node.x -= 50
+showModalSpinner = (progress_max_secs) ->
+  $('#modal-spinner').modal(backdrop: 'static', keyboard: false)
+  interval_ms = progress_max_secs * 50 # max_secs * 1000 / 20 -> 20 intervals
+  i = 0
+  timerID = null
+  incProgressBar = ->
+    clearInterval(timerID) if i >= 20
+    $('#modal-spinner .progress > .bar').css('width', (i * 5)+'%' )
+    ++i
+  timerID = setInterval(incProgressBar, interval_ms)
 
-moveRight = (idx) ->
-  console.log "move to right group #", idx
-  sigInst.iterNodes (node) ->
-    groupID = parseInt(node.attr.attributes[4].val)
-    if groupID == idx
-      node.x += 50
+cancelModalSpinner = ->
+  $('#modal-spinner').modal('hide')
 
-moveUp = (idx) ->
-  console.log "move to right group #", idx
-  sigInst.iterNodes (node) ->
-    groupID = parseInt(node.attr.attributes[4].val)
-    if groupID == idx
-      node.y -= 50
+loadAndDrawGraph = ->
+  # import GEXF file
+  sigInst.parseGexf('/facebook/graph.gexf')
 
-moveDown = (idx) ->
-  console.log "move to right group #", idx
-  sigInst.iterNodes (node) ->
-    groupID = parseInt(node.attr.attributes[4].val)
-    if groupID == idx
-      node.y += 50
+  # kill the spinner message/progress bar
+  cancelModalSpinner()
 
+  # Draw the graph :
+  sigInst.draw()
 
-highlightGroup = (idx) ->
-  console.log "inside highlightgroup for group #", idx
-  numNode = 0
-  sigInst.iterNodes (node) ->
-    groupID = parseInt(node.attr.attributes[4].val)
-#    console.log groupID
-    if groupID == idx
-      node.color = '#FFFFFF'
-      numNode += 1
-    else
-      node.color = colorTable[groupID]
-  console.log "done highlighing, total nodes affected ", numNode
+setupESHQ = ->
+  eshq = new ESHQ("graph_ready_" + window.facebook_profile_id_sha1);
 
-deHighlightGroup = ->
-  console.log "de-highlight groups"
-  sigInst.iterNodes (node) ->
-    groupID = parseInt(node.attr.attributes[4].val)
-    node.color = colorTable[groupID]
+  eshq.onopen = (e) ->
+    # callback called when the connection is made
+
+  eshq.onmessage = (e) ->
+    # called when a new message with no specific type has been received
+#    console.log 'origin:', e.origin
+#    console.log JSON.parse(e.data)
+    loadAndDrawGraph()
+
+  eshq.onerror = (e) ->
+    # callback called on errror
 

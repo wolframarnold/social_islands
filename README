@@ -3,3 +3,28 @@ Social Islands
 Visualization of social groups of your Facebook network.
 
 Go to localhost:3000 and start logging in.
+
+Resque
+======
+
+We have the following queues:
+
+viz
+---
+
+This queue is read by the Java app (Jesque... class) to read a render request from the front-end.
+
+push_to_web
+-----------
+
+When the render request is completed, the Java backend willll push a new job to the `push_to_web`
+queue which the front-end uses to asynchronously notify the web client.
+
+
+EventSource HQ (ESHQ)
+=====================
+
+This is a Heroku add-on service implementing "Server-Side Events", an HTML5 technology for pushing data from
+the sever to the client. It's a lighter-weight technology than Websockets, but it doesn't support bi-directional
+communication. To run the app locally with this in place, you need to set the ESHQ environment veriables,
+`ESHQ_KEY`, `ESHQ_SECRET` and `ESHQ_URL` which can be found from `heroku config`.

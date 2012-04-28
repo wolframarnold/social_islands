@@ -23,6 +23,17 @@
       %button.btn Center
       %button.btn Right
 
-    :javascript
-      $("#test-group").button();
-      $('#button-group').button();
+:javascript
+  window.facebook_profile_id_sha1 = '#{Digest::SHA1.hexdigest(@facebook_profile.id)}';
+  window.graph_ready = #{@facebook_profile.graph.present?};
+
+#modal-spinner.modal.hide.fade{style: 'display:none;'}
+  .modal-header
+    %h2 Social Islands
+    %h3 We're crunching the numbers...
+  .modal-body
+    %p
+      - credits = 'Flickr Credits to "dotpolka", http://www.flickr.com/photos/dotpolka/95641638'
+      = image_tag 'squirrel_crunching.jpg', alt: credits, title: credits
+    .progress.progress-striped.active
+      .bar{style: "width: 0%;"}

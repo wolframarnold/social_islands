@@ -45,3 +45,12 @@ body {
   right: 0;
   bottom: 62px + 15px;  // top bar is 44 pix + 18 margin = 62
 }
+
+#modal-spinner {
+  text-align: center;
+  background-color: #882;
+}
+
+#modal-spinner .modal-header {
+  text-align: left;
+}

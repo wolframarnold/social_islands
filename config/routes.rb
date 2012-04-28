@@ -4,10 +4,6 @@ SocialIslands::Application.routes.draw do
   match '/auth/:provider/callback' => 'sessions#create'
   match '/auth/failure' => 'sessions#failure'
   match 'sign_out' => 'sessions#destroy'
-  #
-  #get "facebook/visualize" => 'facebook#visualize'
-  #get "facebook/graph.gexf" => 'facebook#graph', :as => :facebook_graph
-  #post "facebook/label" => 'facebook#label'
 
   resource :facebook_profile, path: 'facebook', only: 'show' do
     collection do
@@ -15,6 +11,9 @@ SocialIslands::Application.routes.draw do
       put :label
     end
   end
+
+  post '/eshq/socket' =>  'push_to_web#socket'
+  post '/push_to_web/graph_ready' =>  'push_to_web#graph_ready'
 
   root :to => 'facebook_profiles#login'
 
