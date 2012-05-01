@@ -21,6 +21,14 @@ When the render request is completed, the Java backend willll push a new job to 
 queue which the front-end uses to asynchronously notify the web client.
 
 
+User ID override
+================
+
+In development mode only (for security reasons), you can append a query parameter to override
+the user_id of the profile being rendered. Default is the currently logged in user.
+
+    http://localhost:3000/facebook?user_id=123456789abc
+
 EventSource HQ (ESHQ)
 =====================
 

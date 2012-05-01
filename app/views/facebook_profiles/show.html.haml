@@ -4,24 +4,7 @@
 
   .span2
     #button-group
-      - @facebook_profile.labels.each do |label|
-        = form_for @facebook_profile, url: label_facebook_profile_path, html: {class: 'form-inline island-form', id: nil} do |f|
-          .island-label
-            %button.btn.island-show{style: "color: #{css_rgb_from_rgb_hash(label.color)}", title: "Click to show"}
-              %strong= label.name
-            %a.rename{href: '#', style: 'display:none'}
-              %i.icon-pencil.icon-white
-              rename
-          .island-label-edit{style: 'display:none'}
-            = fields_for :label, label, index: label.group_index do |l|
-              = l.text_field :name, class: 'input-small'
-              = l.hidden_field :group_index
-
-
-    .btn-group#test-group{'data-toggle' => 'buttons-radio'}
-      %button.btn Left
-      %button.btn Center
-      %button.btn Right
+      = render 'labels'
 
 :javascript
   window.facebook_profile_id_sha1 = '#{Digest::SHA1.hexdigest(@facebook_profile.id)}';

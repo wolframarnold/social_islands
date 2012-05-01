@@ -215,12 +215,16 @@ cancelModalSpinner = ->
 loadAndDrawGraph = ->
   # import GEXF file
   sigInst.parseGexf('/facebook/graph.gexf')
+  window.graph_is_loaded = true
 
   # kill the spinner message/progress bar
   cancelModalSpinner()
 
   # Draw the graph :
   sigInst.draw()
+
+updateLabels = (html) ->
+  $('#button-group').append(html);
 
 setupESHQ = ->
   eshq = new ESHQ("graph_ready_" + window.facebook_profile_id_sha1);
@@ -230,9 +234,8 @@ setupESHQ = ->
 
   eshq.onmessage = (e) ->
     # called when a new message with no specific type has been received
-#    console.log 'origin:', e.origin
-#    console.log JSON.parse(e.data)
-    loadAndDrawGraph()
+    loadAndDrawGraph() unless window.graph_is_loaded?
+    updateLabels(JSON.parse(e.data).labels_html)
 
   eshq.onerror = (e) ->
     # callback called on errror
