@@ -1,28 +1,28 @@
 $ ->
   sigRoot = $('#graph')
+  if sigRoot.length > 0
+    window.sigInst = sigma.init(document.getElementById('graph'))
 
-  window.sigInst = sigma.init(document.getElementById('graph'))
+    sigInst.drawingProperties({
+      defaultLabelColor: '#fff',
+      defaultLabelSize: 14,
+      defaultLabelBGColor: '#fff',
+      defaultLabelHoverColor: '#000',
+      labelThreshold: 6,
+      defaultEdgeType: 'curve'
+      }).graphProperties({
+        minNodeSize: 0.5,
+        maxNodeSize: 5,
+        minEdgeSize: 0.3,
+        maxEdgeSize: 0.3
+        }).mouseProperties({
+          maxRatio: 4
+        });
 
-  sigInst.drawingProperties({
-    defaultLabelColor: '#fff',
-    defaultLabelSize: 14,
-    defaultLabelBGColor: '#fff',
-    defaultLabelHoverColor: '#000',
-    labelThreshold: 6,
-    defaultEdgeType: 'curve'
-    }).graphProperties({
-      minNodeSize: 0.5,
-      maxNodeSize: 5,
-      minEdgeSize: 0.3,
-      maxEdgeSize: 0.3
-      }).mouseProperties({
-        maxRatio: 4
-      });
-
-  if window.graph_ready is true
-    loadAndDrawGraph()
-  else
-    showModalSpinner(20)
+    if window.graph_ready is true
+      loadAndDrawGraph()
+    else
+      showModalSpinner(20)
 
 #  window.highLightedGroup = -1
 #  window.tthis = null

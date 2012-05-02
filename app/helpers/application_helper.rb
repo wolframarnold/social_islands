@@ -12,4 +12,16 @@ module ApplicationHelper
     "Social Islands, discover communities, facebook, network visualization, explore network, label social islands, define groups"
   end
 
+  def login_logout_links(opts)
+    if signed_in?
+      link_to 'Sign Out', sign_out_path, opts.merge(title: 'Sign Out')
+    else
+      link_to 'Sign In', sign_in_path, opts.merge(title: 'Sign In')
+    end
+  end
+
+  def sign_in_path
+    '/auth/facebook'
+  end
+
 end
