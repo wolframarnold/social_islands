@@ -71,24 +71,28 @@ $ ->
 #      moveRight(1)
 #    sigInst.draw()
 
+  # In case the labels/buttons are loaded from the ESHQ push, we can't bind
+  # event handlers to the (non-existing) elements, we need to use jQuery's on()
+  # mechanism
+
   # Show/hide rename link
-  $('.island-label').mouseenter ->
+  $('#button-group').on 'mouseenter', '.island-label', ->
     showLabelRenameLink $(this)
-  $('.island-label').mouseleave ->
+  $('#button-group').on 'mouseleave', '.island-label', ->
     hideLabelRenameLink $(this)
 
   # Island label button click -- highlight group, inhibit form submission
-  $('.island-label button').click ->
+  $('#button-group').on 'click', '.island-label button', ->
     $(this).parents('#button-group').find('button.island-show').removeClass('active')
     $(this).toggleClass('active')
     false
 
   # Rename action
-  $('a.rename').click ->
+  $('#button-group').on 'click', 'a.rename', ->
     showLabelEdit $(this)
 
   # Finishing name update, either by submit or by blur (cancel)
-  $('.island-form').submit ->
+  $('#button-group').on 'submit', '.island-form', ->
     formElem = $(this)
     hideLabelEdit formElem
     jqxhr = $.post '/facebook/label', formElem.serialize()
@@ -100,12 +104,12 @@ $ ->
     false
 
   # ESC key when pressed in input box
-  $('.island-label-edit input[name*=name]').keyup (event) ->
+  $('#button-group').on 'keyup', '.island-label-edit input[name*=name]', (event) ->
     if event.keyCode == 27 # ESC
       hideLabelEdit $(this).parents('.island-form')
 
   # Blur -- when clicking on rename of another intput box
-  $('.island-label-edit input[name*=name]').blur ->
+  $('#button-group').on 'blur', '.island-label-edit input[name*=name]', ->
     hideLabelEdit $(this).parents('.island-form')
 
   setupESHQ();
