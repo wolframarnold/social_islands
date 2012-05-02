@@ -1,7 +1,11 @@
 FactoryGirl.define do
 
+  sequence :uid do |n|
+    (123456 + n).to_s
+  end
+
   factory :fb_user, class: User do
-    sequence(:uid) { |i| i}
+    uid
     name 'Joe Smith'
     provider 'facebook'
     image 'http://example.com/joesmith.png'

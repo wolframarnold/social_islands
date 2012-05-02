@@ -54,7 +54,7 @@ group :test, :development do
   gem 'rspec-rails', '~> 2.9.0'
   gem 'database_cleaner', '~> 0.7.2'
   gem 'spork', '~> 0.9.0'
-  gem 'factory_girl_rails', '~> 3.1.0', require: false
+  gem 'factory_girl_rails', '~> 3.2.0', require: false
 end
 
 group :production do

@@ -6,11 +6,18 @@ class FacebookProfile
 
   belongs_to :user
 
+  validates :uid, :name, :image, :user_id, :presence => true
+
+  key :uid, String
+  key :image, String
+  key :name, String
   key :friends, Array
   key :edges,   Array
   many :labels
   key :graph,   String
   timestamps!
+
+  before_validation :populate_name_uid_image
 
   def get_nodes_and_edges
     @koala_client = Koala::Facebook::API.new(user.token)
@@ -68,6 +75,14 @@ class FacebookProfile
         batch_api.fql_query(fql)
       end
     end.flatten
+  end
+
+  private
+
+  def populate_name_uid_image
+    self.name = user.name
+    self.image = user.image
+    self.uid = user.uid
   end
 
 end
