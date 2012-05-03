@@ -1,7 +1,10 @@
 class Label
-  include MongoMapper::EmbeddedDocument
+  include Mongoid::Document
+  include Mongoid::Timestamps
 
-  key :name, String
-  key :group_index, Integer
-  key :color, Hash
+  embedded_in :facebook_profile, inverse_of: :labels
+
+  field :name,        type: String
+  field :group_index, type: Integer
+  field :color,       type: Hash
 end

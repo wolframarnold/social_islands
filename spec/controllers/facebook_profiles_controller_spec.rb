@@ -6,7 +6,7 @@ describe FacebookProfilesController do
 
   before do
     controller.stub!(:current_user).and_return(user)
-    session[:user_id] = user.id.to_s
+    session[:user_id] = user.to_param
   end
 
   context 'profile exists' do
@@ -44,7 +44,7 @@ describe FacebookProfilesController do
     let(:update_attrs) { {label: {'1' => {group_index: '1', name: 'Highschool friends'}}} }
 
     it 'updates the label if it exists' do
-      fb_profile.push(labels: label_attrs)
+      fb_profile.labels.push Label.new(label_attrs)
       fb_profile.reload.should have(1).labels
       expect {
         xhr :put, :label, update_attrs
@@ -64,13 +64,23 @@ describe FacebookProfilesController do
     end
 
     it 'does not overwrite the color if set' do
-      fb_profile.add_to_set(labels: label_attrs)
+      fb_profile.labels.push Label.new(label_attrs)
       fb_profile.reload.should have(1).labels
       expect {
         xhr :put, :label, update_attrs
       }.to_not change{fb_profile.reload.labels.first.color}
     end
 
+  end
+
+  context "#graph" do
+    let!(:fb_profile) {FactoryGirl.create(:facebook_profile, user: user)}
+
+    it 'responds with application/gexf+xml content type' do
+      get :graph
+      response.content_type.should == 'application/gexf+xml'
+      response.body.should match(%r{xmlns=.*"http://www.gexf.net/1.2draft})
+    end
   end
 
 end

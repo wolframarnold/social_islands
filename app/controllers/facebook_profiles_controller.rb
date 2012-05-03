@@ -15,28 +15,22 @@ class FacebookProfilesController < ApplicationController
 
       # NOTE: The args parameters MUST be AN ARRAY, for Jesque to pick it up correctly. It apparently
       # cannot handle hashes.
-      Resque.push('viz', :class => 'com.socialislands.viz.VizWorker', :args => [current_user.id])
+      Resque.push('viz', :class => 'com.socialislands.viz.VizWorker', :args => [current_user.to_param])
     end
   end
 
   def graph
-    render :text => current_user.facebook_profile.graph, :content_type => 'application/gexf+xml', :layout => false
+    # current_user.facebook_profile.only(:graph) is not supported by Mongoid...
+    render :text => FacebookProfile.graph_only.where(user_id: current_user.id).first.graph, :content_type => 'application/gexf+xml', :layout => false
   end
 
   def label
-    labels_params = params[:label]
-    # TODO: Refactor to use Mongoid adapter which natively supports searching embedded docs
-    # as well as a find_or_create_by method which is useful for embedded docs
-    # MongoMapper also doesn't appear to store the embedded object ID even though it assigns one
-    labels = @facebook_profile.labels
-
-    labels.each_with_index do |label,idx|
-      label_params = labels_params[label.group_index.to_s]
-      if label_params.present?
-        labels[idx].name = label_params[:name]
-      end
-    end
-    # TODO: We should be able to use the $set method to just update labels, but it doesn't work with MongoMoapper
+    # label attr's come in as nested attr's, like label: { '1' => {name: 'abc', group_index: 123}, ...}
+    # this code is currently handling only one
+    labels_params = params[:label].first[1]  # get the label hash, i.e. {name: 'abc', group_index: 123}
+    group_index = labels_params.delete(:group_index).to_i
+    label = @facebook_profile.labels.find_or_initialize_by(group_index: group_index)
+    label.attributes = labels_params
     @facebook_profile.save
     head 200
     #render json: {error: "miserable failure"}, status: 500

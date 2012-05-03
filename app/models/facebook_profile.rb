@@ -1,21 +1,30 @@
 class FacebookProfile
 
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
 
-  attr_reader :koala_client, :friends, :edges
+  attr_reader :koala_client
+  attr_accessible :uid, :name, :image
 
   belongs_to :user
 
-  validates :uid, :name, :image, :user_id, :presence => true
+  validates :uid, :name, :image, :user_id, presence: true
 
-  key :uid, String
-  key :image, String
-  key :name, String
-  key :friends, Array
-  key :edges,   Array
-  many :labels
-  key :graph,   String
-  timestamps!
+  field :uid,     type: String
+  field :image,   type: String
+  field :name,    type: String
+  field :friends, type: Array
+  field :edges,   type: Array
+  field :graph,   type: String
+
+  index :user_id, unique: true
+
+  HEAVY_FIELDS = [:friends, :edges, :graph]
+
+  default_scope without(HEAVY_FIELDS)
+  scope :graph_only, unscoped.only(:graph)
+
+  embeds_many :labels, inverse_of: :facebook_profile
 
   before_validation :populate_name_uid_image
 

@@ -11,8 +11,10 @@ class SessionsController < ApplicationController
 
       user = User.where(provider: omni['provider'], uid: omni['uid']).first
       if user.nil?
-        user = User.create!(provider: omni['provider'], uid: omni['uid'], image: omni['info']['image'], name: omni['info']['name'],
-                            token: omni['credentials']['token'], secret: omni['credentials']['secret'])
+        user = User.new(provider: omni['provider'], uid: omni['uid'], image: omni['info']['image'], name: omni['info']['name'])
+        user.token = omni['credentials']['token']
+        user.secret = omni['credentials']['secret']
+        user.save!
       else
         # TODO: Possibly not a good idea to store the token and secret here -- is this vulnerable?
         user.token = omni['credentials']['token']
@@ -21,7 +23,7 @@ class SessionsController < ApplicationController
       end
 
       # TODO: Secure this with fingerprint or use Devise
-      session[:user_id] = user.id.to_s
+      session[:user_id] = user.to_param
       redirect_to send("#{omni['provider']}_profile_path")
     end
   end

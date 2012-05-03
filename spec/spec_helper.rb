@@ -40,7 +40,7 @@ RSpec.configure do |config|
 
     config.include LoginHelpers, :type => :controller
 
-    DatabaseCleaner.orm = :mongo_mapper
+    DatabaseCleaner.orm = :mongoid
 
     config.before(:suite) do
       DatabaseCleaner.strategy = :truncation
@@ -48,6 +48,7 @@ RSpec.configure do |config|
     end
 
     config.before(:each) do
+      Mongoid::IdentityMap.clear
       DatabaseCleaner.start
     end
 

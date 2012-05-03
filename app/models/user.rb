@@ -1,15 +1,20 @@
 class User
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
 
-  key :uid, String
-  key :provider, String
-  key :image, String
-  key :name, String
-  key :token, String
-  key :secret, String
+  field :uid,      type: String
+  field :provider, type: String
+  field :image,    type: String
+  field :name,     type: String
+  field :token,    type: String
+  field :secret,   type: String
 
-  timestamps!
+  index [:uid, :provider], unique: true
 
-  one :facebook_profile
+  attr_accessible :uid, :provider, :image, :name
+
+  validates :uid, :provider, :image, :name, :token, :secret, presence: true
+
+  has_one :facebook_profile, dependent: :nullify
 
 end

@@ -23,10 +23,14 @@ describe SessionsController do
     end
 
     it 'sets current_user' do
-      user = User.create!(uid: '123456790', provider: 'facebook')
-
       get :create, :provider => 'facebook'
-      controller.current_user.should == user
+      user = controller.current_user
+      user.should be_kind_of(User)
+      user.uid.should == OmniAuth.mock_auth_for(:facebook)[:uid]
+      user.name.should == OmniAuth.mock_auth_for(:facebook)[:info][:name]
+      user.image.should == OmniAuth.mock_auth_for(:facebook)[:info][:image]
+      user.token.should == OmniAuth.mock_auth_for(:facebook)[:credentials][:token]
+      user.secret.should == OmniAuth.mock_auth_for(:facebook)[:credentials][:secret]
     end
 
     it 'creates a user if not found' do
@@ -36,7 +40,7 @@ describe SessionsController do
     end
 
     it 'does not create a user if one exists' do
-      User.create!(uid: '123456790', provider: 'facebook')
+      FactoryGirl.create(:fb_user, uid: OmniAuth.mock_auth_for(:facebook)[:uid])
 
       expect {
         get :create, :provider => 'facebook'
@@ -44,10 +48,10 @@ describe SessionsController do
     end
 
     it 'sets user_id in session' do
-      user = User.create!(uid: '123456790', provider: 'facebook')
+      user = FactoryGirl.create(:fb_user, uid: OmniAuth.mock_auth_for(:facebook)[:uid])
 
       get :create, :provider => 'facebook'
-      session[:user_id].should == user.id.to_s
+      session[:user_id].should == user.to_param
     end
 
 
