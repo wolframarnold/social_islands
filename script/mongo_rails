@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+# This command will lauch the mongo console connected to the database for the currently
+# active environment, as set via RAILS_ENV or 'development' by default
+
+APP_PATH = File.expand_path('../../config/application',  __FILE__)
+require File.expand_path('../../config/boot',  __FILE__)
+
+require 'heroku/command/base'
+
+heroku_base = Heroku::Command::BaseWithApp.new
+config_vars = heroku_base.heroku.config_vars(heroku_base.app)
+
+# We're after:
+#"MONGOHQ_URL"=>"mongodb://username:password@host:port/db_name"
+
+mongohq_url = config_vars['MONGOHQ_URL']
+proto_user_pw, host_post_db = mongohq_url.split('@')
+user, pw = proto_user_pw.sub('mongodb://','').split(':')
+
+system("mongo #{host_post_db} -u #{user} -p #{pw}")

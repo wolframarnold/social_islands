@@ -36,3 +36,28 @@ This is a Heroku add-on service implementing "Server-Side Events", an HTML5 tech
 the sever to the client. It's a lighter-weight technology than Websockets, but it doesn't support bi-directional
 communication. To run the app locally with this in place, you need to set the ESHQ environment veriables,
 `ESHQ_KEY`, `ESHQ_SECRET` and `ESHQ_URL` which can be found from `heroku config`.
+
+Debugging
+=========
+
+Mongo
+-----
+
+I've added a tool `script/mongo_rails` which will launch the MongoDB console
+connected to the currently active environment. By default this is the development
+database. To launch the production database, specify it like this:
+
+    script/mongo_rails RAILS_ENV=production
+
+**Be careful this is the live database!!!**
+
+This command uses the heroku gem to dynamically discover the Mongo connection
+parameters and then launched the Mongo console with these.
+
+Redis
+-----
+
+To debug the production redis database, you can use the `redis-cli` tool to
+connect to the production redis on Heroku. Run `heroku config` to see what
+connection parameters you need and pass these to switches for the command line
+tool. Don't save any passwords into files!
