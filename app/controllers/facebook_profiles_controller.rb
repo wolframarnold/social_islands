@@ -9,13 +9,8 @@ class FacebookProfilesController < ApplicationController
 
   def show
     if @facebook_profile.nil?
-      @facebook_profile = current_user.build_facebook_profile
-      @facebook_profile.get_nodes_and_edges
-      @facebook_profile.save!
-
-      # NOTE: The args parameters MUST be AN ARRAY, for Jesque to pick it up correctly. It apparently
-      # cannot handle hashes.
-      Resque.push('viz', :class => 'com.socialislands.viz.VizWorker', :args => [current_user.to_param])
+      @facebook_profile = current_user.create_facebook_profile
+      Resque.enqueue(FacebookFetcher, current_user.to_param)
     end
   end
 
