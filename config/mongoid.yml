@@ -1,8 +1,9 @@
 development:
-  identity_map_enabled: true
-  logger: true
-  host: localhost
-  database: trust_exchange_development
+#  identity_map_enabled: true
+#  logger: true
+#  host: localhost
+#  database: trust_exchange_development
+  uri: "mongodb://:@127.0.0.1:27017/trust_exchange_development"
 
 test:
   identity_map_enabled: true
@@ -14,11 +15,7 @@ test:
 production:
   identity_map_enabled: true
   logger: true
-  host: <%= ENV['MONGOID_HOST'] %>
-  port: <%= ENV['MONGOID_PORT'] %>
-  username: <%= ENV['MONGOID_USERNAME'] %>
-  password: <%= ENV['MONGOID_PASSWORD'] %>
-  database: <%= ENV['MONGOID_DATABASE'] %>
+  uri: <%= ENV['MONGOHQ_URL'] %>
   # slaves:
   #   - host: slave1.local
   #     port: 27018
