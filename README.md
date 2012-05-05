@@ -49,11 +49,11 @@ Debugging
 Mongo
 -----
 
-I've added a tool `script/mongo_rails` which will launch the MongoDB console
-connected to the currently active environment. By default this is the development
-database. To launch the production database, specify it like this:
+I've added a tool `script/mongo_production` which will launch the MongoDB console
+connected to the ***live production database!*** This is incredibly helpful and
+incredibly dangerous. Use it wisely.
 
-    script/mongo_rails RAILS_ENV=production
+    script/mongo_production
 
 To remove a specific user's profile, run within the mongo console:
 
@@ -66,10 +66,13 @@ To remove a specific user's profile, run within the mongo console:
 This command uses the heroku gem to dynamically discover the Mongo connection
 parameters and then launched the Mongo console with these.
 
-Redis
------
+Reque-web
+---------
 
-To debug the production redis database, you can use the `redis-cli` tool to
-connect to the production redis on Heroku. Run `heroku config` to see what
-connection parameters you need and pass these to switches for the command line
-tool. Don't save any passwords into files!
+To watch the resque queues of the production redis database, you can use script `script/resque-web-production`
+which launches the `redis-web` tool connected to the ***live production redis database.***
+
+    script/reque-web-production
+
+If this fails, it may already be running. To kill it, run `resque-web -k`
+

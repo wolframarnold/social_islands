@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+# This command will launch the resque-web tool connected to the production database
+# on Heroku
+
+APP_PATH = File.expand_path('../../config/application',  __FILE__)
+require File.expand_path('../../config/boot',  __FILE__)
+
+require 'heroku/command/base'
+
+heroku_base = Heroku::Command::BaseWithApp.new
+config_vars = heroku_base.heroku.config_vars(heroku_base.app)
+
+# We're after:
+#REDISTOGO_URL => redis://redistogo:password@gar.redistogo.com:9041/
+
+
+redistogo_url = config_vars['REDISTOGO_URL']
+puts "***WARNING -- you are connected to the live production redis database***"
+puts "***WITH GREAT POWERS COME GREAT RESPONSIBILITIES***"
+system("resque-web -r #{redistogo_url}")
+
