@@ -14,12 +14,18 @@ viz
 
 This queue is read by the Java app (Jesque... class) to read a render request from the front-end.
 
-push_to_web
+fb_fetcher
 -----------
 
-When the render request is completed, the Java backend willll push a new job to the `push_to_web`
-queue which the front-end uses to asynchronously notify the web client.
+This queue is both pushed to and serviced by the Rails app. Upon login, if an FB profile
+for the user doesn't exist in our database yet, it'll push a job on the queue to download
+the FB profile data (friends, connections,...). This is done asynchronously on a queue
+because it can take up to ~10 seconds. At the end of the fb_fetcher job, it'll enqueue
+the viz job.
 
+To start the rails queue, you need to run:
+
+    QUEUES=fb_fetcher rake resque:work
 
 User ID override
 ================
