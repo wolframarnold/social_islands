@@ -1,0 +1,16 @@
+common: &default_settings
+  eshq_key: 459bf300-f1fb-4c4a-a460-8f79fec15b36
+  eshq_secret: e72be58d-dc7f-4619-9c2c-dd4eff37ddf7
+  eshq_url: http://app.eventsourcehq.com
+
+# Note: We shouldn't use this for development -- as these are the production
+# secrets. We should really have two different ESHQ accounts, one for development,
+# one for production
+development:
+  <<: *default_settings
+
+test:
+  <<: *default_settings
+
+production:
+  <<: *default_settings
