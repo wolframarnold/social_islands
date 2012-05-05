@@ -55,6 +55,12 @@ database. To launch the production database, specify it like this:
 
     script/mongo_rails RAILS_ENV=production
 
+To remove a specific user's profile, run within the mongo console:
+
+    wolf = db.users.find({name:"Wolfram Arnold",provider:'facebook'}).next()
+    db.facebook_profiles.remove({user_id:wolf._id})
+
+
 **Be careful this is the live database!!!**
 
 This command uses the heroku gem to dynamically discover the Mongo connection
