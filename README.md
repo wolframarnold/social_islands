@@ -46,6 +46,12 @@ communication. To run the app locally with this in place, you need to set the ES
 Debugging
 =========
 
+Trigger just the Java backend job
+---------------------------------
+
+Push a Resque job directly onto the queue. See file `app/jobs/facebook_fetcher` for details.
+
+
 Mongo
 -----
 
