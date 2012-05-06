@@ -1,0 +1,8 @@
+%h1 Get a Scoring
+
+= form_for @user, url: scoring_create_path do |f|
+  = f.label 'Facebook UID', :uid
+  = f.text_field :uid
+  = f.label 'Facebook user access token', :token
+  = f.text_field :token
+  = f.submit 'Run Score'

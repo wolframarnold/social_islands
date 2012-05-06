@@ -19,7 +19,7 @@ class FacebookProfile
 
   index :user_id, unique: true
 
-  HEAVY_FIELDS = [:friends, :edges, :graph]
+  HEAVY_FIELDS = [:friends, :edges, :graph, :histogram_num_connections]
 
   default_scope without(HEAVY_FIELDS)
   scope :graph_only, unscoped.only(:graph)

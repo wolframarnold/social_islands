@@ -1,5 +1,13 @@
 SocialIslands::Application.routes.draw do
 
+  get "scoring/new" => 'scoring#new'
+
+  post "scoring/create" => 'scoring#create'
+
+  get "scoring/show/:id" => 'scoring#show', :as => :scoring_show
+
+
+
   # Omniauth routes
   match '/auth/:provider/callback' => 'sessions#create'
   match '/auth/failure' => 'sessions#failure'

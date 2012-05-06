@@ -15,7 +15,7 @@ class User
 
   attr_accessible :uid, :provider, :image, :name
 
-  validates :uid, :provider, :image, :name, :token, presence: true
+  validates :uid, :provider, :name, :token, presence: true
 
   has_one :facebook_profile, dependent: :nullify
 

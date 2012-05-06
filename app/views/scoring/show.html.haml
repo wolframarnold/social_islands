@@ -1,0 +1,36 @@
+%h1 User score:
+
+%h2
+  = image_tag @facebook_profile.image
+  = @facebook_profile.name
+
+
+%h2 Maturity
+%p
+  = @facebook_profile.degree
+
+%h2 Graph Regularity
+%p
+  Min:
+  = @facebook_profile.clustering_coefficient_lower
+  Mean:
+  = @facebook_profile.clustering_coefficient_mean
+  Max:
+  = @facebook_profile.clustering_coefficient_upper
+
+%p
+  Yours:
+  = @facebook_profile.graph_density
+
+%h2 Community Diversity
+%p
+  Min:
+  = @facebook_profile.k_core_lower
+  Mean:
+  = @facebook_profile.k_core_mean
+  Max:
+  = @facebook_profile.k_core_upper
+
+%p
+  Yours:
+  = @facebook_profile.k_core
