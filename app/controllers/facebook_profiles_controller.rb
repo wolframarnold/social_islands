@@ -8,10 +8,9 @@ class FacebookProfilesController < ApplicationController
   end
 
   def show
-    if @facebook_profile.nil?
-      @facebook_profile = current_user.create_facebook_profile
-      Resque.enqueue(FacebookFetcher, current_user.to_param, 'viz')
-    end
+    @facebook_profile = current_user.create_facebook_profile if @facebook_profile.nil?
+    # We always enqueue -- Fetcher is smart enough to not fetch or compute graph if it's been done already
+    Resque.enqueue(FacebookFetcher, current_user.to_param, 'viz')
   end
 
   def graph

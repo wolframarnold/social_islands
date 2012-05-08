@@ -8,7 +8,7 @@
 
 :javascript
   window.facebook_profile_id_sha1 = '#{Digest::SHA1.hexdigest(@facebook_profile.to_param)}';
-  window.graph_ready = #{@facebook_profile.labels.present?};
+  window.graph_ready = #{@facebook_profile.has_graph?};
 
 #modal-spinner.modal.hide.fade{style: 'display:none;'}
   .modal-header

@@ -53,10 +53,14 @@ gem 'simple_form', '~> 2.0.2'
 
 group :test, :development do
   gem 'rspec-rails', '~> 2.9.0'
+  gem 'heroku'
+end
+
+group :test do
+  # Don't put this in the development group, because it disables all net connections by default !!!
   gem 'database_cleaner', '~> 0.7.2'
   gem 'spork', '~> 0.9.0'
   gem 'factory_girl_rails', '~> 3.2.0', require: false
-  gem 'heroku'
   gem 'webmock', '~> 1.8.6'
 end
 

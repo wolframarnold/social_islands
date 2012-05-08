@@ -1,0 +1,34 @@
+!!!
+%html
+
+  %head
+    %title
+      = yield(:page_title) || default_page_title
+    %meta{"http-equiv"=>"Content-Type", :content=>"text/html; charset=utf-8"}
+    %meta{name: 'keywords', content: yield(:keywords) || default_meta_keywords}
+    %meta{name: 'description', content: yield(:description) || default_meta_description}
+    %meta{name: 'author', content: 'Wolfram Arnold, Weidong Yang'}
+    = favicon_link_tag
+    = stylesheet_link_tag 'scoring', :medial => 'all'
+    = javascript_include_tag 'scoring', 'http://app.eventsourcehq.com/es.js'
+    = csrf_meta_tag
+    = yield(:head)
+    = render 'shared/google_analytics'
+
+  %body
+    #alerts
+      .alert.alert-error.fade.in#alert-error{style: 'display:none'}
+      .alert.alert-success.fade.in#alert-success{style: 'display:none'}
+    .navbar
+      .navbar-inner
+        .container-fluid
+          = link_to 'trust.cc', root_path, class: 'brand'
+          %ul.nav.pull-right
+            %li
+              = link_to 'About Us', '#'
+            %li
+              = link_to 'FAQ', '#'
+            -#%li
+            -#  = login_logout_links class: 'pull-right'
+    .container-fluid.full-height
+      = yield

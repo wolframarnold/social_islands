@@ -1,36 +1,104 @@
-%h1 User score:
+.row-fluid
 
-%h2
-  = image_tag @facebook_profile.image
-  = @facebook_profile.name
+  .span5.offset7
+    %h1
+      = user_name
+      = user_image
 
 
-%h2 Maturity
-%p
-  = @facebook_profile.degree
+.row-fluid
+  .span4
+    %h2 &nbsp;
+    .red-green-bar
+      %span
+        0
+      %span.pull-right
+        >1000
+  .span2
+    %h2 &nbsp;
+    = @facebook_profile.degree
+  .span1
+  .span5
+    %h2 Maturity
+    %p
+      The Maturity Score tells us how much effort the user has invested into
+      their profile over time. Variables that enter here include the number of friends,
+      age of the profile, activity, etc. Higher scores here imply a greater
+      confidence of the other scores.
 
-%h2 Graph Regularity
-%p
-  Min:
-  = @facebook_profile.clustering_coefficient_lower
-  Mean:
-  = @facebook_profile.clustering_coefficient_mean
-  Max:
-  = @facebook_profile.clustering_coefficient_upper
+.row-fluid
+  .span4
+    %h2 &nbsp;
+    .red-green-red-bar
+      %span{style: "position: relative; left: #{((@facebook_profile.graph_density - @facebook_profile.clustering_coefficient_lower) / (@facebook_profile.clustering_coefficient_upper - @facebook_profile.clustering_coefficient_lower) * 100).round}%"}
+        |
+    %div
+      %span{style: "position: relative; left: #{((@facebook_profile.clustering_coefficient_mean - @facebook_profile.clustering_coefficient_lower) / (@facebook_profile.clustering_coefficient_upper - @facebook_profile.clustering_coefficient_lower) * 100).round}%"}
+        ^
+  .span2
+    %h2 &nbsp;
+    %div
+      = number_to_percentage((@facebook_profile.graph_density - @facebook_profile.clustering_coefficient_lower) / (@facebook_profile.clustering_coefficient_upper - @facebook_profile.clustering_coefficient_lower) * 100, precision: 1)
+    %div
+      Mean
+  .span1
+  .span5
+    %h2 Graph Regularity
+    %p
+      The Graph Regularity Score tells us how this user's graph compares to all other users having
+      the same number of friends, across the entire Facebook membership. What counts here are the
+      are the densitiy of connections between a user's friends. It's a measure of how seriously they
+      take their online presence, low numbers can mean that the user has sent out friend requests at random
+      to unknown people. However, if the Maturity score is high, a low number here may not be a
+      negative indicator, it may just mean that they belong to a number of distinct communities that
+      don't overlap very much. High numbers here mean the user belongs to a single, highly
+      interconnected community.
 
-%p
-  Yours:
-  = @facebook_profile.graph_density
+    %pre
+      Raw Data
+      Min:
+      = @facebook_profile.clustering_coefficient_lower
+      Mean:
+      = @facebook_profile.clustering_coefficient_mean
+      Max:
+      = @facebook_profile.clustering_coefficient_upper
+      User's:
+      = @facebook_profile.graph_density
 
-%h2 Community Diversity
-%p
-  Min:
-  = @facebook_profile.k_core_lower
-  Mean:
-  = @facebook_profile.k_core_mean
-  Max:
-  = @facebook_profile.k_core_upper
 
-%p
-  Yours:
-  = @facebook_profile.k_core
+
+.row-fluid
+  .span4
+    %h2 &nbsp;
+    .red-green-red-bar
+      %span{style: "position: relative; left: #{((@facebook_profile.k_core - @facebook_profile.k_core_lower) / (@facebook_profile.k_core_upper - @facebook_profile.k_core_lower) * 100).round}%"}
+        |
+    %div
+      %span{style: "position: relative; left: #{((@facebook_profile.k_core_mean - @facebook_profile.k_core_lower) / (@facebook_profile.k_core_upper - @facebook_profile.k_core_lower) * 100).round}%"}
+        ^
+  .span2
+    %h2 &nbsp;
+    %div
+      = number_to_percentage((@facebook_profile.k_core - @facebook_profile.k_core_lower) / (@facebook_profile.k_core_upper - @facebook_profile.k_core_lower) * 100, precision: 1)
+    %div
+      Mean
+  .span1
+  .span5
+    %h2 Community Diversity
+    %p
+      The Community Diversity Score tells us about the health of a user's community, specifically the densest community
+      on their social graph. Low scores mean the user belongs to communities that have a low level of interconnectedness,
+      "the club of hermites." High scores mean the user's life is dominated one or several large densely connected communities,
+      "the club of socialites." Neither is per se good or bad, but the extremes can be unusual. Most balanced individuals
+      fall in the mid-range.
+
+    %pre
+      Raw Data
+      Min:
+      = @facebook_profile.k_core_lower
+      Mean:
+      = @facebook_profile.k_core_mean
+      Max:
+      = @facebook_profile.k_core_upper
+      User's:
+      = @facebook_profile.k_core

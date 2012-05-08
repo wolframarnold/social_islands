@@ -7,19 +7,18 @@ class ScoringController < ApplicationController
   end
 
   def create
-    @user = User.find_or_initialize_by(params[:user])
+    # TODO: test for lookup only by UID, not by token, b/c token can be different over time for same user
+    @user = User.find_or_initialize_by(uid: params[:user][:uid])
+    @user.token = params[:user][:token]  # not mass-assignable
     if @user.new_record?
       @user.provider = 'facebook'
       @user.name = 'Yourself'
-      return render 'new' unless @user.save
     end
+    # save back in any case, to update token
+    return render 'new' unless @user.save
     @facebook_profile = @user.facebook_profile
-    if @facebook_profile.nil?
-      @facebook_profile = @user.create_facebook_profile
-      @facebook_profile.get_nodes_and_edges
-      @facebook_profile.save!
-      Resque.push('scoring', :class => 'com.socialislands.viz.ScoringWorker', :args => [@user.to_param])
-    end
+    @facebook_profile = @user.create_facebook_profile if @facebook_profile.nil?
+    Resque.enqueue(FacebookFetcher, @user.to_param, 'scoring')
     redirect_to scoring_show_path(@facebook_profile.to_param)
   end
 

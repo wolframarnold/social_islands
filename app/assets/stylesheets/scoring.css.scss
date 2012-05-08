@@ -1,3 +1,33 @@
 // Place all the styles related to the Scoring controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import "bootswatch/superhero/variables";
+
+// Hack--sprite path in Bootswatch is wrong, override here
+$iconSpritePath:          asset-url("glyphicons-halflings.png", image);
+$iconWhiteSpritePath:     asset-url("glyphicons-halflings-white.png", image);
+
+@import "bootstrap";
+
+@import "bootswatch/superhero/bootswatch";
+@import "bootstrap_extension";
+
+.red-green-bar {
+  @include gradient-horizontal(#f00, #0f0);
+  width: auto;
+  height: 20px;
+}
+
+.green-red-bar {
+  @include gradient-horizontal(#0f0, #f00);
+  width: auto;
+  height: 20px;
+}
+
+.red-green-red-bar {
+  @include gradient-horizontal-three-colors(#f00, #0f0, 50%, #f00);
+  position: relative;
+  width: auto;
+  height: 20px;
+}

@@ -11,6 +11,10 @@ describe FacebookProfilesController do
 
   context 'profile exists' do
 
+    before do
+      Resque.should_receive(:enqueue).with(FacebookFetcher, user.to_param, 'viz')
+    end
+
     let!(:facebook_profile) { user.create_facebook_profile }
 
     it 'assigns @facebook_profile' do
