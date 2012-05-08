@@ -25,7 +25,7 @@ the viz job.
 
 To start the rails queue, you need to run:
 
-    QUEUES=fb_fetcher rake resque:work
+    VERBOSE=1 QUEUES=fb_fetcher rake resque:work
 
 User ID override
 ================
