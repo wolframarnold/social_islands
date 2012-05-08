@@ -25,7 +25,7 @@ describe FacebookProfilesController do
   context 'profile does not exist' do
 
     before do
-      FacebookProfile.any_instance.should_receive(:get_nodes_and_edges)
+      Resque.should_receive(:enqueue).with(FacebookFetcher, user.to_param)
     end
 
     it 'creates a new facebook_profile instance from the current user' do

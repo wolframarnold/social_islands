@@ -41,7 +41,7 @@ class SessionsController < ApplicationController
   def set_credentials(user,omni_credentials)
     user.token = omni_credentials['token']
     user.secret = omni_credentials['secret']
-    user.expires_at = Time.at(omni_credentials['expires_at'])
+    user.expires_at = Time.at(omni_credentials['expires_at']) unless omni_credentials['expired_at'].blank?
     user.expires = omni_credentials['expires']
   end
 
