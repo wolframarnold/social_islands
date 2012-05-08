@@ -34,6 +34,7 @@ gem 'resque', '~> 1.20.0'
 gem 'thin', '~> 1.3.1'
 gem 'newrelic_rpm', '~> 3.3.4'
 gem 'eshq', '~> 0.0.4'
+gem 'simple_form', '~> 2.0.2'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
@@ -56,6 +57,7 @@ group :test, :development do
   gem 'spork', '~> 0.9.0'
   gem 'factory_girl_rails', '~> 3.2.0', require: false
   gem 'heroku'
+  gem 'webmock', '~> 1.8.6'
 end
 
 group :production do

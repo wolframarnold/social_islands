@@ -8,7 +8,7 @@ class FacebookProfile
 
   belongs_to :user
 
-  validates :uid, :name, :image, :user_id, presence: true
+  validates :uid, :user_id, presence: true
 
   field :uid,     type: String
   field :image,   type: String
@@ -40,6 +40,21 @@ class FacebookProfile
 
     self.edges = run_fql_queries_as_batch(fql_queries)
   end
+
+  # We're not loading graph nor edges nor friends by default, because they're very
+  # large and expensive. So, to query if the graph is present we need to run
+  # a DB query, without loading the attribute, though. Mongo is good at this...
+  def has_graph?
+    #graph.present? ||
+        self.class.unscoped.where(:_id => self.to_param, :graph.ne => nil).exists?
+  end
+
+  def has_edges?
+    #edges.present? ||
+        self.class.unscoped.where(:_id => self.to_param, :edges.ne => nil).exists?
+  end
+
+  private
 
   # Returns an array of arrays of friends, chunked such that neither sub-array
   # exeeds a sum of 5000 mutual_friends
@@ -85,8 +100,6 @@ class FacebookProfile
       end
     end.flatten
   end
-
-  private
 
   def populate_name_uid_image
     self.name = user.name

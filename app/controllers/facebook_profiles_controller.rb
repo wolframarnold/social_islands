@@ -10,7 +10,7 @@ class FacebookProfilesController < ApplicationController
   def show
     if @facebook_profile.nil?
       @facebook_profile = current_user.create_facebook_profile
-      Resque.enqueue(FacebookFetcher, current_user.to_param)
+      Resque.enqueue(FacebookFetcher, current_user.to_param, 'viz')
     end
   end
 
