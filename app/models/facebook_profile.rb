@@ -86,7 +86,7 @@ class FacebookProfile
   end
 
   def get_user_photos
-    @graph.get_connections("me", "photos")
+    koala_client.get_connections("me", "photos")
     #photos
     #locations
     #posts
