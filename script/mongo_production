@@ -2,20 +2,9 @@
 # This command will launch the mongo console connected to the production database
 # on Heroku
 
-APP_PATH = File.expand_path('../../config/application',  __FILE__)
-require File.expand_path('../../config/boot',  __FILE__)
+require File.expand_path('../../lib/heroku_utils', __FILE__)
 
-require 'heroku/command/base'
-
-heroku_base = Heroku::Command::BaseWithApp.new
-config_vars = heroku_base.heroku.config_vars(heroku_base.app)
-
-# We're after:
-#"MONGOHQ_URL"=>"mongodb://username:password@host:port/db_name"
-
-mongohq_url = config_vars['MONGOHQ_URL']
-proto_user_pw, host_post_db = mongohq_url.split('@')
-user, pw = proto_user_pw.sub('mongodb://','').split(':')
+mongo_credentials = HerokuUtils.get_mongo_production_credentials
 puts "***WARNING -- you are connected to the live production database***"
 puts "***WITH GREAT POWERS COME GREAT RESPONSIBILITIES***"
-system("mongo #{host_post_db} -u #{user} -p #{pw}")
+system("mongo #{mongo_credentials[:host_port_db]} -u #{mongo_credentials[:username]} -p #{mongo_credentials[:password]}")

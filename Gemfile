@@ -40,7 +40,7 @@ gem 'simple_form', '~> 2.0.2'
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
 # To use Jbuilder templates for JSON
-# gem 'jbuilder'
+gem 'jbuilder', '~> 0.4.0'
 
 # Use unicorn as the app server
 # gem 'unicorn'
@@ -54,6 +54,7 @@ gem 'simple_form', '~> 2.0.2'
 group :test, :development do
   gem 'rspec-rails', '~> 2.9.0'
   gem 'heroku'
+  gem 'highline', '~> 1.6.12'
 end
 
 group :test do

@@ -55,6 +55,19 @@ Push a Resque job directly onto the queue. See file `app/jobs/facebook_fetcher` 
 Mongo
 -----
 
+### Pulling the Production Database
+
+I've added a custom rake task that will pull down a copy of the production database and insert
+it into the development database. The development database is dropped in the process.
+**This is destructive to the local database!**
+
+    rake mongo:pull
+
+(This relies on the `heroku config` command to read the production Mongo credentials, and
+it's using as target the development database configured in the local `mongo.yml`.)
+
+### Accessing the live production database
+
 I've added a tool `script/mongo_production` which will launch the MongoDB console
 connected to the ***live production database!*** This is incredibly helpful and
 incredibly dangerous. Use it wisely.
@@ -66,11 +79,10 @@ To remove a specific user's profile, run within the mongo console:
     wolf = db.users.find({name:"Wolfram Arnold",provider:'facebook'}).next()
     db.facebook_profiles.remove({user_id:wolf._id})
 
-
 **Be careful this is the live database!!!**
 
-This command uses the heroku gem to dynamically discover the Mongo connection
-parameters and then launched the Mongo console with these.
+Note that making a copy of the production database is preferable to direct access!
+
 
 Reque-web
 ---------
