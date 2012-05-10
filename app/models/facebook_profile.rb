@@ -18,6 +18,12 @@ class FacebookProfile
   field :graph,   type: String
   field :photos,  type: Array
   field :email,   type: String
+  field :tagged,  type: Array
+  field :posts,   type: Array
+  field :locations, type: Array
+  field :statuses,  type: Array
+  field :info,    type: Hash
+
 
   index :user_id, unique: true
 
@@ -35,6 +41,14 @@ class FacebookProfile
 
     self.friends = get_all_friends
     self.photos = get_user_photos
+    self.image = get_user_picture
+    self.posts = get_user_posts
+    self.tagged = get_user_tagged
+    self.locations = get_user_locations
+    self.statuses = get_user_statuses
+    self.info = get_user_info
+    self.name = info["name"]
+    self.email = info["email"]
 
     # FB reports at most 5000 rows per query. Based on the mutual friend counts, we can calculate how many friends
     # we should include in the edges query (next) here to stay below 5000 results
@@ -87,12 +101,32 @@ class FacebookProfile
 
   def get_user_photos
     koala_client.get_connections("me", "photos")
-    #photos
-    #locations
-    #posts
-    #statuses
-    #tagged
   end
+
+  def get_user_locations
+    koala_client.get_connections("me", "locations")
+  end
+
+  def get_user_posts
+    koala_client.get_connections("me", "posts")
+  end
+
+  def get_user_statuses
+    koala_client.get_connections("me", "statuses")
+  end
+
+  def get_user_tagged
+    koala_client.get_connections("me", "tagged")
+  end
+
+  def get_user_picture
+    koala_client.get_picture("me")
+  end
+
+  def get_user_info
+    koala_client.get_object("me")
+  end
+
   # Returns an array of FQL queries to retrieve the edges (connections between) all the friends
   def fql_quries_for_mutual_friends(chunks)
     fql_queries = chunks.map do |chunk|
