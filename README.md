@@ -61,7 +61,7 @@ I've added a custom rake task that will pull down a copy of the production datab
 it into the development database. The development database is dropped in the process.
 **This is destructive to the local database!**
 
-    rake mongo:pull
+    rake mongohq:pull
 
 (This relies on the `heroku config` command to read the production Mongo credentials, and
 it's using as target the development database configured in the local `mongo.yml`.)
