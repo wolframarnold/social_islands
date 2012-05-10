@@ -4,6 +4,22 @@ describe FacebookFetcher do
 
   let!(:user) {FactoryGirl.create(:fb_user)}
 
+  context 'scoring job' do
+    let!(:facebook_profile) {FactoryGirl.create(:facebook_profile, graph: nil, user: user)}
+
+    it 'passes postback url to job' do
+      FacebookProfile.any_instance.should_not_receive(:get_nodes_and_edges)
+
+      Resque.should_receive(:push).with(
+          'scoring',
+          hash_including(:class => 'com.socialislands.viz.ScoringWorker', :args => [user.to_param, 'http://example.com/score'])
+      )
+
+      FacebookFetcher.perform(user.to_param, 'scoring', 'http://example.com/score')
+
+    end
+  end
+
   context "first-time profile" do
     let!(:facebook_profile) {FactoryGirl.create(:facebook_profile, graph: nil, edges: nil, friends: nil, user: user)}
 

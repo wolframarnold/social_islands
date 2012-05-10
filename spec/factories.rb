@@ -28,4 +28,10 @@ FactoryGirl.define do
     user factory: :fb_user
   end
 
+  factory :api_client do
+    name 'New Commerce, Inc.'
+    api_key 'mnbvcxz0987654'
+    postback_domain 'api.example.com'
+  end
+
 end

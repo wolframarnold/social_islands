@@ -15,8 +15,10 @@ class User
 
   attr_accessible :uid, :provider, :image, :name
 
-  validates :uid, :provider, :name, :token, presence: true
+  # TODO: should we always require a name ? Not available for API clients
+  validates :uid, :provider, :token, presence: true
 
   has_one :facebook_profile, dependent: :nullify
+  has_and_belongs_to_many :api_clients, dependent: :nullify
 
 end

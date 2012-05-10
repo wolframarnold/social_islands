@@ -7,6 +7,12 @@ SocialIslands::Application.routes.draw do
   get "scoring/show/:id" => 'scoring#show', :as => :scoring_show
 
 
+  # let use include their own meta data id, etc.
+  post '/profile' => 'api#create_profile'
+  #put '/profile' => 'api#profile_update'
+  #get '/graph' => 'api#graph'
+  get '/score' => 'api#score'
+
 
   # Omniauth routes
   match '/auth/:provider/callback' => 'sessions#create'
