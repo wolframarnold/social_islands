@@ -45,13 +45,11 @@ class FacebookProfile
   # large and expensive. So, to query if the graph is present we need to run
   # a DB query, without loading the attribute, though. Mongo is good at this...
   def has_graph?
-    #graph.present? ||
-        self.class.unscoped.where(:_id => self.to_param, :graph.ne => nil).exists?
+    graph.present? || self.class.unscoped.where(:_id => self.to_param, :graph.ne => nil).exists?
   end
 
   def has_edges?
-    #edges.present? ||
-        self.class.unscoped.where(:_id => self.to_param, :edges.ne => nil).exists?
+    edges.present? || self.class.unscoped.where(:_id => self.to_param, :edges.ne => nil).exists?
   end
 
   private
@@ -73,32 +71,34 @@ class FacebookProfile
       curr_chunk << friend
     end
     chunks << curr_chunk
-    Rails.logger.info "Friend chunks: #{chunks.length}: " + chunks.map{|ch| ch.map{|f| f.slice('uid','mutual_friend_count')}}.inspect
     chunks
   end
 
   # Returns array of hashes of all the friends
   def get_all_friends
-    koala_client.fql_query('SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,likes_count,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC')
+    friends = koala_client.fql_query('SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,likes_count,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC')
+    Rails.logger.tagged("User#_id=#{self.uid}") { Rails.logger.info "#{friends.length} friends" }
+    friends
   end
 
   # Returns an array of FQL queries to retrieve the edges (connections between) all the friends
   def fql_quries_for_mutual_friends(chunks)
-    fql_queries = chunks.map do |chunk|
+    chunks.map do |chunk|
       ids = chunk.map { |f| f['uid'].to_s }.join(',')
       # Note: 2nd condition below is required to avoid permissions issue.
       "SELECT uid1,uid2 FROM friend WHERE uid1 IN (#{ids}) AND uid2 IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER BY uid1"
     end
-    fql_queries.each { |fql| Rails.logger.info "FQL query: " + fql }
   end
 
   # Returns an array with combined results of all queries
   def run_fql_queries_as_batch(fql_queries)
-    koala_client.batch do |batch_api|
+    edges = koala_client.batch do |batch_api|
       fql_queries.each do |fql|
         batch_api.fql_query(fql)
       end
     end.flatten
+    Rails.logger.tagged("User#_id=#{self.uid}") { Rails.logger.info "#{edges.length} edges" }
+    edges
   end
 
   def populate_name_uid_image
