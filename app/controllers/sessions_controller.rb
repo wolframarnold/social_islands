@@ -32,8 +32,9 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    token = current_user.token
     reset_session
-    redirect_to root_path
+    redirect_to facebook_sign_out_url(token)
   end
 
   private
@@ -45,4 +46,7 @@ class SessionsController < ApplicationController
     user.expires = omni_credentials['expires']
   end
 
+  def facebook_sign_out_url(token)
+    "https://www.facebook.com/logout.php?next=#{root_url}&access_token=#{token}"
+  end
 end
