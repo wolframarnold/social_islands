@@ -72,6 +72,13 @@ describe SessionsController do
   end
 
   context '#destroy' do
+    before do
+      @user = FactoryGirl.create(:fb_user)
+      controller.stub(:current_user).and_return(@user)
+      class << controller
+        public :facebook_sign_out_url
+      end
+    end
 
     it 'deletes session' do
       session[:user_id] = 'some user_id'
@@ -82,7 +89,7 @@ describe SessionsController do
 
     it 'redirects to root_path' do
       get :destroy
-      response.should redirect_to(root_path)
+      response.should redirect_to(controller.facebook_sign_out_url(@user.token))
     end
   end
 end
