@@ -27,6 +27,10 @@ To start the rails queue, you need to run:
 
     VERBOSE=1 QUEUES=fb_fetcher rake resque:work
 
+To monitor whether the queues are up, you can check the processes with `ps aux | grep resque` or use
+the `resque-web` tool. The worker will not pick up code changes automatically, you need to restart it for
+that to happen.
+
 User ID override
 ================
 
