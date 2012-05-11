@@ -4,11 +4,11 @@
 
   .span2
     #button-group
-      = render 'labels'
+      = render 'labels' if @has_graph
 
 :javascript
   window.facebook_profile_id_sha1 = '#{Digest::SHA1.hexdigest(@facebook_profile.to_param)}';
-  window.graph_ready = #{@facebook_profile.has_graph?};
+  window.graph_ready = #{@has_graph};
 
 #modal-spinner.modal.hide.fade{style: 'display:none;'}
   .modal-header
