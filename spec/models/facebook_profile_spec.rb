@@ -26,6 +26,20 @@ describe FacebookProfile do
       }.to_not change(@fb, :graph)
     end
 
+    # Mongoid removed more than one $ne clause -- not sure this is a Mongoid bug or a native MongoDB limitation
+    # couldn't figure out how to test for both conditions easily $nin => [nil, ''] didn't seem to work either.
+    #it 'detects "" as not present' do
+    #  @fb.set(:graph, '')
+    #  Mongoid::IdentityMap.clear  # prevent cache from holding graph
+    #  @fb.should_not have_graph
+    #end
+
+    it 'detects nil as not present' do
+      @fb.unset(:graph)
+      Mongoid::IdentityMap.clear  # prevent cache from holding graph
+      @fb.should_not have_graph
+    end
+
     it 'edges' do
       expect {
         @fb.should have_graph
