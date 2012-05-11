@@ -46,11 +46,11 @@ class FacebookProfile
   # large and expensive. So, to query if the graph is present we need to run
   # a DB query, without loading the attribute, though. Mongo is good at this...
   def has_graph?
-    graph.present? || self.class.unscoped.where(:_id => self.to_param, :graph.ne => nil).exists?
+    graph.present? || self.class.unscoped.where(:_id => self.to_param, :graph.ne => nil, :graph.ne => '').exists?
   end
 
   def has_edges?
-    edges.present? || self.class.unscoped.where(:_id => self.to_param, :edges.ne => nil).exists?
+    edges.present? || self.class.unscoped.where(:_id => self.to_param, :edges.ne => nil, :graph.ne => '').exists?
   end
 
   def as_json(opts={})
