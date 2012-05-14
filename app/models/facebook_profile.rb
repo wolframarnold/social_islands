@@ -3,7 +3,6 @@ class FacebookProfile
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  attr_reader :koala_client
   attr_accessible :uid, :name, :image
 
   belongs_to :user
@@ -37,8 +36,6 @@ class FacebookProfile
   before_validation :populate_name_uid_image
 
   def get_nodes_and_edges
-    @koala_client = Koala::Facebook::API.new(user.token)
-
     self.friends = get_all_friends
     self.photos = get_user_photos
     self.image = get_user_picture
@@ -71,6 +68,35 @@ class FacebookProfile
         self.class.unscoped.where(:_id => self.to_param, :edges.ne => nil).exists?
   end
 
+  def get_user_photos
+    koala_client.get_connections("me", "photos")
+  end
+
+  def get_user_locations
+    koala_client.get_connections("me", "locations")
+  end
+
+  def get_user_posts
+    koala_client.get_connections("me", "posts")
+  end
+
+  def get_user_statuses
+    koala_client.get_connections("me", "statuses")
+  end
+
+  # FIXME: Is this working? Don't see this documented in FB
+  def get_user_tagged
+    koala_client.get_connections("me", "tagged")
+  end
+
+  def get_user_picture
+    koala_client.get_picture("me")
+  end
+
+  def get_user_info
+    koala_client.get_object("me")
+  end
+
   private
 
   # Returns an array of arrays of friends, chunked such that neither sub-array
@@ -99,34 +125,6 @@ class FacebookProfile
     koala_client.fql_query('SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,likes_count,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC')
   end
 
-  def get_user_photos
-    koala_client.get_connections("me", "photos")
-  end
-
-  def get_user_locations
-    koala_client.get_connections("me", "locations")
-  end
-
-  def get_user_posts
-    koala_client.get_connections("me", "posts")
-  end
-
-  def get_user_statuses
-    koala_client.get_connections("me", "statuses")
-  end
-
-  def get_user_tagged
-    koala_client.get_connections("me", "tagged")
-  end
-
-  def get_user_picture
-    koala_client.get_picture("me")
-  end
-
-  def get_user_info
-    koala_client.get_object("me")
-  end
-
   # Returns an array of FQL queries to retrieve the edges (connections between) all the friends
   def fql_quries_for_mutual_friends(chunks)
     fql_queries = chunks.map do |chunk|
@@ -150,6 +148,10 @@ class FacebookProfile
     self.name = user.name
     self.image = user.image
     self.uid = user.uid
+  end
+
+  def koala_client
+    @koala_client ||= Koala::Facebook::API.new(user.token)
   end
 
 end
