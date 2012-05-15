@@ -23,15 +23,16 @@ class FacebookProfile
   field :statuses,  type: Array
   field :info,    type: Hash
 
-
   index :user_id, unique: true
+
+  embeds_many :labels, inverse_of: :facebook_profile
+
+  has_one :photo_engagements, as: :engagements, class_name: 'PhotoEngagements', inverse_of: :facebook_profile
 
   HEAVY_FIELDS = [:friends, :edges, :graph, :histogram_num_connections]
 
   default_scope without(HEAVY_FIELDS)
   scope :graph_only, unscoped.only(:graph)
-
-  embeds_many :labels, inverse_of: :facebook_profile
 
   before_validation :populate_name_uid_image
 
@@ -66,6 +67,11 @@ class FacebookProfile
   def has_edges?
     #edges.present? ||
         self.class.unscoped.where(:_id => self.to_param, :edges.ne => nil).exists?
+  end
+
+  def compute_photo_engagements
+    build_photo_engagements if photo_engagements.nil?
+    photo_engagements.compute
   end
 
   def get_user_photos

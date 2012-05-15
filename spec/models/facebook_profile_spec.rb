@@ -33,4 +33,11 @@ describe FacebookProfile do
     end
   end
 
+  context 'photo_engagements' do
+
+    it { should respond_to(:photo_engagements)}
+
+    it { should respond_to(:compute_photo_engagements)}
+
+  end
 end

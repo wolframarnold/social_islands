@@ -4,6 +4,16 @@ Visualization of social groups of your Facebook network.
 
 Go to localhost:3000 and start logging in.
 
+Engagement Stats
+================
+
+To get the engagement stats computed for a specific user, you can use this rake task
+
+    rake engagements:photos USER_ID=...
+
+where the `USER_ID` is the MongoDB ID for the given user. Instead of `USER_ID` you can also
+specify `UID=xxx` which is the Facebook UID.
+
 Resque
 ======
 
