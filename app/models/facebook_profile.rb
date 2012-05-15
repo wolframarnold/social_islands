@@ -22,6 +22,8 @@ class FacebookProfile
   field :posts,   type: Array
   field :locations, type: Array
   field :statuses,  type: Array
+  field :likes,  type: Array
+  field :checkins,  type: Array
   field :info,    type: Hash
 
 
@@ -46,6 +48,8 @@ class FacebookProfile
     self.tagged = get_user_tagged
     self.locations = get_user_locations
     self.statuses = get_user_statuses
+    self.checkins = get_user_checkins
+    self.likes = get_user_likes
     self.info = get_user_info
     self.name = info["name"]
     self.email = info["email"]
@@ -121,6 +125,14 @@ class FacebookProfile
 
   def get_user_picture
     koala_client.get_picture("me")
+  end
+
+  def get_user_likes
+    koala_client.get_connections("me", "likes")
+  end
+
+  def get_user_checkins
+    koala_client.get_connections("me", "checkins")
   end
 
   def get_user_info

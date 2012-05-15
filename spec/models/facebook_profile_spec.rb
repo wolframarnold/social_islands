@@ -33,4 +33,12 @@ describe FacebookProfile do
     end
   end
 
+  context "Map Reduce Photo Engagement Stats" do
+
+    before do
+      @fb_profile = FactoryGirl.create(:fb_profile)
+    end
+
+  end
+
 end
