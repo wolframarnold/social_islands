@@ -8,7 +8,7 @@ describe FacebookFetcher do
     let!(:facebook_profile) {FactoryGirl.create(:facebook_profile, graph: nil, edges: nil, friends: nil, user: user)}
 
     it 'retrieves FB edges & friends and pushes viz job on queue' do
-      FacebookProfile.any_instance.should_receive(:get_nodes_and_edges)
+      FacebookProfile.any_instance.should_receive(:get_profile_and_network_graph!)
 
       Resque.should_receive(:push).with(
         'viz',
@@ -24,7 +24,7 @@ describe FacebookFetcher do
     it "doesn't retrieve edges, friends if they exist but puts viz job on queue" do
       facebook_profile = FactoryGirl.create(:facebook_profile, graph: nil,user: user)
       facebook_profile.should have_edges
-      FacebookProfile.any_instance.should_not_receive(:get_nodes_and_edges)
+      FacebookProfile.any_instance.should_not_receive(:get_profile_and_network_graph!)
 
       Resque.should_receive(:push).with(
           'viz',
@@ -38,7 +38,7 @@ describe FacebookFetcher do
       facebook_profile = FactoryGirl.create(:facebook_profile, user: user)
       facebook_profile.should have_edges
       facebook_profile.should have_graph
-      FacebookProfile.any_instance.should_not_receive(:get_nodes_and_edges)
+      FacebookProfile.any_instance.should_not_receive(:get_profile_and_network_graph)
 
       Resque.should_not_receive(:push)
 

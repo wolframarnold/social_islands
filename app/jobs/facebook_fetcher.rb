@@ -7,8 +7,7 @@ class FacebookFetcher
     facebook_profile = FacebookProfile.where(user_id: user_id).first
 
     if !facebook_profile.has_edges?
-      facebook_profile.get_nodes_and_edges
-      facebook_profile.save!
+      facebook_profile.get_profile_and_network_graph!
     end
 
     if !facebook_profile.has_graph?
