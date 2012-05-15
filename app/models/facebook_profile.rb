@@ -9,21 +9,23 @@ class FacebookProfile
 
   validates :uid, :user_id, presence: true
 
-  field :uid,       type: String
-  field :image,     type: String
-  field :name,      type: String
-  field :friends,   type: Array
-  field :edges,     type: Array
-  field :graph,     type: String
-  field :photos,    type: Array
-  field :email,     type: String
-  field :tagged,    type: Array
-  field :posts,     type: Array
-  field :locations, type: Array
-  field :statuses,  type: Array
-  field :likes,     type: Array
-  field :checkins,  type: Array
-  field :info,      type: Hash
+  field :uid,        type: String
+  field :image,      type: String
+  field :name,       type: String
+  field :friends,    type: Array
+  field :edges,      type: Array
+  field :graph,      type: String
+  field :photos,     type: Array
+  field :email,      type: String
+  field :tagged,     type: Array
+  field :posts,      type: Array
+  field :locations,  type: Array
+  field :statuses,   type: Array
+  field :likes,      type: Array
+  field :checkins,   type: Array
+  field :info,       type: Hash
+  field :created_at, type: DateTime
+  field :trust_score, type: Integer
 
   index :user_id, unique: true
   index :uid, unique: true
@@ -88,6 +90,16 @@ class FacebookProfile
   def compute_photo_engagements
     build_photo_engagements if photo_engagements.nil?
     photo_engagements.compute
+  end
+
+  def compute_created_at
+    #self.created_at = f(self.uid)
+    # notice, there are Rails time helpers like 1.month.ago or 1.day.ago + 1.month.from_now, google it/see docs, etc.
+  end
+
+  def compute_trust_score
+    # access photo engagements scores: self.photo_engagements.co_tags_uniques, etc. see methods in PhotoEngagements
+    # self.trust_score = ....
   end
 
   private
