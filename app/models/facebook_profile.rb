@@ -9,19 +9,21 @@ class FacebookProfile
 
   validates :uid, :user_id, presence: true
 
-  field :uid,     type: String
-  field :image,   type: String
-  field :name,    type: String
-  field :friends, type: Array
-  field :edges,   type: Array
-  field :graph,   type: String
-  field :photos,  type: Array
-  field :email,   type: String
-  field :tagged,  type: Array
-  field :posts,   type: Array
+  field :uid,       type: String
+  field :image,     type: String
+  field :name,      type: String
+  field :friends,   type: Array
+  field :edges,     type: Array
+  field :graph,     type: String
+  field :photos,    type: Array
+  field :email,     type: String
+  field :tagged,    type: Array
+  field :posts,     type: Array
   field :locations, type: Array
   field :statuses,  type: Array
-  field :info,    type: Hash
+  field :likes,     type: Array
+  field :checkins,  type: Array
+  field :info,      type: Hash
 
   index :user_id, unique: true
   index :uid, unique: true
@@ -46,6 +48,8 @@ class FacebookProfile
     queue_user_locations
     queue_user_statuses
     queue_user_info
+    queue_user_likes
+    queue_user_checkins
     queue_fql_quries_for_mutual_friends
 
     execute_fb_batch_query
@@ -108,7 +112,14 @@ class FacebookProfile
     add_to_fb_batch_query(:statuses) { |batch_client| batch_client.get_connections("me", "statuses") }
   end
 
-  # FIXME: Is this working? Don't see this documented in FB
+  def queue_user_likes
+    add_to_fb_batch_query(:likes) { |batch_client| batch_client.get_connections("me", "likes") }
+  end
+
+  def queue_user_checkins
+    add_to_fb_batch_query(:checkins) { |batch_client| batch_client.get_connections("me", "checkins") }
+  end
+
   def queue_user_tagged
     add_to_fb_batch_query(:tagged) { |batch_client| batch_client.get_connections("me", "tagged") }
   end
