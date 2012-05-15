@@ -40,4 +40,29 @@ describe FacebookProfile do
     it { should respond_to(:compute_photo_engagements)}
 
   end
+
+  context 'FB request batching' do
+    let(:fp) { FactoryGirl.create(:facebook_profile, user: user) }
+
+    before do
+      fp.should_receive(:get_all_friends).and_return(fp.friends)
+      fp.info = {'name' => 'joe', 'email' => 'joe@example.com'}
+      fp.should_receive(:execute_fb_batch_query)
+    end
+
+    it 'batches all requests' do
+      fp.get_profile_and_network_graph!
+      batched_attrs = fp.instance_variable_get(:@batched_attributes)
+      batched_attrs.should include(attr: :edges, chunked: true)
+      batched_attrs.should include(attr: :photos, chunked: false)
+      batched_attrs.should include(attr: :image, chunked: false)
+      batched_attrs.should include(attr: :posts, chunked: false)
+      batched_attrs.should include(attr: :tagged, chunked: false)
+      batched_attrs.should include(attr: :locations, chunked: false)
+      batched_attrs.should include(attr: :statuses, chunked: false)
+      batched_attrs.should include(attr: :info, chunked: false)
+    end
+
+  end
+
 end
