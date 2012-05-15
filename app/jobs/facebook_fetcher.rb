@@ -8,8 +8,7 @@ class FacebookFetcher
 
     if !facebook_profile.has_edges?
       Rails.logger.tagged('fb_fetcher', "User#_id=#{user_id}") { Rails.logger.info "Retrieving FB Profile's nodes and edges for" }
-      facebook_profile.get_nodes_and_edges
-      facebook_profile.save!
+      facebook_profile.get_profile_and_network_graph!
     end
 
     if !facebook_profile.has_graph?
