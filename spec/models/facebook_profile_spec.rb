@@ -33,12 +33,11 @@ describe FacebookProfile do
     end
   end
 
-  context "Map Reduce Photo Engagement Stats" do
+  context 'photo_engagements' do
 
-    before do
-      @fb_profile = FactoryGirl.create(:fb_profile)
-    end
+    it { should respond_to(:photo_engagements)}
+
+    it { should respond_to(:compute_photo_engagements)}
 
   end
-
 end
