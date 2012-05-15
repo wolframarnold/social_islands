@@ -23,7 +23,9 @@ describe PhotoEngagements do
                                              "message" => "Another comment, same person",
                                              "created_time" => "2012-04-19T07:13:47+0000"}
         @eng = fp.build_photo_engagements.compute
-        fp.save
+        expect {
+          fp.save
+        }.to change(PhotoEngagements,:count).by(1)
       end
 
       it 'copies the uid' do

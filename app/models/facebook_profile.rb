@@ -27,7 +27,7 @@ class FacebookProfile
 
   embeds_many :labels, inverse_of: :facebook_profile
 
-  has_one :photo_engagements, as: :engagements, class_name: 'PhotoEngagements', inverse_of: :facebook_profile
+  has_one :photo_engagements, autosave: true, as: :engagements, class_name: 'PhotoEngagements', inverse_of: :facebook_profile
 
   HEAVY_FIELDS = [:friends, :edges, :graph, :histogram_num_connections]
 
