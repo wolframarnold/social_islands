@@ -11,16 +11,16 @@ class FacebookFetcher
       facebook_profile.get_profile_and_network_graph!
     end
 
-    if !facebook_profile.has_graph?
-      # NOTE: The args parameters MUST be AN ARRAY, for Jesque to pick it up correctly. It apparently
-      # cannot handle hashes.
-      Rails.logger.tagged('fb_fetcher', "User#_id=#{user_id}") { Rails.logger.info "Enqueuing '#{computation}' job, postback url: '#{postback_url}'" }
-      args = [user_id]
-      args << postback_url if postback_url.present?
-      Resque.push(computation,
-                  class: "com.socialislands.viz.#{computation.camelize}Worker",
-                  args: args)
-    end
+    # Don't re-generate graph if we already have it
+    return if facebook_profile.has_graph? && computation == 'viz'
+    # NOTE: The args parameters MUST be AN ARRAY, for Jesque to pick it up correctly. It apparently
+    # cannot handle hashes.
+    Rails.logger.tagged('fb_fetcher', "User#_id=#{user_id}") { Rails.logger.info "Enqueuing '#{computation}' job, postback url: '#{postback_url}'" }
+    args = [user_id]
+    args << postback_url if postback_url.present?
+    Resque.push(computation,
+                class: "com.socialislands.viz.#{computation.camelize}Worker",
+                args: args)
   end
 
 end
