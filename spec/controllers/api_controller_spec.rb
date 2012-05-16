@@ -75,6 +75,13 @@ describe ApiController do
         }.to change{api_client.reload.user_ids}.from([]).to([user.id])
       end
 
+      it 'will not associate api_client more than once' do
+        user.api_clients << api_client
+        expect {
+          post :create_profile, post_params_existing_user
+        }.not_to change{user.reload.api_client_ids.length}
+      end
+
       it 'finds existing fb profile' do
         fb_profile = FactoryGirl.create(:facebook_profile, user: user)
         post :create_profile, post_params_existing_user

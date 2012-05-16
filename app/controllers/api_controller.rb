@@ -10,7 +10,7 @@ class ApiController < ApplicationController
     @user = User.find_or_initialize_by(uid: params[:user][:uid])
     @user.token = params[:user][:token]  # not mass-assignable
     @user.provider = 'facebook' if @user.new_record?
-    @user.api_clients << @api_client
+    @user.api_clients << @api_client unless @user.api_client_ids.include?(@api_client.id)
     if !@user.save
       return render(:json => {:errors => @user.errors.to_json}, status: :unprocessable_entity)
     end
