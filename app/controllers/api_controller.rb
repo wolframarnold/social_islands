@@ -30,8 +30,10 @@ class ApiController < ApplicationController
   def score
     @facebook_profile = FacebookProfile.where(uid: params[:user][:uid]).first
     if @facebook_profile.nil?
-      head 404 # not_found
+      head :not_found # not_found
     else
+      # TODO: use associations for this
+      return head :unauthorized unless @api_client.user_ids.include?(@facebook_profile.user_id)
       render :json => @facebook_profile
     end
   end
