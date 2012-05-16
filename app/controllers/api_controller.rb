@@ -4,7 +4,6 @@ class ApiController < ApplicationController
 
   def create_profile
     postback_url = params[:postback_url]
-    return render(status: :unprocessable_entity, json: {errors: [postback_url: 'must be provided']}) if postback_url.blank?
 
     @user = User.find_or_initialize_by(uid: params[:user][:uid])
     @user.token = params[:user][:token]  # not mass-assignable
