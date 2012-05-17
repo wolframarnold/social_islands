@@ -22,7 +22,7 @@ $ ->
     if window.graph_ready is true
       loadAndDrawGraph()
     else
-      showModalSpinner(20)
+      showModalSpinner(30)
 
 #  window.highLightedGroup = -1
 #  window.tthis = null

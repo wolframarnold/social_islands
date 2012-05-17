@@ -77,15 +77,17 @@ class FacebookProfile
 
   def as_json(opts={})
     h = {}
-    h[:maturity]                  = self.degree
-    h[:graph_regularity_lower]    = self.clustering_coefficient_lower
-    h[:graph_regularity_upper]    = self.clustering_coefficient_upper
-    h[:graph_regularity_mean]     = self.clustering_coefficient_mean
-    h[:graph_regularity_actual]   = self.graph_density
-    h[:community_diversity_lower] = self.k_core_lower
-    h[:community_diversity_upper] = self.k_core_upper
-    h[:community_diversity_mean]  = self.k_core_mean
-    h[:community_diversity_actual]= self.k_core
+    if self.respond_to?(:degree)  # scoring was successful
+      h[:maturity]                  = self.degree
+      h[:graph_regularity_lower]    = self.clustering_coefficient_lower
+      h[:graph_regularity_upper]    = self.clustering_coefficient_upper
+      h[:graph_regularity_mean]     = self.clustering_coefficient_mean
+      h[:graph_regularity_actual]   = self.graph_density
+      h[:community_diversity_lower] = self.k_core_lower
+      h[:community_diversity_upper] = self.k_core_upper
+      h[:community_diversity_mean]  = self.k_core_mean
+      h[:community_diversity_actual]= self.k_core
+    end
     h
   end
 
