@@ -33,6 +33,8 @@ class FacebookProfile
   embeds_many :labels, inverse_of: :facebook_profile
 
   has_one :photo_engagements, autosave: true, as: :engagements, class_name: 'PhotoEngagements', inverse_of: :facebook_profile
+  has_one :status_engagements, autosave: true, as: :engagements, class_name: 'StatusEngagements', inverse_of: :facebook_profile
+
 
   HEAVY_FIELDS = [:friends, :edges, :graph, :histogram_num_connections]
 
@@ -91,6 +93,12 @@ class FacebookProfile
     build_photo_engagements if photo_engagements.nil?
     photo_engagements.compute
   end
+
+  def compute_status_engagements
+    build_status_engagements if status_engagements.nil?
+    status_engagements.compute
+  end
+
 
   def compute_created_at
     #self.created_at = f(self.uid)
