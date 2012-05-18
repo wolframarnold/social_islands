@@ -179,9 +179,26 @@ class FacebookProfile
     page_age = Date.today - self.created_at
     friend_count = self.class.unscoped.where(:_id=>self.to_param).only("friends").first.friends.count
     self.profile_maturity = (Math.tanh(page_age/300.0)*Math.tanh(friend_count/300.0)*100).to_i()
-    puts "page age: ", page_age, " friends count", friend_count, "profile maturity ", self.profile_maturity
+    puts "page age: "+page_age.to_s+" friends count: "+friend_count.to_s+ " profile maturity: "+self.profile_maturity.to_s
     # access photo engagements scores: self.photo_engagements.co_tags_uniques, etc. see methods in PhotoEngagements
     # self.trust_score = ....
+    compute_photo_engagements
+    compute_status_engagements
+
+    total_likes = self.photo_engagements.likes_uniques + self.status_engagements.likes_uniques
+    total_comments = self.photo_engagements.comments_uniques+self.status_engagements.comments_uniques
+    total_co_tags = self.photo_engagements.co_tags_uniques
+
+    score_likes = Math.tanh(total_likes/40.0)*(28.3 +5.0*rand())
+    score_comments = Math.tanh(total_comments/20.0)*(28.3 +5.0*rand())
+    score_co_tags = Math.tanh(total_co_tags/20.0)*(28.3 +5.0*rand())
+    self.trust_score = (score_likes+score_comments+score_co_tags).to_i
+    puts "Uniques: "
+    puts "like: "+ total_likes.to_s + " score: "+score_likes.to_i.to_s
+    puts "comments: "+total_comments.to_s+" score: "+score_comments.to_i.to_s
+    puts "cotags: " + total_co_tags.to_s + " score: "+score_co_tags.to_i.to_s
+    puts "trust_score: "+ trust_score.to_s
+
   end
 
   private
