@@ -9,23 +9,24 @@ class FacebookProfile
 
   validates :uid, :user_id, presence: true
 
-  field :uid,        type: String
-  field :image,      type: String
-  field :name,       type: String
-  field :friends,    type: Array
-  field :edges,      type: Array
-  field :graph,      type: String
-  field :photos,     type: Array
-  field :email,      type: String
-  field :tagged,     type: Array
-  field :posts,      type: Array
-  field :locations,  type: Array
-  field :statuses,   type: Array
-  field :likes,      type: Array
-  field :checkins,   type: Array
-  field :info,       type: Hash
-  field :created_at, type: Date
-  field :trust_score, type: Integer
+  field :uid,               type: String
+  field :image,             type: String
+  field :name,              type: String
+  field :friends,           type: Array
+  field :edges,             type: Array
+  field :graph,             type: String
+  field :photos,            type: Array
+  field :email,             type: String
+  field :tagged,            type: Array
+  field :posts,             type: Array
+  field :locations,         type: Array
+  field :statuses,          type: Array
+  field :likes,             type: Array
+  field :checkins,          type: Array
+  field :info,              type: Hash
+  field :created_at,        type: Date
+  field :trust_score,       type: Integer
+  field :profile_maturity,  type: Integer
 
   index :user_id, unique: true
   index :uid, unique: true
@@ -111,14 +112,14 @@ class FacebookProfile
     elsif (lid <1000000000000)
       self.created_at = Date.parse('2009-06-01')
     else
-      self.created_at = interpolateDate(lid)
+      self.created_at = interpolate_date(lid)
     end
   #  #self.created_at = f(self.uid)
   #  # notice, there are Rails time helpers like 1.month.ago or 1.day.ago + 1.month.from_now, google it/see docs, etc.
   end
 
-  def interpolateDate(lid)
-    timeArray=[['2009-9-24', '100000241077339'],
+  def interpolate_date(lid)
+    time_array=[['2009-9-24', '100000241077339'],
                ['2009-11-22', '100000498112056'],
                ['2009-12-10', '100000525348604'],
                ['2009-12-27', '100000585319862'],
@@ -129,17 +130,17 @@ class FacebookProfile
                ['2012-5-8', '100003811911948'],
                ['2012-5-16', '100003875801329']]
 
-    numRecord = timeArray.length
-    dates=Array.new(numRecord)
-    lids = Array.new(numRecord)
-    (0..(numRecord-1)).each do |i|
-      dates[i] = Date.parse(timeArray[i][0])
-      lids[i] = timeArray[i][1].to_i
+    num_record = time_array.length
+    dates=Array.new(num_record)
+    lids = Array.new(num_record)
+    (0..(num_record-1)).each do |i|
+      dates[i] = Date.parse(time_array[i][0])
+      lids[i] = time_array[i][1].to_i
     end
 
     lidmin = 0
     lidmax = 0
-    idmin = numRecord -1
+    idmin = num_record -1
     idmax = 0
     lids.reverse_each do |k|
       if k<= lid
@@ -160,20 +161,25 @@ class FacebookProfile
     createDate = 0
     if lidmax == lids[0] # date falls before first date available
       delta = lids[0]-lid
-      createDate = dates[0] - ((delta.to_f/(lids[1]-lids[0]).to_f)*(dates[1]-dates[0])).to_i
+      create_date = dates[0] - ((delta.to_f/(lids[1]-lids[0]).to_f)*(dates[1]-dates[0])).to_i
     elsif lidmin==lids[-1] # date is newer then latest available date point
       delta = lid-lids[-1]
-      createDate = dates[-1]+ ((delta.to_f/(lids[-1]-lids[-2]).to_f)*(dates[-1]-dates[-2])).to_i
+      create_date = dates[-1]+ ((delta.to_f/(lids[-1]-lids[-2]).to_f)*(dates[-1]-dates[-2])).to_i
     elsif lidmin==lidmax  # date falls on a record in our database
-      createDate = dates[idmin]
+      create_date = dates[idmin]
     else    # date is in our range, so we interpolate
       delta = lid-lids[idmin]
-      createDate = dates[idmin]+ ((delta.to_f/(lids[idmax]-lids[idmin]).to_f)*(dates[idmax]-dates[idmin])).to_i
+      create_date = dates[idmin]+ ((delta.to_f/(lids[idmax]-lids[idmin]).to_f)*(dates[idmax]-dates[idmin])).to_i
     end
-    return createDate
+    return create_date
   end
 
   def compute_trust_score
+    compute_created_at
+    page_age = Date.today - self.created_at
+    friend_count = self.class.unscoped.where(:_id=>self.to_param).only("friends").first.friends.count
+    self.profile_maturity = (Math.tanh(page_age/300.0)*Math.tanh(friend_count/300.0)*100).to_i()
+    puts "page age: ", page_age, " friends count", friend_count, "profile maturity ", self.profile_maturity
     # access photo engagements scores: self.photo_engagements.co_tags_uniques, etc. see methods in PhotoEngagements
     # self.trust_score = ....
   end
