@@ -24,7 +24,7 @@ class FacebookProfile
   field :likes,      type: Array
   field :checkins,   type: Array
   field :info,       type: Hash
-  field :created_at, type: DateTime
+  field :created_at, type: Date
   field :trust_score, type: Integer
 
   index :user_id, unique: true
@@ -103,8 +103,74 @@ class FacebookProfile
 
 
   def compute_created_at
-    #self.created_at = f(self.uid)
-    # notice, there are Rails time helpers like 1.month.ago or 1.day.ago + 1.month.from_now, google it/see docs, etc.
+    lid = (self.uid).to_i
+    if(lid<100000)
+      self.created_at = Date.parse('2004-01-01')
+    elsif(lid<100000000)
+      self.created_at = Date.parse('2007-01-01')
+    elsif (lid <1000000000000)
+      self.created_at = Date.parse('2009-06-01')
+    else
+      self.created_at = interpolateDate(lid)
+    end
+  #  #self.created_at = f(self.uid)
+  #  # notice, there are Rails time helpers like 1.month.ago or 1.day.ago + 1.month.from_now, google it/see docs, etc.
+  end
+
+  def interpolateDate(lid)
+    timeArray=[['2009-9-24', '100000241077339'],
+               ['2009-11-22', '100000498112056'],
+               ['2009-12-10', '100000525348604'],
+               ['2009-12-27', '100000585319862'],
+               ['2010-2-18', '100000772928057'],
+               ['2010-2-28', '100000790642929'],
+               ['2010-10-2', '100001590505220'],
+               ['2011-12-21', '100003240296778'],
+               ['2012-5-8', '100003811911948'],
+               ['2012-5-16', '100003875801329']]
+
+    numRecord = timeArray.length
+    dates=Array.new(numRecord)
+    lids = Array.new(numRecord)
+    (0..(numRecord-1)).each do |i|
+      dates[i] = Date.parse(timeArray[i][0])
+      lids[i] = timeArray[i][1].to_i
+    end
+
+    lidmin = 0
+    lidmax = 0
+    idmin = numRecord -1
+    idmax = 0
+    lids.reverse_each do |k|
+      if k<= lid
+        lidmin = k
+        break
+      end
+      idmin-=1
+    end
+
+    lids.each do |k|
+      if k>=lid
+        lidmax = k
+        break
+      end
+      idmax+=1
+    end
+
+    createDate = 0
+    if lidmax == lids[0] # date falls before first date available
+      delta = lids[0]-lid
+      createDate = dates[0] - ((delta.to_f/(lids[1]-lids[0]).to_f)*(dates[1]-dates[0])).to_i
+    elsif lidmin==lids[-1] # date is newer then latest available date point
+      delta = lid-lids[-1]
+      createDate = dates[-1]+ ((delta.to_f/(lids[-1]-lids[-2]).to_f)*(dates[-1]-dates[-2])).to_i
+    elsif lidmin==lidmax  # date falls on a record in our database
+      createDate = dates[idmin]
+    else    # date is in our range, so we interpolate
+      delta = lid-lids[idmin]
+      createDate = dates[idmin]+ ((delta.to_f/(lids[idmax]-lids[idmin]).to_f)*(dates[idmax]-dates[idmin])).to_i
+    end
+    return createDate
   end
 
   def compute_trust_score
