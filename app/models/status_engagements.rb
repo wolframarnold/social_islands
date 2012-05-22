@@ -55,6 +55,8 @@ class StatusEngagements
     raw_data_hash[engagement_name]['data'].each do |eng|
       # Comments has an additional sub-hash "from"
       friend_uid = engagement_name == 'comments' ? eng['from']['id'] : eng['id']
+      next if friend_uid.nil?  # TODO: record this case (name only, no ID -- non-FB member)
+                               # see story: https://www.pivotaltracker.com/story/show/29603637
       next if friend_uid == facebook_profile.uid
       result[friend_uid] ||= 0  # ||= sets the value, only if the left-hand-side is nil
       result[friend_uid] += 1

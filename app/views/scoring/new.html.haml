@@ -1,7 +1,7 @@
-%h1 Run Score
-
-= simple_form_for @user, url: scoring_create_path do |f|
-  = f.error_notification
-  = f.input :uid, label: 'Facebook UID'
-  = f.input :token, label: 'Facebook user access token'
-  = f.button :submit, 'Run Score', class: 'btn btn-primary'
+-#%h1 Run Score
+-#
+-#= simple_form_for :user, url: profile_path do |f|
+-#  = f.error_notification
+-#  = f.input :token, label: 'Facebook user access token', html_input: {name: :token}
+-#  = f.input :api_key, label: 'Api Key', html_input: {name: :api_key}
+-#  = f.button :submit, 'Run Score', class: 'btn btn-primary'

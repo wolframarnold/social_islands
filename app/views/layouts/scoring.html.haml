@@ -17,8 +17,10 @@
 
   %body
     #alerts
-      .alert.alert-error.fade.in#alert-error{style: 'display:none'}
-      .alert.alert-success.fade.in#alert-success{style: 'display:none'}
+      - if alert.present?
+        .alert.alert-error.fade.in= alert
+      - if notice.present?
+        .alert.alert-success.fade.in= notice
     .navbar
       .navbar-inner
         .container-fluid
@@ -32,3 +34,6 @@
             -#  = login_logout_links class: 'pull-right'
     .container-fluid.full-height
       = yield
+
+:javascript
+  $('.alert').alert();

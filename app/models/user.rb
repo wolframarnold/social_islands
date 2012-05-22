@@ -12,13 +12,14 @@ class User
   field :expires,    type: Boolean
 
   index [:uid, :provider], unique: true
+  index [:token, :provider], unique: true
 
   attr_accessible :uid, :provider, :image, :name
 
   # TODO: should we always require a name ? Not available for API clients
   validates :uid, :provider, :token, presence: true
 
-  has_one :facebook_profile, dependent: :nullify
+  has_one :facebook_profile, dependent: :nullify, autosave: true
   has_and_belongs_to_many :api_clients, dependent: :nullify
 
 end

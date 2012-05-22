@@ -21,7 +21,7 @@ group :assets do
 end
 
 gem 'jquery-rails', '~> 2.0.2'
-gem 'mongoid', '~> 2.4.9'
+gem 'mongoid', '~> 2.4.10'
 gem 'bson_ext', '~> 1.6.2'
 gem 'haml', '~> 3.1.4'
 gem 'haml-rails', '~> 0.3.4'
@@ -41,6 +41,8 @@ gem 'simple_form', '~> 2.0.2'
 
 # To use Jbuilder templates for JSON
 gem 'jbuilder', '~> 0.4.0'
+
+gem 'rest-client', '~> 1.6.7'
 
 # Use unicorn as the app server
 # gem 'unicorn'

@@ -7,7 +7,7 @@ class FacebookProfile
 
   belongs_to :user
 
-  validates :uid, :user_id, presence: true
+  validates :user_id, presence: true
 
   field :uid,               type: String
   field :image,             type: String
@@ -16,7 +16,6 @@ class FacebookProfile
   field :edges,             type: Array
   field :graph,             type: String
   field :photos,            type: Array
-  field :email,             type: String
   field :tagged,            type: Array
   field :posts,             type: Array
   field :locations,         type: Array
@@ -24,7 +23,7 @@ class FacebookProfile
   field :likes,             type: Array
   field :checkins,          type: Array
   field :info,              type: Hash
-  field :created_at,        type: Date
+  field :joined_on,         type: Date
   field :trust_score,       type: Integer
   field :profile_maturity,  type: Integer
 
@@ -36,32 +35,72 @@ class FacebookProfile
   has_one :photo_engagements, autosave: true, as: :engagements, class_name: 'PhotoEngagements', inverse_of: :facebook_profile
   has_one :status_engagements, autosave: true, as: :engagements, class_name: 'StatusEngagements', inverse_of: :facebook_profile
 
-
   HEAVY_FIELDS = [:friends, :edges, :graph, :histogram_num_connections]
 
   default_scope without(HEAVY_FIELDS)
   scope :graph_only, unscoped.only(:graph)
 
-  before_validation :populate_name_uid_image
 
-  def get_profile_and_network_graph!
-    self.friends = get_all_friends
+  # 1. Look up by token.
+  # 2. If that fails, go to FB and get UID then try to find record by UID.
+  # 3. If that fails, too, then we assume we don't have the record yet -> create new.
+  def self.find_or_create_by_token(token)
+    user = User.where(token: token, provider: 'facebook').first
+
+    if user.nil?
+      uid = FacebookProfile.get_uid(token)
+      user = User.where(uid: uid, provider: 'facebook').first
+    end
+
+    if user.nil?
+      user = User.new(uid: uid, provider: 'facebook')
+      user.token = token
+      fb_profile = user.build_facebook_profile(uid: uid)
+      user.save
+    else
+      user.update_attribute(:token, token)
+      fb_profile = user.facebook_profile || user.create_facebook_profile(uid: uid)
+    end
+
+    fb_profile
+  end
+
+  def email
+    self.info['email']
+  end
+
+  def token
+    @token ||= self.user.try(:token)
+  end
+
+  # API needs to break these out
+  def get_profile_and_friends
+    queue_user_info
+    queue_all_friends
+
+    execute_fb_batch_query
+
+    self.uid = self.info['id']
+    self.name = self.info['name']
+  end
+
+  def get_network_graph
     queue_user_photos
     queue_user_picture
     queue_user_posts
     queue_user_tagged
     queue_user_locations
     queue_user_statuses
-    queue_user_info
     queue_user_likes
     queue_user_checkins
     queue_fql_quries_for_mutual_friends
 
     execute_fb_batch_query
+  end
 
-    self.name = self.info["name"]
-    self.email = self.info["email"]
-
+  def get_profile_and_network_graph!
+    get_profile_and_friends
+    get_network_graph
     save!
   end
 
@@ -76,22 +115,6 @@ class FacebookProfile
     edges.present? || self.class.unscoped.where(:_id => self.to_param, :edges.ne => nil).exists?
   end
 
-  def as_json(opts={})
-    h = {}
-    if self.respond_to?(:degree)  # scoring was successful
-      h[:maturity]                  = self.degree
-      h[:graph_regularity_lower]    = self.clustering_coefficient_lower
-      h[:graph_regularity_upper]    = self.clustering_coefficient_upper
-      h[:graph_regularity_mean]     = self.clustering_coefficient_mean
-      h[:graph_regularity_actual]   = self.graph_density
-      h[:community_diversity_lower] = self.k_core_lower
-      h[:community_diversity_upper] = self.k_core_upper
-      h[:community_diversity_mean]  = self.k_core_mean
-      h[:community_diversity_actual]= self.k_core
-    end
-    h
-  end
-
   def compute_photo_engagements
     build_photo_engagements if photo_engagements.nil?
     photo_engagements.compute
@@ -103,18 +126,18 @@ class FacebookProfile
   end
 
 
-  def compute_created_at
+  def compute_joined_on
     lid = (self.uid).to_i
     if(lid<100000)
-      self.created_at = Date.parse('2004-01-01')
+      self.joined_on = Date.parse('2004-01-01')
     elsif(lid<100000000)
-      self.created_at = Date.parse('2007-01-01')
+      self.joined_on = Date.parse('2007-01-01')
     elsif (lid <1000000000000)
-      self.created_at = Date.parse('2009-06-01')
+      self.joined_on = Date.parse('2009-06-01')
     else
-      self.created_at = interpolate_date(lid)
+      self.joined_on = interpolate_date(lid)
     end
-  #  #self.created_at = f(self.uid)
+  #  #self.joined_on = f(self.uid)
   #  # notice, there are Rails time helpers like 1.month.ago or 1.day.ago + 1.month.from_now, google it/see docs, etc.
   end
 
@@ -175,10 +198,10 @@ class FacebookProfile
   end
 
   def compute_trust_score
-    compute_created_at
-    page_age = Date.today - self.created_at
+    compute_joined_on
+    page_age = Date.today - self.joined_on
     friend_count = self.class.unscoped.where(:_id=>self.to_param).only("friends").first.friends.count
-    self.profile_maturity = (Math.tanh(page_age/300.0)*Math.tanh(friend_count/300.0)*100).to_i()
+    self.profile_maturity = (Math.tanh(page_age/300.0)*Math.tanh(friend_count/300.0)*100).round
     puts "page age: "+page_age.to_s+" friends count: "+friend_count.to_s+ " profile maturity: "+self.profile_maturity.to_s
     # access photo engagements scores: self.photo_engagements.co_tags_uniques, etc. see methods in PhotoEngagements
     # self.trust_score = ....
@@ -199,6 +222,7 @@ class FacebookProfile
     puts "cotags: " + total_co_tags.to_s + " score: "+score_co_tags.to_i.to_s
     puts "trust_score: "+ trust_score.to_s
 
+    self.save
   end
 
   private
@@ -235,8 +259,19 @@ class FacebookProfile
     add_to_fb_batch_query(:tagged) { |batch_client| batch_client.get_connections("me", "tagged") }
   end
 
+  def self.get_uid(token)
+    fields = Koala::Facebook::API.new(token).get_object('me', fields: 'id')
+    fields['id']
+  end
+
   def queue_user_info
     add_to_fb_batch_query(:info) { |batch_client| batch_client.get_object("me") }
+  end
+
+  # Returns array of hashes of all the friends
+  def queue_all_friends
+    fql = 'SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,likes_count,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC'
+    add_to_fb_batch_query(:friends) { |batch_client| batch_client.fql_query(fql) }
   end
 
   # Returns an array of arrays of friends, chunked such that neither sub-array
@@ -259,13 +294,6 @@ class FacebookProfile
     chunks
   end
 
-  # Returns array of hashes of all the friends
-  def get_all_friends
-    friends = koala_client.fql_query('SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,likes_count,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC')
-    Rails.logger.tagged("User#_id=#{self.uid}") { Rails.logger.info "#{friends.length} friends" }
-    friends
-  end
-
   # Returns an array of FQL queries to retrieve the edges (connections between) all the friends
   def queue_fql_quries_for_mutual_friends
     # FB reports at most 5000 rows per query. Based on the mutual friend counts, we can calculate how many friends
@@ -277,16 +305,9 @@ class FacebookProfile
       # Note: 2nd condition below is required to avoid permissions issue.
       "SELECT uid1,uid2 FROM friend WHERE uid1 IN (#{ids}) AND uid2 IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER BY uid1"
     end
-    #fql_queries.each { |fql| Rails.logger.info "FQL query: " + fql }
     fql_queries.each do |fql|
       add_to_fb_batch_query(:edges, true) { |batch_client| batch_client.fql_query(fql) }
     end
-  end
-
-  def populate_name_uid_image
-    self.name = user.name
-    self.image = user.image
-    self.uid = user.uid
   end
 
   def add_to_fb_batch_query(attr, chunked=false)
@@ -298,6 +319,8 @@ class FacebookProfile
 
   def execute_fb_batch_query
     # Batch execution returns an array of combined results, in the order they were queued
+
+    Rails.logger.tagged("User#_id=#{self.user_id}") { Rails.logger.info "FB Batch call for attrs: [#{@batched_attributes.join(', ')}]" }
     @batch_client.execute.each_with_index do |result, idx|
       attr = @batched_attributes[idx]
       if attr[:chunked]
@@ -307,10 +330,12 @@ class FacebookProfile
         self.send "#{attr[:attr]}=", result
       end
     end
+    # reset batch client and array, for next batch
+    @batch_client = @batched_attributes = nil
   end
 
   def koala_client
-    @koala_client ||= Koala::Facebook::API.new(user.token)
+    @koala_client ||= Koala::Facebook::API.new(self.token)
   end
 
 end

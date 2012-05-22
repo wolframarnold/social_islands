@@ -5,17 +5,21 @@ describe FacebookFetcher do
   let!(:user) {FactoryGirl.create(:fb_user)}
 
   context 'scoring job' do
-    let!(:facebook_profile) {FactoryGirl.create(:facebook_profile, graph: nil, user: user)}
+    let!(:facebook_profile) {FactoryGirl.create(:facebook_profile, graph: nil, user: user,
+                                                profile_maturity: 63, trust_score: 88)}
 
-    it 'passes postback url to job' do
-      FacebookProfile.any_instance.should_not_receive(:get_nodes_and_edges)
+    before do
+      FacebookProfile.any_instance.should_receive(:compute_trust_score)
+    end
 
-      Resque.should_receive(:push).with(
-          'scoring',
-          hash_including(:class => 'com.socialislands.viz.ScoringWorker', :args => [user.to_param, 'http://example.com/score'])
-      )
+    it 'send post-back with scores to postback_url' do
+      stub_http_request(:post, "example.com/score")
 
       FacebookFetcher.perform(user.to_param, 'scoring', 'http://example.com/score')
+
+      a_request(:post, "example.com/score").
+          with(body:    {uid: facebook_profile.uid, profile_maturity: 63, trust_score: 88},
+               headers: {'Content-Type' => 'application/json'}).should have_been_made.once
 
     end
   end

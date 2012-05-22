@@ -2,15 +2,7 @@ require 'spec_helper'
 
 describe FacebookProfile do
 
-  let(:user) {FactoryGirl.create(:fb_user)}
-
-  it 'saves name, uid, image from user' do
-    fb = user.build_facebook_profile
-    fb.save!
-    fb.name.should == user.name
-    fb.image.should == user.image
-    fb.uid.should == user.uid
-  end
+  let!(:user) {FactoryGirl.create(:fb_user)}
 
   context 'detects attributes without loading them' do
     before do
@@ -59,9 +51,8 @@ describe FacebookProfile do
     let(:fp) { FactoryGirl.create(:facebook_profile, user: user) }
 
     before do
-      fp.should_receive(:get_all_friends).and_return(fp.friends)
-      fp.info = {'name' => 'joe', 'email' => 'joe@example.com'}
-      fp.should_receive(:execute_fb_batch_query)
+      fp.info = {'name' => 'joe', 'uid' => '222222'}
+      fp.should_receive(:execute_fb_batch_query).twice
     end
 
     it 'batches all requests' do
@@ -75,6 +66,81 @@ describe FacebookProfile do
       batched_attrs.should include(attr: :locations, chunked: false)
       batched_attrs.should include(attr: :statuses, chunked: false)
       batched_attrs.should include(attr: :info, chunked: false)
+    end
+
+  end
+
+  context '.find_or_create_by_token' do
+
+    context 'FBProfile and User records exist' do
+      let!(:fb_profile) { FactoryGirl.create(:facebook_profile, user: user) }
+
+      context 'token matches' do
+
+        it 'returns record' do
+          FacebookProfile.find_or_create_by_token(fb_profile.token).should == fb_profile
+        end
+        it 'does not create a new record' do
+          expect {
+            FacebookProfile.find_or_create_by_token(fb_profile.token)
+          }.should_not change(FacebookProfile,:count)
+        end
+      end
+      context 'token does not match' do
+        before do
+          Koala::Facebook::API.any_instance.should_receive(:get_object).
+              with('me', fields: 'id').
+              and_return('id'=>fb_profile.uid)
+        end
+        it 'finds record by UID' do
+          FacebookProfile.find_or_create_by_token(fb_profile.token+'123').should == fb_profile
+        end
+        it 'does not create a new record' do
+          expect {
+            FacebookProfile.find_or_create_by_token(fb_profile.token+'123')
+          }.should_not change(FacebookProfile,:count)
+        end
+        it 'updates token' do
+          old_token = fb_profile.token
+          expect {
+            FacebookProfile.find_or_create_by_token(fb_profile.token+'123')
+          }.should change{fb_profile.user.reload.token}.from(old_token).to(old_token+'123')
+        end
+      end
+    end
+
+    context 'User record exists but FBProfile does not' do
+      it 'creates a new FBProfile record' do
+        expect {
+          fp = FacebookProfile.find_or_create_by_token(user.token)
+          fp.user.should == user
+        }.to change(FacebookProfile,:count).by(1)
+      end
+      it 'does not create a new User record' do
+        expect {
+          FacebookProfile.find_or_create_by_token(user.token)
+        }.to_not change(User,:count)
+      end
+    end
+
+    context 'neither FBProfile nor User record does not exist' do
+      before do
+        Koala::Facebook::API.any_instance.should_receive(:get_object).
+            with('me', fields: 'id').
+            and_return('id'=>'7654321')
+      end
+      it 'creates a new record' do
+        expect {
+          FacebookProfile.find_or_create_by_token('zxcvlkjh768')
+        }.to change(FacebookProfile,:count).by(1)
+      end
+      it 'creates a new user' do
+        expect {
+          fp = FacebookProfile.find_or_create_by_token('zxcvlkjh768')
+          fp.user.should_not be_nil
+          fp.user.uid.should == '7654321'
+        }.to change(User,:count).by(1)
+      end
     end
 
   end

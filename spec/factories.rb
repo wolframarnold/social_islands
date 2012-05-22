@@ -15,6 +15,8 @@ FactoryGirl.define do
 
   factory :facebook_profile do
     user factory: :fb_user
+    uid  { user.uid }
+    name { user.name }
     friends [{"uid"=>'563900754', "name"=>"Weidong Yang",
               "first_name"=>"Weidong", "last_name"=>"Yang",
               "pic"=>"https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/186383_563900754_1786047058_s.jpg", "pic_square"=>"https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/186383_563900754_1786047058_q.jpg",
