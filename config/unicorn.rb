@@ -1,4 +1,4 @@
-worker_processes 2
+worker_processes 1
 timeout 30
 
 @resque_pid = nil
