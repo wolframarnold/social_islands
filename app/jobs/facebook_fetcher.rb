@@ -6,6 +6,8 @@ class FacebookFetcher
   def self.perform(user_id, computation, postback_url=nil)
     facebook_profile = FacebookProfile.where(user_id: user_id).first
 
+    something_that_causes_an_excpetion
+
     if !facebook_profile.has_edges?
       Rails.logger.tagged('fb_fetcher', "User#_id=#{user_id}") { Rails.logger.info "Retrieving FB Profile's nodes and edges for" }
       facebook_profile.get_profile_and_network_graph!
@@ -13,6 +15,7 @@ class FacebookFetcher
 
     case computation
       when 'viz'
+
         # Don't re-generate graph if we already have it
         return if facebook_profile.has_graph?
         # NOTE: The args parameters MUST be AN ARRAY, for Jesque to pick it up correctly. It apparently
@@ -39,6 +42,12 @@ class FacebookFetcher
 
     end
 
+  rescue => e
+    Rails.logger.tagged('fb_fetcher', "User#_id=#{user_id}", 'Exception') {
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace.join("\n")
+    }
+    raise
   end
 
 end
