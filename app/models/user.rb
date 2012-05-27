@@ -11,8 +11,10 @@ class User
   field :expires_at, type: DateTime
   field :expires,    type: Boolean
 
-  index [:uid, :provider], unique: true
-  index [:token, :provider], unique: true
+  index [[:uid, Mongo::ASCENDING], [:provider, Mongo::ASCENDING]], unique: true
+  index [[:token, Mongo::ASCENDING], [:provider, Mongo::ASCENDING]], unique: true
+  index :name
+  index [[:created_at, Mongo::DESCENDING]]
 
   attr_accessible :uid, :provider, :image, :name
 
@@ -20,6 +22,6 @@ class User
   validates :uid, :provider, :token, presence: true
 
   has_one :facebook_profile, dependent: :nullify, autosave: true
-  has_and_belongs_to_many :api_clients, dependent: :nullify
+  has_and_belongs_to_many :api_clients, dependent: :nullify, index: true
 
 end

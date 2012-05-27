@@ -7,7 +7,7 @@ class StatusEngagements
   field :liked_by,       type: Hash
   field :commented_by,   type: Hash
 
-  belongs_to :facebook_profile, polymorphic: true
+  belongs_to :facebook_profile, polymorphic: true, index: true
 
   validates :facebook_profile, presence: true
 

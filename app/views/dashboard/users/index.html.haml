@@ -1,0 +1,28 @@
+.row-fluid
+
+  %h1= @query.nil? ? 'Users' : 'Search Results'
+
+  - if @query.present? && @query.errors.present?
+    %b= @query.errors
+  - else
+
+    = will_paginate @users unless @query.present?
+
+    %table.table.table-striped
+      %thead
+        %tr
+          %th Name
+          %th _id (MongoDB)
+          %th UID (Faceboo)
+          %th Picture
+          %th Created At
+      %tbody
+        - @users.each do |user|
+          %tr
+            %td= user.name.blank? ? '&mdash;'.html_safe : user.name
+            %td= user._id
+            %td= link_to user.uid, "http://facebook.com/#{user.uid}"
+            %td= user.image.blank? ? '&mdash;'.html_safe : image_tag(user.image)
+            %td= user.created_at
+
+    = will_paginate @users unless @query.present?

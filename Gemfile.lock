@@ -32,6 +32,8 @@ GEM
     arel (3.0.2)
     blankslate (2.1.2.4)
     bootstrap-sass (2.0.2)
+    bootstrap-will_paginate (0.0.7)
+      will_paginate
     bootswatch-rails (0.0.11)
       railties (>= 3.1)
     bson (1.6.2)
@@ -213,12 +215,17 @@ GEM
     webmock (1.8.6)
       addressable (>= 2.2.7)
       crack (>= 0.1.7)
+    will_paginate (3.0.3)
+    will_paginate_mongoid (1.0.5)
+      mongoid (~> 2.4)
+      will_paginate (~> 3.0.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   bootstrap-sass (~> 2.0.2)
+  bootstrap-will_paginate (~> 0.0.7)
   bootswatch-rails (~> 0.0.11)
   bson_ext (~> 1.6.2)
   coffee-rails (~> 3.2.1)
@@ -247,3 +254,4 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   unicorn (~> 4.3.0)
   webmock (~> 1.8.6)
+  will_paginate_mongoid (~> 1.0.5)

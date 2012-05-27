@@ -1,0 +1,41 @@
+!!!
+%html
+
+  %head
+    %title
+      = yield(:page_title) || default_page_title
+    %meta{"http-equiv"=>"Content-Type", :content=>"text/html; charset=utf-8"}
+    %meta{name: 'keywords', content: yield(:keywords) || default_meta_keywords}
+    %meta{name: 'description', content: yield(:description) || default_meta_description}
+    %meta{name: 'author', content: 'Wolfram Arnold, Weidong Yang'}
+    = favicon_link_tag
+    = stylesheet_link_tag 'dashboard', :medial => 'all'
+    = csrf_meta_tag
+    = yield(:head)
+    = render 'shared/google_analytics'
+
+  %body
+    #alerts
+      - if alert.present?
+        .alert.alert-error.fade.in= alert
+      - if notice.present?
+        .alert.alert-success.fade.in= notice
+    .navbar
+      .navbar-inner
+        .container-fluid
+          = link_to 'trust.cc Dashboard', dashboard_root_path, class: 'brand'
+          -#%ul.nav.pull-right
+          -#  %li
+          -#    = login_logout_links
+          .pull-right
+            = simple_form_for @query || Query.new, url: search_dashboard_users_path, html: { class: 'navbar-search', id: 'new_query_by_name' } do |f|
+              = f.text_field :name, class: 'search-query', placeholder: 'Search by name'
+            = simple_form_for @query || Query.new, url: search_dashboard_users_path, html: { class: 'navbar-search', id: 'new_query_by_uid' } do |f|
+              = f.text_field :uid, class: 'search-query', placeholder: 'Search by Facebook UID'
+            = simple_form_for @query || Query.new, url: search_dashboard_users_path, html: { class: 'navbar-search', id: 'new_query_by_user_id' } do |f|
+              = f.text_field :user_id, class: 'search-query', placeholder: 'Search by MongoDB user_id'
+    .container-fluid.full-height
+      = yield
+
+:javascript
+  $('.alert').alert();
