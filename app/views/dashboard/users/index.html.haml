@@ -13,14 +13,14 @@
         %tr
           %th Name
           %th _id (MongoDB)
-          %th UID (Faceboo)
+          %th UID (Facebook)
           %th Picture
           %th Created At
       %tbody
         - @users.each do |user|
           %tr
             %td= user.name.blank? ? '&mdash;'.html_safe : user.name
-            %td= user._id
+            %td= link_to user.to_param, dashboard_user_path(user.to_param)
             %td= link_to user.uid, "http://facebook.com/#{user.uid}"
             %td= user.image.blank? ? '&mdash;'.html_safe : image_tag(user.image)
             %td= user.created_at

@@ -12,6 +12,10 @@ class Dashboard::UsersController < Dashboard::BaseController
     render 'index'
   end
 
+  def show
+    @user = User.find(params[:id])
+  end
+
   private
 
   def not_for_production

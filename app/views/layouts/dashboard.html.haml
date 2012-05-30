@@ -10,6 +10,7 @@
     %meta{name: 'author', content: 'Wolfram Arnold, Weidong Yang'}
     = favicon_link_tag
     = stylesheet_link_tag 'dashboard', :medial => 'all'
+    = javascript_include_tag 'dashboard', 'http://app.eventsourcehq.com/es.js'
     = csrf_meta_tag
     = yield(:head)
     = render 'shared/google_analytics'

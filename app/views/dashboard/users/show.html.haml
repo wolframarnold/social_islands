@@ -1,0 +1,47 @@
+%h2 User Record
+
+- fp = @user.facebook_profile
+
+
+.pseudo-table-striped
+  .row-fluid.pseudo-table-row
+    .span2 Name
+    .span2= fp.name
+    .span2= image_tag fp.image
+  .row-fluid.pseudo-table-row
+    .span2 UID
+    .span2= fp.uid
+
+%h2 Facebook Profile Record
+
+%div
+  .row-fluid.pseudo-table-header
+    %b.span2 Field
+    %b.span4 Value
+.pseudo-table-striped
+  .row-fluid.pseudo-table-row
+    .span2 Profile Maturity
+    .span2= fp.profile_maturity || '&mdash;'.html_safe
+    .span4
+      .red-green-bar
+        %span
+          0
+        %span.pull-right
+          100
+      %div
+        %span{style: "position: relative; left: #{fp.profile_maturity}%"}
+          ^
+
+  .row-fluid.pseudo-table-row
+    .span2 Trust Score
+    .span2= fp.trust_score || '&mdash;'.html_safe
+    .span4
+      .red-green-bar
+        %span
+          0
+        %span.pull-right
+          100
+      %div
+        %span{style: "position: relative; left: #{fp.trust_score}%"}
+          ^
+
