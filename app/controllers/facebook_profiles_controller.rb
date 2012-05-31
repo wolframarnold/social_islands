@@ -11,7 +11,12 @@ class FacebookProfilesController < ApplicationController
     @facebook_profile = current_user.create_facebook_profile if @facebook_profile.nil?
     @has_graph = @facebook_profile.has_graph?
     # We always enqueue -- Fetcher is smart enough to not fetch or compute graph if it's been done already
-    Resque.enqueue(FacebookFetcher, current_user.to_param, 'viz')
+    if Rails.env.development?
+      FacebookFetcher.perform(current_user.to_param, 'viz')
+    else
+      Resque.enqueue(FacebookFetcher, current_user.to_param, 'viz')
+    end
+
   end
 
   def graph

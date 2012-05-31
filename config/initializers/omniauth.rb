@@ -53,6 +53,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
                 user_website
                 user_work_history
                 friends_likes
+                friends_location
                 email
                 read_stream]
 

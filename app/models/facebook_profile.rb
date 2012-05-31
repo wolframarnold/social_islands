@@ -270,7 +270,7 @@ class FacebookProfile
 
   # Returns array of hashes of all the friends
   def queue_all_friends
-    fql = 'SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,likes_count,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC'
+    fql = 'SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,current_location,email,timezone,likes_count,mutual_friend_count,friend_count,religion,birthday,hometown_location,contact_email,education,website,locale,wall_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC'
     add_to_fb_batch_query(:friends) { |batch_client| batch_client.fql_query(fql) }
   end
 
