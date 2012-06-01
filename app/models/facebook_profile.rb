@@ -225,6 +225,68 @@ class FacebookProfile
     self.save
   end
 
+  def compute_location_stat
+    wei=FacebookProfile.where("name"=>"Weidong Yang").first
+    Geocoder.coordinates(wei.info["location"]["name"])
+    friends=wei.class.unscoped.where(:_id => wei.to_param).first.friends;
+    num_friends=friends.count
+
+    location_hash = Hash.new()
+
+    friends.each do |friend|
+      location = ""
+      if not(friend["current_location"].nil?)
+        fb_location = friend["current_location"]
+        country = fb_location["country"] || ""
+        if country == "United States"
+          name = fb_location["name"] || ""
+          if name.length==0
+            city = fb_location["city"] || ""
+            state = fb_location["state"] || ""
+            location = city+", " + state + ", " + country
+          else
+            location = name + ", " + country
+          end
+        else
+          name = fb_location["name"] || ""
+          if name.length==0
+            city = fb_location["city"] || ""
+            state = fb_location["state"] || ""
+            location = city+", " + state + ", " + country
+          else
+            location = name
+          end
+        end
+        #puts fb_location;
+        #puts location;
+      end
+
+      if location.length > 0
+        if location_hash[location].nil?
+          location_hash[location]=1
+        else
+          location_hash[location] = location_hash[location]+1
+        end
+      end
+    end;
+    location_hash = location_hash.sort_by {|name, count| count}.reverse
+    #now finding coordinates
+    coordinate_hash = Hash.new()
+    num_location = location_hash.length
+
+    num_loc = num_location > 5 ? 4 : numlocation
+    (0..num_loc).each do |i|
+      location = location_hash[i][0]
+      coordinate_hash[location] = Geocoder.coordinates(location)
+      if i>0
+        cord0 = coordinate_hash[location_hash[0][0]]
+        cord1 = coordinate_hash[location_hash[i][0]]
+        puts Geocoder::Calculations.distance_between(cord0, cord1)
+      end
+    end
+
+  end
+
   private
 
   def queue_user_photos
