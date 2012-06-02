@@ -26,6 +26,7 @@ class FacebookProfile
   field :joined_on,         type: Date
   field :trust_score,       type: Integer
   field :profile_maturity,  type: Integer
+  field :user_stat,         type: Hash
 
   index :user_id, unique: true
   index :uid, unique: true
@@ -197,11 +198,38 @@ class FacebookProfile
     return create_date
   end
 
+  def field_completeness(field_name)
+    completeness = self.info[field_name].nil? ? 0 : self.info[field_name].length
+    completeness = completeness>0 ? 1 : 0
+
+    return completeness
+  end
+
   def compute_trust_score
     compute_joined_on
     page_age = Date.today - self.joined_on
     friend_count = self.class.unscoped.where(:_id=>self.to_param).only("friends").first.friends.count
-    self.profile_maturity = (Math.tanh(page_age/300.0)*Math.tanh(friend_count/300.0)*100).round
+    edge_count = self.class.unscoped.where(:_id=>self.to_param).only("edges").first.edges.count
+    self.profile_maturity = (Math.tanh(page_age/300.0)*Math.tanh(friend_count/300.0)*80).round(0)
+
+    profile_completeness = 0
+    if not((defined?self.info).nil?)
+      has_education = field_completeness("education")
+      has_location = field_completeness("location")
+      has_sex = field_completeness("gender")
+      has_email=field_completeness("email")
+      has_website = field_completeness("website")
+      has_birthday = field_completeness("birthday")
+      has_bio = field_completeness("bio")
+      has_verified = 0
+      if not(self.info["verified"].nil?)
+        has_verified = self.info["verified"]=="true" ? 1 : 0
+      end
+      profile_completeness =   has_education+has_location+has_sex+has_email+has_website+has_birthday+has_bio+has_verified
+    end
+
+    self.profile_maturity = self.profile_maturity + (profile_completeness * 20.0/8.0).round(0)
+
     puts "page age: "+page_age.to_s+" friends count: "+friend_count.to_s+ " profile maturity: "+self.profile_maturity.to_s
     # access photo engagements scores: self.photo_engagements.co_tags_uniques, etc. see methods in PhotoEngagements
     # self.trust_score = ....
@@ -215,12 +243,30 @@ class FacebookProfile
     score_likes = Math.tanh(total_likes/40.0)*(28.3 +5.0*rand())
     score_comments = Math.tanh(total_comments/20.0)*(28.3 +5.0*rand())
     score_co_tags = Math.tanh(total_co_tags/20.0)*(28.3 +5.0*rand())
+
+
     self.trust_score = (score_likes+score_comments+score_co_tags).to_i
     puts "Uniques: "
     puts "like: "+ total_likes.to_s + " score: "+score_likes.to_i.to_s
     puts "comments: "+total_comments.to_s+" score: "+score_comments.to_i.to_s
     puts "cotags: " + total_co_tags.to_s + " score: "+score_co_tags.to_i.to_s
     puts "trust_score: "+ trust_score.to_s
+
+
+    self.user_stat = Hash.new()
+    self.user_stat["num_friend"]=friend_count
+    self.user_stat["num_edge"]=edge_count
+    self.user_stat["profile_completeness"]= (profile_completeness * 100/8).round(0)
+    self.user_stat["num_likes"]=(defined?self.likes).nil? ? 0 : self.likes.count
+    self.user_stat["num_location"]=(defined?self.locations).nil? ? 0 : self.locations.count
+    self.user_stat["num_photo"]=(defined?self.photos).nil? ? 0 : self.photos.count
+    self.user_stat["num_posts"]=(defined?self.posts).nil? ? 0 : self.posts.count
+    self.user_stat["num_status"]=(defined?self.statuses).nil? ? 0 : self.statuses.count
+    self.user_stat["num_tag"]=(defined?self.tagged).nil? ? 0 : self.tagged.count
+
+    self.user_stat["total_liked"]=total_likes
+    self.user_stat["total_commented"]=total_comments
+    self.user_stat["total_photo_co_tag"] = total_co_tags
 
     self.save
   end

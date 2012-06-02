@@ -11,6 +11,10 @@
   .row-fluid.pseudo-table-row
     .span2 UID
     .span2= fp.uid
+  .row-fluid.pseudo-table-row
+    .span2 Joined on
+    .span2=fp.joined_on || '&mdash;'.html_safe
+
 
 %h2 Facebook Profile Record
 
@@ -45,3 +49,12 @@
         %span{style: "position: relative; left: #{fp.trust_score}%"}
           ^
 
+%h2 User info
+
+.pseudo-table-striped
+  .row-fluid.pseudo-table-row
+    .span2 User Stat
+    .span2=fp.user_stat || '&mdash;'.html_safe
+  .row-fluid.pseudo-table-row
+    .span2 User info
+    .span2=fp.info || '&mdash;'.html_safe
