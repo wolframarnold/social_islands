@@ -54,7 +54,11 @@
 .pseudo-table-striped
   .row-fluid.pseudo-table-row
     .span2 User Stat
-    .span2=fp.user_stat || '&mdash;'.html_safe
+    .span2= fp.user_stat || '&mdash;'.html_safe
   .row-fluid.pseudo-table-row
     .span2 User info
-    .span2=fp.info || '&mdash;'.html_safe
+    .span2= fp.info || '&mdash;'.html_safe
+  .row-fluid.pseudo-table-row
+    .span2 Location
+    .span2
+      = gmaps(markers: { data: [{lat: 37.7749295, lng: -122.4194155}, {lat: 37.8043, lng: -122.2711}].to_json }, map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
