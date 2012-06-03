@@ -36,6 +36,7 @@ gem 'simple_form', '~> 2.0.2'
 gem 'will_paginate_mongoid', '~> 1.0.5'
 gem 'bootstrap-will_paginate', '~> 0.0.7'
 gem 'geocoder'
+gem 'gmaps4rails'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

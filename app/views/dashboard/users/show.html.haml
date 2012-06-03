@@ -13,7 +13,7 @@
     .span2= fp.uid
   .row-fluid.pseudo-table-row
     .span2 Joined on
-    .span2=fp.joined_on || '&mdash;'.html_safe
+    .span2= fp.joined_on || '&mdash;'.html_safe
 
 
 %h2 Facebook Profile Record
@@ -58,3 +58,7 @@
   .row-fluid.pseudo-table-row
     .span2 User info
     .span2=fp.info || '&mdash;'.html_safe
+
+= gmaps(markers: {lat:12,lng:13})
+
+= yield :scripts
