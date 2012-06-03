@@ -1,149 +1,204 @@
 // https://graph.facebook.com/me for Wolfram Arnold
 {
-    "id": "595045215",
-    "name": "Wolfram Arnold",
-    "first_name": "Wolfram",
-    "last_name": "Arnold",
-    "link": "http://www.facebook.com/wolfram",
-    "username": "wolfram",
-    "about": "Luck = Preparation + Opportunity -- Chinese saying",
-    "birthday": "05/07/1971",
-    "hometown": {
-        "id": "106107456086305",
-        "name": "Usingen"
+    "wolf":{
+    "id":"595045215",
+    "name":"Wolfram Arnold",
+    "first_name":"Wolfram",
+    "last_name":"Arnold",
+    "link":"http://www.facebook.com/wolfram",
+    "username":"wolfram",
+    "about":"Luck = Preparation + Opportunity -- Chinese saying",
+    "birthday":"05/07/1971",
+    "hometown":{
+        "id":"106107456086305",
+        "name":"Usingen"
     },
-    "location": {
-        "id": "114952118516947",
-        "name": "San Francisco, California"
+    "location":{
+        "id":"114952118516947",
+        "name":"San Francisco, California"
     },
-    "quotes": "\"The truly free individual is free only to the extent of his own self-mastery, while those who will not govern themselves are condemned to find masters to govern over them.\" - Socrates\r\n\r\n\"In an information-rich environment in which what matters remains buried in noise, individuals at every level are limited in both what they can absorb and what they can pass along. And the more oppressed by danger and fatigue, the more vulnerable they become to both inadvertent misunderstanding and deliberate deception.\" - Generals Robert H. Scales and Paul van Riper\r\n\r\n\"In the end, the incalculables of determination, morale, fighting skill, and leadership far more than technology will determine who wins and who loses.\" - Generals Robert H. Scales and Paul van Riper\r\n\r\n\"Failure to change is a vice! I want everyone at Toyota to change or at least do not be an obstacle for someone else wanting to change. I also want everyone to write down their change plans for the year.\" - Hiroshi Okuda, CEO and chairman, Toyota Motors",
-    "work": [
+    "quotes":"\"The truly free individual is free only to the extent of his own self-mastery, while those who will not govern themselves are condemned to find masters to govern over them.\" - Socrates\r\n\r\n\"In an information-rich environment in which what matters remains buried in noise, individuals at every level are limited in both what they can absorb and what they can pass along. And the more oppressed by danger and fatigue, the more vulnerable they become to both inadvertent misunderstanding and deliberate deception.\" - Generals Robert H. Scales and Paul van Riper\r\n\r\n\"In the end, the incalculables of determination, morale, fighting skill, and leadership far more than technology will determine who wins and who loses.\" - Generals Robert H. Scales and Paul van Riper\r\n\r\n\"Failure to change is a vice! I want everyone at Toyota to change or at least do not be an obstacle for someone else wanting to change. I also want everyone to write down their change plans for the year.\" - Hiroshi Okuda, CEO and chairman, Toyota Motors",
+    "work":[
         {
-            "employer": {
-                "id": "202602139772492",
-                "name": "WTA Consulting, Inc."
+            "employer":{
+                "id":"202602139772492",
+                "name":"WTA Consulting, Inc."
             },
-            "location": {
-                "id": "114952118516947",
-                "name": "San Francisco, California"
+            "location":{
+                "id":"114952118516947",
+                "name":"San Francisco, California"
             },
-            "position": {
-                "id": "130875350283931",
-                "name": "CEO & Founder"
+            "position":{
+                "id":"130875350283931",
+                "name":"CEO & Founder"
             },
-            "description": "Rails, TDD, Agile & Mobile Technology Consulting",
-            "start_date": "2008-07"
+            "description":"Rails, TDD, Agile & Mobile Technology Consulting",
+            "start_date":"2008-07"
         },
         {
-            "employer": {
-                "id": "107262812639931",
-                "name": "Papercheck.com"
+            "employer":{
+                "id":"107262812639931",
+                "name":"Papercheck.com"
             },
-            "location": {
-                "id": "114952118516947",
-                "name": "San Francisco, California"
+            "location":{
+                "id":"114952118516947",
+                "name":"San Francisco, California"
             },
-            "position": {
-                "id": "116566561728916",
-                "name": "VP of Engineering"
+            "position":{
+                "id":"116566561728916",
+                "name":"VP of Engineering"
             },
-            "start_date": "2010-01",
-            "end_date": "2012-01"
+            "start_date":"2010-01",
+            "end_date":"2012-01"
         },
         {
-            "employer": {
-                "id": "110096322346646",
-                "name": "Real Girls Media"
+            "employer":{
+                "id":"110096322346646",
+                "name":"Real Girls Media"
             },
-            "location": {
-                "id": "114952118516947",
-                "name": "San Francisco, California"
+            "location":{
+                "id":"114952118516947",
+                "name":"San Francisco, California"
             },
-            "position": {
-                "id": "110265725662722",
-                "name": "Senior Software Engineer"
+            "position":{
+                "id":"110265725662722",
+                "name":"Senior Software Engineer"
             },
-            "with": [
+            "with":[
                 {
-                    "id": "690514007",
-                    "name": "Nick Kallen"
+                    "id":"690514007",
+                    "name":"Nick Kallen"
                 },
                 {
-                    "id": "1213494587",
-                    "name": "Andrew Trice"
+                    "id":"1213494587",
+                    "name":"Andrew Trice"
                 },
                 {
-                    "id": "727136513",
-                    "name": "Nathan Wilmes"
+                    "id":"727136513",
+                    "name":"Nathan Wilmes"
                 },
                 {
-                    "id": "595822764",
-                    "name": "Davis W. Frank"
+                    "id":"595822764",
+                    "name":"Davis W. Frank"
                 },
                 {
-                    "id": "668046932",
-                    "name": "Aram Price"
+                    "id":"668046932",
+                    "name":"Aram Price"
                 }
             ],
-            "description": "Building the CMS in Rails...",
-            "start_date": "2006-11",
-            "end_date": "2007-08"
+            "description":"Building the CMS in Rails...",
+            "start_date":"2006-11",
+            "end_date":"2007-08"
         }
     ],
-    "education": [
+    "education":[
         {
-            "school": {
-                "id": "108510145846959",
-                "name": "Christian-Wirth-Schule"
+            "school":{
+                "id":"108510145846959",
+                "name":"Christian-Wirth-Schule"
             },
-            "year": {
-                "id": "131367623569918",
-                "name": "1990"
+            "year":{
+                "id":"131367623569918",
+                "name":"1990"
             },
-            "type": "High School",
-            "with": [
+            "type":"High School",
+            "with":[
                 {
-                    "id": "1450761515",
-                    "name": "Regine Hungerbühler"
+                    "id":"1450761515",
+                    "name":"Regine Hungerbühler"
                 },
                 {
-                    "id": "100000068682547",
-                    "name": "Jens Heuser"
+                    "id":"100000068682547",
+                    "name":"Jens Heuser"
                 }
             ]
         },
         {
-            "school": {
-                "id": "10515469841",
-                "name": "University of Oregon"
+            "school":{
+                "id":"10515469841",
+                "name":"University of Oregon"
             },
-            "degree": {
-                "id": "170434169669210",
-                "name": "PhD"
+            "degree":{
+                "id":"170434169669210",
+                "name":"PhD"
             },
-            "year": {
-                "id": "143018465715205",
-                "name": "2000"
+            "year":{
+                "id":"143018465715205",
+                "name":"2000"
             },
-            "concentration": [
+            "concentration":[
                 {
-                    "id": "103735996332544",
-                    "name": "Materials Science"
+                    "id":"103735996332544",
+                    "name":"Materials Science"
                 },
                 {
-                    "id": "109279729089828",
-                    "name": "Physics"
+                    "id":"109279729089828",
+                    "name":"Physics"
                 }
             ],
-            "type": "Graduate School"
+            "type":"Graduate School"
         }
     ],
-    "gender": "male",
-    "relationship_status": "Married",
-    "political": "Liberal",
-    "email": "wolfram@arnold.name",
-    "timezone": -7,
-    "locale": "en_US",
-    "verified": true,
-    "updated_time": "2012-05-17T19:31:10+0000"
+    "gender":"male",
+    "relationship_status":"Married",
+    "political":"Liberal",
+    "email":"wolfram@arnold.name",
+    "timezone":-7,
+    "locale":"en_US",
+    "verified":true,
+    "updated_time":"2012-05-17T19:31:10+0000"
+},
+
+    "wei": {
+        "id": "563900754",
+        "name": "Weidong Yang",
+        "first_name": "Weidong",
+        "last_name": "Yang",
+        "link": "http://www.facebook.com/weidong.yang",
+        "username": "weidong.yang",
+        "birthday": "03/13/1968",
+        "location": {
+            "id": "114952118516947",
+            "name": "San Francisco, California"
+        },
+        "bio": "http://www.lightisdance.com\r\nhttp://www.mamboreflection.com",
+        "education": [
+            {
+                "school": {
+                    "id": "142644165783748",
+                    "name": "wulumuqi"
+                },
+                "type": "High School"
+            },
+            {
+                "school": {
+                    "id": "105504456149925",
+                    "name": "Fudan University"
+                },
+                "type": "College"
+            },
+            {
+                "school": {
+                    "id": "10515469841",
+                    "name": "University of Oregon"
+                },
+                "type": "College"
+            }
+        ],
+        "gender": "male",
+        "religion": "Spiritual",
+        "email": "wdyangmail@yahoo.com",
+        "website": "www.lightisdance.com",
+        "timezone": -7,
+        "locale": "en_US",
+        "languages": [
+            {
+                "id": "111735208843636",
+                "name": "Chinese"
+            }
+        ],
+        "verified": true,
+        "updated_time": "2012-05-30T07:03:49+0000",
+        "type": "user"
+    }
 }

@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 FactoryGirl.define do
 
   sequence :uid do |n|
@@ -11,6 +13,23 @@ FactoryGirl.define do
     image 'http://example.com/joesmith.png'
     token 'BCDEFG'
     secret 'HIJKLMNO'
+  end
+
+  def Factory.info_fixture(name)
+    path = File.expand_path('../fixtures/facebook_info_response.json', __FILE__)
+    @json ||= JSON.parse(File.read(path))[name]
+  end
+
+  def Factory.friends_fixture(name)
+    path = File.expand_path('../fixtures/facebook_friends_response.json', __FILE__)
+    @json_friends ||= JSON.parse(File.read(path))[name]
+  end
+
+  factory :wei_fb_profile, class: FacebookProfile do
+    user factory: :fb_user#, name: info_fixture("wei")["name"]
+    uid Factory.info_fixture("wei")['id']
+    friends Factory.friends_fixture("wei")
+    info Factory.info_fixture("wei")
   end
 
   factory :facebook_profile do

@@ -40,6 +40,7 @@ class FacebookProfile
 
   default_scope without(HEAVY_FIELDS)
   scope :graph_only, unscoped.only(:graph)
+  scope :friends_only, unscoped.only(:friends)
 
 
   # 1. Look up by token.
@@ -213,7 +214,7 @@ class FacebookProfile
     self.profile_maturity = (Math.tanh(page_age/300.0)*Math.tanh(friend_count/300.0)*80).round(0)
 
     profile_completeness = 0
-    if not((defined?self.info).nil?)
+    if self.info.present?
       has_education = field_completeness("education")
       has_location = field_completeness("location")
       has_sex = field_completeness("gender")
@@ -222,7 +223,7 @@ class FacebookProfile
       has_birthday = field_completeness("birthday")
       has_bio = field_completeness("bio")
       has_verified = 0
-      if not(self.info["verified"].nil?)
+      if self.info["verified"].present?
         has_verified = self.info["verified"]=="true" ? 1 : 0
       end
       profile_completeness =   has_education+has_location+has_sex+has_email+has_website+has_birthday+has_bio+has_verified
@@ -240,7 +241,7 @@ class FacebookProfile
     total_comments = self.photo_engagements.comments_uniques+self.status_engagements.comments_uniques
     total_co_tags = self.photo_engagements.co_tags_uniques
 
-    score_likes = Math.tanh(total_likes/40.0)*(28.3 +5.0*rand())
+    score_likes = Math.tanh( total_likes/40.0 ) * (28.3 +5.0*rand())
     score_comments = Math.tanh(total_comments/20.0)*(28.3 +5.0*rand())
     score_co_tags = Math.tanh(total_co_tags/20.0)*(28.3 +5.0*rand())
 
@@ -271,10 +272,9 @@ class FacebookProfile
     self.save
   end
 
-  def compute_location_stat
-    wei=FacebookProfile.where("name"=>"Weidong Yang").first
-    Geocoder.coordinates(wei.info["location"]["name"])
-    friends=wei.class.unscoped.where(:_id => wei.to_param).first.friends;
+  def collect_friends_location_stats
+    friends = FacebookProfile.unscoped.friends_only.find(self.id).friends
+
     num_friends=friends.count
 
     location_hash = Hash.new()
@@ -286,14 +286,14 @@ class FacebookProfile
         country = fb_location["country"] || ""
         if country == "United States"
           name = fb_location["name"] || ""
-          if name.length==0
+          if name.blank?
             city = fb_location["city"] || ""
             state = fb_location["state"] || ""
             location = city+", " + state + ", " + country
           else
             location = name + ", " + country
           end
-        else
+        else # foreign country
           name = fb_location["name"] || ""
           if name.length==0
             city = fb_location["city"] || ""
@@ -307,16 +307,19 @@ class FacebookProfile
         #puts location;
       end
 
-      if location.length > 0
+      if location.present?
         if location_hash[location].nil?
           location_hash[location]=1
         else
           location_hash[location] = location_hash[location]+1
         end
       end
-    end;
-    location_hash = location_hash.sort_by {|name, count| count}.reverse
-    #now finding coordinates
+    end
+
+    location_hash.sort_by {|name, count| count}.reverse
+  end
+
+  def geolocation_coordiates_for_friends_locations(location_hash)
     coordinate_hash = Hash.new()
     num_location = location_hash.length
 
@@ -330,7 +333,6 @@ class FacebookProfile
         puts Geocoder::Calculations.distance_between(cord0, cord1)
       end
     end
-
   end
 
   private
@@ -378,7 +380,7 @@ class FacebookProfile
 
   # Returns array of hashes of all the friends
   def queue_all_friends
-    fql = 'SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,current_location,email,timezone,likes_count,mutual_friend_count,friend_count,religion,birthday,hometown_location,contact_email,education,website,locale,wall_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC'
+    fql = 'SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,current_location,hometown_location,email,timezone,likes_count,mutual_friend_count,friend_count,religion,birthday,hometown_location,contact_email,education,website,locale,wall_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC'
     add_to_fb_batch_query(:friends) { |batch_client| batch_client.fql_query(fql) }
   end
 
