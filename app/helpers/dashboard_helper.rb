@@ -35,4 +35,11 @@ module DashboardHelper
     end
     loc_list.to_json
   end
+
+  def display_stats(profile)
+    profile.user_stat.inject('') do |str,kv|
+      str + "#{kv[0]}: #{kv[1]}" + '</br>'
+    end.html_safe
+  end
+
 end

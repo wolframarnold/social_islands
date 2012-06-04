@@ -35,6 +35,12 @@
       %div
         %span{style: "position: relative; left: #{fp.profile_maturity}%"}
           ^
+    .span4
+      %p
+        The Maturity Score tells us how much effort the user has invested into
+        their profile over time. Variables that enter here include the number of friends,
+        age of the profile. Higher scores here imply a greater relevance and
+        confidence of the other scores.
 
   .row-fluid.pseudo-table-row
     .span2 Trust Score
@@ -48,16 +54,21 @@
       %div
         %span{style: "position: relative; left: #{fp.trust_score}%"}
           ^
+    .span4
+      %p
+        The Trust Score is a measure of the real-world social engagement of the user
+        with their community.
+
 
 %h2 User info
 
 .pseudo-table-striped
   .row-fluid.pseudo-table-row
     .span2 User Stat
-    .span2= fp.user_stat || '&mdash;'.html_safe
-  .row-fluid.pseudo-table-row
-    .span2 User info
-    .span2= fp.info || '&mdash;'.html_safe
+    .span2= display_stats(fp)
+  -#.row-fluid.pseudo-table-row
+  -#  .span2 User info
+  -#  .span2= fp.info || '&mdash;'.html_safe
   .row-fluid.pseudo-table-row
     .span2 Location
     .span2
