@@ -15,8 +15,6 @@
 //@import "bootswatch/journal/bootswatch";
 @import "bootstrap_extension";
 
-@import "gmaps4rails";
-
 .red-green-bar {
   @include gradient-horizontal(#f00, #0f0);
   width: auto;
