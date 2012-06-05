@@ -42,4 +42,27 @@ module DashboardHelper
     end.html_safe
   end
 
+  # TODO: Have these contents come from a YAML file
+  def popover_attrs(key)
+    case key
+      when :profile_authenticity
+        {'data-original-title' => key.to_s.humanize,
+         'data-content' => <<-STR
+         The Authenticity Score tells us how much effort the user has invested into
+         their profile over time. Variables that enter here include the number of friends,
+         age of the profile. Higher scores here imply a greater relevance and
+         confidence of the other scores.
+         STR
+        }
+      when :trust_score
+        {'data-original-title' => key.to_s.humanize,
+         'data-content' => <<-STR
+         The Trust Score is a measure of the real-world social engagement of the user
+         with their community.
+         STR
+        }
+      else
+        raise "Unknown key #{key} for popover content"
+    end
+  end
 end

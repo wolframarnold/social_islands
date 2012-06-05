@@ -24,7 +24,9 @@
     %b.span4 Value
 .pseudo-table-striped
   .row-fluid.pseudo-table-row
-    .span2 Profile Maturity
+    .span2
+      %span Profile Authenticity
+      %i.hints.icon-question-sign{popover_attrs(:profile_authenticity)}
     .span2= fp.profile_maturity || '&mdash;'.html_safe
     .span4
       .red-green-bar
@@ -35,15 +37,11 @@
       %div
         %span{style: "position: relative; left: #{fp.profile_maturity}%"}
           ^
-    .span4
-      %p
-        The Maturity Score tells us how much effort the user has invested into
-        their profile over time. Variables that enter here include the number of friends,
-        age of the profile. Higher scores here imply a greater relevance and
-        confidence of the other scores.
 
   .row-fluid.pseudo-table-row
-    .span2 Trust Score
+    .span2
+      %span Trust Score
+      %i.hints.icon-question-sign{popover_attrs(:trust_score)}
     .span2= fp.trust_score || '&mdash;'.html_safe
     .span4
       .red-green-bar
@@ -54,10 +52,6 @@
       %div
         %span{style: "position: relative; left: #{fp.trust_score}%"}
           ^
-    .span4
-      %p
-        The Trust Score is a measure of the real-world social engagement of the user
-        with their community.
 
 
 %h2 User info
@@ -75,3 +69,6 @@
       = gmaps(markers: { data: friend_location},
         circles: {data: default_circle, option:{fillColor:"#FF0000"}},
         map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
+
+:javascript
+  $('.hints').popover();
