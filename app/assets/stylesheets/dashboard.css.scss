@@ -38,17 +38,20 @@
   .pseudo-table-row:nth-child(odd) {
     background-color: $tableBackgroundAccent;
   }
+  .pseudo-table-header {
+    padding: 8px;
+  }
+
+  .pseudo-table-row {
+    border-top: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  .pseudo-table-row:hover {
+    background-color: $tableBackgroundHover;
+  }
 }
 
 .pseudo-table-header {
   padding: 8px;
-}
-
-.pseudo-table-row {
-  border-top: 1px solid #ddd;
-  padding: 8px;
-}
-
-.pseudo-table-row:hover {
-  background-color: $tableBackgroundHover;
 }

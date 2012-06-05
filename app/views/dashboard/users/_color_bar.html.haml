@@ -1,0 +1,10 @@
+.span2= score || '&mdash;'.html_safe
+.span4
+  .red-green-bar
+    %span
+      0
+    %span.pull-right
+      100
+  %div
+    %span{style: "position: relative; left: #{score}%"}
+      ^

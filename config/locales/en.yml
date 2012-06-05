@@ -6,6 +6,7 @@ en:
     profile_authenticity:
       title: Profile Authenticity
       content:
+        (0...100)
         The Authenticity Score tells us how much effort the user has invested into
         their profile over time. Variables that enter here include the number of friends,
         age of the profile. Higher scores here imply a greater relevance and
@@ -13,5 +14,30 @@ en:
     trust_score:
       title: Trust Score
       content:
+        (0...100)
         The Trust Score is a measure of the real-world social engagement of the user
         with their community.
+    inbound_engagement_index:
+      title: Inbound Engagement Index
+      content:
+        (1...100) Shows the amount of inbound communication such as likes,
+        co-tagged photos, or comments. This is important, because it illustrates
+        that the user is a respected member of their community and his/her friends
+        are engaging with him/her. In particular third-party checkins or co-tagged
+        photos confirm that a user met with a member of his/her community in the real
+        world, therby providing an offline confirmation of the relationship.
+    outbound_engagement_index:
+      title: Outbound Engagement Index
+      content:
+        (1...100) Shows the amount of outbound communication originated by the user.
+        A high number here is not unambigously positive, because it could indicate
+        spamming activity with little real engagement with the community. If this is
+        balanced with a high amount of inbound activity, i.e. a close to even ratio
+        between both, then this is a very positive sign of an actively engaged user
+        with his/her friends.
+    engagement_ratio:
+      title: Engagement Ratio
+      content:
+        (1...100) The ratio between inbound and outbound engagements. A number close to
+        unity is a highly reputable value. A very large number could indicate a spammer,
+        a very small number could indicate an inactive profile.

@@ -71,6 +71,10 @@ class FacebookProfile
     self.info['email']
   end
 
+  def current_location_name
+    self.info['location']['name']
+  end
+
   def token
     @token ||= self.user.try(:token)
   end

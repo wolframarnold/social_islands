@@ -42,4 +42,11 @@ module DashboardHelper
     { 'data-original-title' => t("dashboard.#{key}.title") || key.to_s.humanize,
       'data-content' => t("dashboard.#{key}.content") }
   end
+
+  def score_background_color_attrs(facebook_profile)
+    return {} if facebook_profile.try(:trust_score).nil?
+    return {style: 'background-color: #5fff5f'} if facebook_profile.trust_score > 60 # green
+    return {style: 'background-color: #ffff00'} if facebook_profile.trust_score > 40 # yellow
+    {style: 'background-color: #ff3f3f'} # red
+  end
 end
