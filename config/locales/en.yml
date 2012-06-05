@@ -2,4 +2,16 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  dashboard:
+    profile_authenticity:
+      title: Profile Authenticity
+      content:
+        The Authenticity Score tells us how much effort the user has invested into
+        their profile over time. Variables that enter here include the number of friends,
+        age of the profile. Higher scores here imply a greater relevance and
+        confidence of the other scores.
+    trust_score:
+      title: Trust Score
+      content:
+        The Trust Score is a measure of the real-world social engagement of the user
+        with their community.
