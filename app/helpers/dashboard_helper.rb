@@ -25,15 +25,10 @@ module DashboardHelper
 
   def friend_location
     loc_array = @user.facebook_profile.collect_friends_location_stats
-    loc_list = []
-    if loc_array.present?
-      num_loc = loc_array.length > 5 ? 5 : loc_array.length
-      (0..num_loc).each do |i1|
-        coord = Geocoder.coordinates(loc_array[i1][0])
-        loc_list[i1] = {lat:coord[0], lng:coord[1], discription:i1, width:(10-i1), height:(10-i1), sidebar:i1}
-      end
-    end
-    loc_list.to_json
+    loc_array[0..5].reduce([]) do |coord_list, loc|
+      coord = Geocoder.coordinates(loc[0])
+      coord_list << {lat: coord[0], lng: coord[1]}
+    end.to_json
   end
 
   def display_stats(profile)
