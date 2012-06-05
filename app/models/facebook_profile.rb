@@ -23,6 +23,7 @@ class FacebookProfile
   field :likes,             type: Array
   field :checkins,          type: Array
   field :info,              type: Hash
+  field :permissions,       type: Hash
   field :joined_on,         type: Date
   field :trust_score,       type: Integer
   field :profile_maturity,  type: Integer
@@ -91,6 +92,7 @@ class FacebookProfile
   end
 
   def get_network_graph
+    queue_user_permissions
     queue_user_photos
     queue_user_picture
     queue_user_posts
@@ -340,6 +342,10 @@ class FacebookProfile
   end
 
   private
+
+  def queue_user_permissions
+    add_to_fb_batch_query(:permissions) { |batch_client| batch_client.get_connections("me", "permissions") }
+  end
 
   def queue_user_photos
     add_to_fb_batch_query(:photos) { |batch_client| batch_client.get_connections("me", "photos") }
