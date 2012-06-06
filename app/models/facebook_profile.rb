@@ -275,6 +275,10 @@ class FacebookProfile
     self.user_stat["total_commented"]=total_comments
     self.user_stat["total_photo_co_tag"] = total_co_tags
 
+    self.user_stat["total_inbound"]=total_likes+total_comments+total_co_tags
+    self.user_stat["total_outbound"]=self.user_stat["num_likes"]+self.user_stat["num_posts"]+self.user_stat["num_status"]
+    self.user_stat['inoutratio']=(self.user_stat["total_inbound"]*1.0/self.user_stat["total_outbound"]).round(3)
+
     self.save
   end
 

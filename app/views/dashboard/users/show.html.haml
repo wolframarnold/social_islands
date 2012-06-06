@@ -47,17 +47,17 @@
     .span2
       %span Inbound Engagement Index
       %i.hints.icon-question-sign{popover_attrs(:inbound_engagement_index)}
-    .span2 (Need a number here)
+    .span2= fp.user_stat['total_inbound']
   .row-fluid.pseudo-table-row
     .span2
       %span Outbound Engagement Index
       %i.hints.icon-question-sign{popover_attrs(:outbound_engagement_index)}
-    .span2 (Need a number here)
+    .span2= fp.user_stat['total_outbound']
   .row-fluid.pseudo-table-row
     .span2
       %span Engagement Ratio
       %i.hints.icon-question-sign{popover_attrs(:engagement_ratio)}
-    .span2 (Need a number here)
+    .span2= fp.user_stat['inoutratio']
   .row-fluid.pseudo-table-row
     .span2 Location
     .span2
