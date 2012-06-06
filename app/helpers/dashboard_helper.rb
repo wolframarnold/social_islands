@@ -15,6 +15,19 @@ module DashboardHelper
     end
   end
 
+  def tagged_location
+    loc_hash = @user.facebook_profile.tagged_location_collection
+    loc_list = []
+    if loc_hash.present?
+      i1=0
+      loc_hash.each_key do |k|
+        loc_list[i1]={lat:k["latitude"], lng:k["longitude"]}
+        i1=i1+1
+      end
+    end
+    loc_list.to_json
+  end
+
   def user_location_with_circle
     if @user.facebook_profile.info["location"]["name"].present?
       loc = Geocoder.coordinates(@user.facebook_profile.info["location"]["name"])

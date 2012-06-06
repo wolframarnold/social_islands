@@ -341,6 +341,37 @@ class FacebookProfile
     end
   end
 
+  def tagged_location_collection
+    #wei = FacebookProfile.where(name:"Weidong Yang").first
+    wei = self
+    location_hash = Hash.new
+    if wei.locations.present?
+      wei.locations.each do |location|
+        loc = location["place"]["location"]
+        location_hash[loc] = 1
+      end
+    end
+
+    if wei.tagged.present?
+      wei.tagged.each do |tag|
+        if tag["place"].present?
+          loc = tag["place"]["location"]
+          location_hash[loc]=1
+        end
+      end
+    end
+
+    if wei.photos.present?
+      wei.photos.each do |tag|
+        if tag["place"].present?
+          loc = tag["place"]["location"]
+          location_hash[loc]=1
+        end
+      end
+    end
+    location_hash
+  end
+
   private
 
   def queue_user_permissions
@@ -390,7 +421,7 @@ class FacebookProfile
 
   # Returns array of hashes of all the friends
   def queue_all_friends
-    fql = 'SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,current_location,hometown_location,email,timezone,likes_count,mutual_friend_count,friend_count,religion,birthday,hometown_location,contact_email,education,website,locale,wall_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC'
+    fql = 'SELECT uid,name,first_name,last_name,pic,pic_square,sex,verified,relationship_status,current_location,hometown_location,email,timezone,likes_count,mutual_friend_count,friend_count,religion,birthday,hometown_location,contact_email,education,website,locale,wall_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER by mutual_friend_count DESC'
     add_to_fb_batch_query(:friends) { |batch_client| batch_client.fql_query(fql) }
   end
 
