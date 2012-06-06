@@ -215,8 +215,10 @@ class FacebookProfile
   def compute_trust_score
     compute_joined_on
     page_age = Date.today - self.joined_on
-    friend_count = self.class.unscoped.where(:_id=>self.to_param).only("friends").first.friends.count
-    edge_count = self.class.unscoped.where(:_id=>self.to_param).only("edges").first.edges.count
+    friend_list =self.class.unscoped.where(:_id=>self.to_param).only("friends").first.friends
+    friend_count = friend_list.present? ? friend_list.count : 0
+    edge_list = self.class.unscoped.where(:_id=>self.to_param).only("edges").first.edges
+    edge_count = edge_list.present? ? edge_list.count : 0
     self.profile_maturity = (Math.tanh(page_age/300.0)*Math.tanh(friend_count/300.0)*80).round(0)
 
     profile_completeness = 0
@@ -264,12 +266,12 @@ class FacebookProfile
     self.user_stat["num_friend"]=friend_count
     self.user_stat["num_edge"]=edge_count
     self.user_stat["profile_completeness"]= (profile_completeness * 100/8).round(0)
-    self.user_stat["num_likes"]=(defined?self.likes).nil? ? 0 : self.likes.count
-    self.user_stat["num_location"]=(defined?self.locations).nil? ? 0 : self.locations.count
-    self.user_stat["num_photo"]=(defined?self.photos).nil? ? 0 : self.photos.count
-    self.user_stat["num_posts"]=(defined?self.posts).nil? ? 0 : self.posts.count
-    self.user_stat["num_status"]=(defined?self.statuses).nil? ? 0 : self.statuses.count
-    self.user_stat["num_tag"]=(defined?self.tagged).nil? ? 0 : self.tagged.count
+    self.user_stat["num_likes"]=self.likes.present? ? self.likes.count : 0
+    self.user_stat["num_location"]=self.locations.present? ? self.locations.count : 0
+    self.user_stat["num_photo"]=self.photos.present? ? self.photos.count : 0
+    self.user_stat["num_posts"]=self.posts.present? ? self.posts.count : 0
+    self.user_stat["num_status"]=self.statuses.present? ? self.statuses.count : 0
+    self.user_stat["num_tag"]=self.tagged.present? ? self.tagged.count : 0
 
     self.user_stat["total_liked"]=total_likes
     self.user_stat["total_commented"]=total_comments
@@ -374,6 +376,54 @@ class FacebookProfile
       end
     end
     location_hash
+  end
+
+  #experiment codes
+  def fetch_new_data(ids)
+    t1=Time.now
+    User.all[ids].map do |usr|
+      puts usr.uid
+      if usr.uid.present?
+        fb = FacebookProfile.where(uid:usr.uid).first
+        if fb.present?
+          puts fb.name
+          if usr.name.blank?
+            usr.name = fb.name
+            usr.image = fb.image
+            usr.save!
+          end
+          begin
+            #fb.get_profile_and_friends
+            fb.compute_trust_score
+            fb.save!
+          rescue Exception=>e
+            puts e
+          end
+        end
+      end
+    end
+    t2 = Time.now - t1
+    puts t2
+    puts t2 / ids.count
+  end
+
+  def complete_trust_score
+    fbb=1
+    usrr=1
+    User.all.map do |usr|
+      usrr=usr
+      fb = FacebookProfile.where(uid:usr.uid).first
+      if fb.present?
+        fbb=fb
+        puts fb.name
+        if fb.user_stat.blank?
+          fb.compute_trust_score
+          fb.save!
+        end
+      else
+        puts usr.name + " not exist in fb"
+      end
+    end
   end
 
   private

@@ -28,19 +28,19 @@ class StatusEngagements
   end
 
   def likes_uniques
-    self.liked_by.length
+    self.liked_by.present? ? self.liked_by.length : 0
   end
 
   def comments_uniques
-    self.commented_by.length
+    self.commented_by.present? ? self.commented_by.length : 0
   end
 
   def likes_total
-    self.liked_by.sum {|attr, val| val}
+    self.liked_by.present? ? self.liked_by.sum {|attr, val| val} : 0
   end
 
   def comments_total
-    self.commented_by.sum {|attr, val| val}
+    self.commented_by.present? ? self.commented_by.sum {|attr, val| val} : 0
   end
 
   private
@@ -54,7 +54,8 @@ class StatusEngagements
     return if raw_data_hash[engagement_name].nil?
     raw_data_hash[engagement_name]['data'].each do |eng|
       # Comments has an additional sub-hash "from"
-      friend_uid = engagement_name == 'comments' ? eng['from']['id'] : eng['id']
+      # found a case where no "from" field exist name: Lacey Powers, 16911093
+      friend_uid = engagement_name == 'comments' ? (eng['from'].present? ? eng['from']['id'] : '0') : eng['id']
       next if friend_uid.nil?  # TODO: record this case (name only, no ID -- non-FB member)
                                # see story: https://www.pivotaltracker.com/story/show/29603637
       next if friend_uid == facebook_profile.uid
