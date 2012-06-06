@@ -57,12 +57,12 @@
     .span2
       %span Engagement Ratio
       %i.hints.icon-question-sign{popover_attrs(:engagement_ratio)}
-    .span2= fp.user_stat['inoutratio']
+    .span2= fp.user_stat['in_out_ratio']
   .row-fluid.pseudo-table-row
     .span2 Location
     .span2
       = gmaps(markers: { data: friend_location},
-        circles: {data: default_circle, option:{fillColor:"#FF0000"}},
+        circles: {data: user_location_with_circle, option:{fillColor:"#00FF00", fillOpacity:0.7, strokeColor:"#FF0000"}},
         map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
 
 :javascript

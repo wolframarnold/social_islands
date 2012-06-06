@@ -29,6 +29,7 @@ module DashboardHelper
   end
 
   def user_location_with_circle
+    return [].to_json if @user.facebook_profile.info["location"].blank?
     if @user.facebook_profile.info["location"]["name"].present?
       loc = Geocoder.coordinates(@user.facebook_profile.info["location"]["name"])
       [{lat:loc[0], lng:loc[1], radius:10000}].to_json

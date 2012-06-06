@@ -73,7 +73,7 @@ class FacebookProfile
   end
 
   def current_location_name
-    self.info['location']['name']
+    self.info['location'].present? ? self.info['location']['name'] : " "
   end
 
   def token
@@ -279,7 +279,7 @@ class FacebookProfile
 
     self.user_stat["total_inbound"]=total_likes+total_comments+total_co_tags
     self.user_stat["total_outbound"]=self.user_stat["num_likes"]+self.user_stat["num_posts"]+self.user_stat["num_status"]
-    self.user_stat['inoutratio']=(self.user_stat["total_inbound"]*1.0/self.user_stat["total_outbound"]).round(3)
+    self.user_stat['in_out_ratio']=(self.user_stat["total_inbound"]*1.0/self.user_stat["total_outbound"]).round(3)
 
     self.save
   end
@@ -379,7 +379,7 @@ class FacebookProfile
   end
 
   #experiment codes
-  def fetch_new_data(ids)
+  def fetch_new_data(ids)   # fetch new data needed
     t1=Time.now
     User.all[ids].map do |usr|
       puts usr.uid
@@ -407,7 +407,7 @@ class FacebookProfile
     puts t2 / ids.count
   end
 
-  def complete_trust_score
+  def complete_trust_score    #go over every record, compute trust_score if not have been done
     fbb=1
     usrr=1
     User.all.map do |usr|
@@ -422,6 +422,24 @@ class FacebookProfile
         end
       else
         puts usr.name + " not exist in fb"
+      end
+    end
+  end
+
+  def correct_name  #change name in database
+    i1=0
+    fbb=1
+    User.all.map do |usr|
+      fb=FacebookProfile.where(uid:usr.uid).first
+      if fb.present?
+      fbb=fb
+      if fb.user_stat.present?
+        fb.user_stat["in_out_ratio"] = fb.user_stat["inoutratio"]
+        fb.user_stat.delete("inoutratio")
+        fb.save!
+      end
+      puts i1 if (((i1/10.0) - (i1/10)) == 0)
+      i1=i1+1
       end
     end
   end
