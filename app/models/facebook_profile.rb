@@ -28,6 +28,8 @@ class FacebookProfile
   field :trust_score,       type: Integer
   field :profile_maturity,  type: Integer
   field :user_stat,         type: Hash
+  field :face_detect,       type: Hash
+  field :face_detect_score, type: String
 
   index :user_id, unique: true
   index :uid, unique: true
@@ -426,6 +428,30 @@ class FacebookProfile
     end
   end
 
+  #def output_summary
+  #  open('meexosummary.csv', 'w') do |f|
+  #    f<< 'fbid,fbmaturity,fbtrust'
+  #    fb=FacebookProfile.where(name:"Weidong Yang").first
+  #    fb.user_stat.each do |k, v|
+  #      f << ','+k
+  #    end
+  #    f<<"\n"
+  #    User.all.map do |usr|
+  #      fb=FacebookProfile.where(uid:usr.uid).first
+  #      if fb.present?
+  #        if fb.user_stat.present?
+  #          f<< "fb-"+fb.uid.to_s+","
+  #          f<< fb.profile_maturity.to_s+","+fb.trust_score.to_s
+  #          fb.user_stat.each do |k, v|
+  #            f<< ","+v.to_s
+  #          end
+  #          f<<"\n"
+  #        end
+  #      end
+  #    end
+  #  end
+  #end
+
   def correct_name  #change name in database
     i1=0
     fbb=1
@@ -441,6 +467,53 @@ class FacebookProfile
       puts i1 if (((i1/10.0) - (i1/10)) == 0)
       i1=i1+1
       end
+    end
+  end
+
+  def get_face_detection
+    client = Face.get_client(:api_key=>FACE_COM_API_KEY, :api_secret=>FACE_COM_API_SECRET)
+    FacebookProfile.all.map do |fb|
+      if fb.image.present?
+        puts fb.name
+        img=fb.image
+        if img[-4..-1]==".jpg"
+          img[-5] = 'n'
+        elsif img[-6..-1]=="square"
+          img[-6..-1]="normal"
+        else
+          puts img
+        end
+        begin
+          fb.face_detect=client.faces_detect(:urls =>[img])
+          fb.save!
+        rescue Exception=>e
+          puts e
+        end
+      end
+    end
+  end
+
+  def eval_face_detection
+    FacebookProfile.all[600..-1].map do |fb|
+      fb.face_detect_score = "NotProcessed"
+      if fb.face_detect.present?
+        img=fb.face_detect["photos"][0]["url"]
+        if img[-4..-1]==".gif"
+          fb.face_detect_score = "NoProfilePicture"
+        else
+          if fb.face_detect["photos"][0]["tags"].present?
+            fb.face_detect_score = "FaceDetected"
+            #tag length > 1
+            #tag gender match
+          else
+            fb.face_detect_score = "NoFaceDetected"
+          end
+        end
+      else
+        fb.face_detect_score = "PictureRemoved"
+      end
+      puts (fb.name.present? ? fb.name : "No Name")+": "+fb.face_detect_score
+      fb.save!
     end
   end
 
