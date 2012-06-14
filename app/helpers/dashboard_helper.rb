@@ -8,13 +8,6 @@ module DashboardHelper
     [{lat: 38.7749295, lng: -122.4194155, radius:300000}].to_json
   end
 
-  def user_location
-    if @user.facebook_profile.info["location"]["name"].present?
-      loc = Geocoder.coordinates(@user.facebook_profile.info["location"]["name"])
-      [{lat:loc[0], lng:loc[1]}].to_json
-    end
-  end
-
   def tagged_location
     loc_hash = @user.facebook_profile.tagged_location_collection
     loc_list = []
@@ -28,11 +21,18 @@ module DashboardHelper
     loc_list.to_json
   end
 
+  def user_location
+    if @user.facebook_profile.info["location"]["name"].present?
+      loc = Geocoder.coordinates(@user.facebook_profile.info["location"]["name"])
+      [{lat:loc[0], lng:loc[1]}].to_json
+    end
+  end
+
   def user_location_with_circle
     return [].to_json if @user.facebook_profile.info["location"].blank?
     if @user.facebook_profile.info["location"]["name"].present?
       loc = Geocoder.coordinates(@user.facebook_profile.info["location"]["name"])
-      [{lat:loc[0], lng:loc[1], radius:10000}].to_json
+      [{lat:loc[0], lng:loc[1], radius:100000}].to_json
     end
   end
 
@@ -42,6 +42,17 @@ module DashboardHelper
     loc_array[0..5].reduce([]) do |coord_list, loc|
       coord = Geocoder.coordinates(loc[0])
       coord_list << {lat: coord[0], lng: coord[1]}
+    end.to_json
+  end
+
+  def friend_location_with_circle
+    loc_array = @user.facebook_profile.collect_friends_location_stats
+    return [].to_json if loc_array.blank?
+    normalizer = loc_array[0][1]**0.75
+    loc_array[0..5].reduce([]) do |coord_list, loc|
+      circle_size = 150000*Math.sqrt(loc[1]*1.0/normalizer)
+      coord = Geocoder.coordinates(loc[0])
+      coord_list << {lat: coord[0], lng: coord[1], radius:circle_size}
     end.to_json
   end
 

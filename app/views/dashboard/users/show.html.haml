@@ -64,8 +64,8 @@
   .row-fluid.pseudo-table-row
     .span2 Location
     .span2
-      = gmaps(markers: { data: friend_location},
-        circles: {data: user_location_with_circle, option:{fillColor:"#00FF00", fillOpacity:0.7, strokeColor:"#FF0000"}},
+      = gmaps(markers: { data: user_location},
+        circles: {data: friend_location_with_circle, option:{fillColor:"#00FF00", fillOpacity:0.7, strokeColor:"#FF0000"}},
         map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
 
 :javascript
