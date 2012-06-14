@@ -13,8 +13,8 @@ $ ->
       }).graphProperties({
         minNodeSize: 0.5,
         maxNodeSize: 5,
-        minEdgeSize: 0.6,
-        maxEdgeSize: 0.6
+        minEdgeSize: 0.4,
+        maxEdgeSize: 0.4
         }).mouseProperties({
           maxRatio: 4
         });
