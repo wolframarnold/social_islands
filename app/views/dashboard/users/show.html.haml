@@ -34,6 +34,9 @@
     .span2 Profile Completeness
     .span2= fp.user_stat['profile_completeness'].blank? ? '&mdash;'.html_safe : fp.user_stat['profile_completeness'].to_s+'%'
   .row-fluid.pseudo-table-row
+    .span2 Face on Profile Picture
+    .span2= fp.face_detect_score.blank? ? '&mdash;'.html_safe : fp.face_detect_score
+  .row-fluid.pseudo-table-row
     .span2 Current Location
     .span2= fp.current_location_name
   .row-fluid.pseudo-table-row
