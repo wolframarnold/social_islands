@@ -40,6 +40,8 @@ gem 'gmaps4rails', '~> 1.5.2'
 gem 'face', '~>0.0.5'
 gem 'geoip', '~>1.1.2'
 gem 'nokogiri', '~>1.5.4'
+gem 'oauth'
+gem 'timezone'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
