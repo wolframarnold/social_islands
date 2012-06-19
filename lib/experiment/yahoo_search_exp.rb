@@ -1,5 +1,5 @@
 require 'csv'
-require Rails.root.join("app/models/api-helpers/yahoo_boss_search")
+require Rails.root.join("app/models/api_helpers/yahoo_boss_search")
 
 module YahooSearch
 

@@ -8,7 +8,7 @@ module YahooBossSearch
   # 'totalresults' is the number of total results four for the search term
   # 'results' is an array of search results with the following sub keys: "date", "clickurl", "url", "dispurl", "title", "abstract"
 
-  WEB_SEARCH_URL = 'http://yboss.yahooapis.com/ysearch/web'
+  YAHOO_BOSS_WEB_SEARCH_URL = 'http://yboss.yahooapis.com/ysearch/web'
 
   # our credentials -- note that each query is billed to us, cost $.80/1000 queries
   YAHOO_CONSUMER_KEY = 'dj0yJmk9Wmo3eXJZZmZsQW9EJmQ9WVdrOWJFVlJUMlp2TkdjbWNHbzlNVGcwTnpNek56WTJNZy0tJnM9Y29uc3VtZXJzZWNyZXQmeD02NA--'
@@ -34,7 +34,7 @@ module YahooBossSearch
 
     #p request.signed_uri
 
-    conn=Faraday.new(WEB_SEARCH_URL) do |builder|
+    conn=Faraday.new(YAHOO_BOSS_WEB_SEARCH_URL) do |builder|
       builder.request :url_encoded
       builder.adapter :net_http
     end
@@ -44,7 +44,8 @@ module YahooBossSearch
     if resp.status.to_i == 200
       JSON.parse(resp.body)
     else
-      resp.status
+      Rails.logger.tagged('YahooSearch', search_term) { Rails.logger.info("Search failed, status: #{resp.status}, #{resp.inspect}")}
+      nil
     end
   end
 
