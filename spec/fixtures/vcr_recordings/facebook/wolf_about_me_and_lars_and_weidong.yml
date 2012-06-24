@@ -1,0 +1,101 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://graph.facebook.com/
+    body:
+      encoding: US-ASCII
+      string: batch=%5B%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22me%22%7D%2C%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22fql%3Fq%3DSELECT%2Buid%252Cname%252Cfirst_name%252Clast_name%252Cpic%252Cpic_square%252Cpic_big%252Caffiliations%252Ctimezone%252Creligion%252Cbirthday%252Cbirthday_date%252Cdevices%252Chometown_location%252Ccurrent_location%252Csex%252Crelationship_status%252Csignificant_other_id%252Cpolitical%252Cinterests%252Cmusic%252Ctv%252Cmovies%252Cbooks%252Cquotes%252Cabout_me%252Cnotes_count%252Cwall_count%252Cstatus%252Clocale%252Cprofile_url%252Cpic_cover%252Cverified%252Cprofile_blurb%252Cfamily%252Cwebsite%252Cemail%252Cname_format%252Cwork%252Ceducation%252Cinspirational_people%252Clanguages%252Clikes_count%252Cfriend_count%252Cmutual_friend_count%252Ccan_post%2BFROM%2Buser%2BWHERE%2Buid%2BIN%2B%2528553647753%252C563900754%2529%2BORDER%2Bby%2Bmutual_friend_count%2BDESC%22%7D%5D&access_token=AAAFqtCQqsRMBAKhkbmFZCXqVutdMyTaJ7T7XdtcU8kbYoE4wR9QRXEMWcTrQ8kIsyFF6tDBXqjXpK98M0okKOlW9pqUslZBIuknZAxLDgZDZD
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
+      Content-Type:
+      - text/javascript; charset=UTF-8
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      Pragma:
+      - no-cache
+      X-Fb-Rev:
+      - '579367'
+      X-Fb-Debug:
+      - IbBosapUT5OIdsnhuoN6F4vUgOW+u8o1PWaSjBXHkT8=
+      Date:
+      - Sat, 23 Jun 2012 23:07:29 GMT
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '8776'
+    body:
+      encoding: US-ASCII
+      string: ! '[{"code":200,"headers":[{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"Cache-Control","value":"private,
+        no-cache, no-store, must-revalidate"},{"name":"Connection","value":"close"},{"name":"Content-Type","value":"text\/javascript;
+        charset=UTF-8"},{"name":"ETag","value":"\"db4839722d0c32c575f6e0eaec6f91ffc271e3e6\""},{"name":"Expires","value":"Sat,
+        01 Jan 2000 00:00:00 GMT"},{"name":"Last-Modified","value":"2012-06-23T22:46:18+0000"},{"name":"Pragma","value":"no-cache"}],"body":"{\"id\":\"595045215\",\"name\":\"Wolfram
+        Arnold\",\"first_name\":\"Wolfram\",\"last_name\":\"Arnold\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/wolfram\",\"username\":\"wolfram\",\"about\":\"Luck
+        = Preparation + Opportunity -- Chinese saying\",\"birthday\":\"05\\\/07\\\/1971\",\"hometown\":{\"id\":\"106107456086305\",\"name\":\"Usingen\"},\"location\":{\"id\":\"114952118516947\",\"name\":\"San
+        Francisco, California\"},\"quotes\":\"\\\"The truly free individual is free
+        only to the extent of his own self-mastery, while those who will not govern
+        themselves are condemned to find masters to govern over them.\\\" - Socrates\\r\\n\\r\\n\\\"In
+        an information-rich environment in which what matters remains buried in noise,
+        individuals at every level are limited in both what they can absorb and what
+        they can pass along. And the more oppressed by danger and fatigue, the more
+        vulnerable they become to both inadvertent misunderstanding and deliberate
+        deception.\\\" - Generals Robert H. Scales and Paul van Riper\\r\\n\\r\\n\\\"In
+        the end, the incalculables of determination, morale, fighting skill, and leadership
+        far more than technology will determine who wins and who loses.\\\" - Generals
+        Robert H. Scales and Paul van Riper\\r\\n\\r\\n\\\"Failure to change is a
+        vice! I want everyone at Toyota to change or at least do not be an obstacle
+        for someone else wanting to change. I also want everyone to write down their
+        change plans for the year.\\\" - Hiroshi Okuda, CEO and chairman, Toyota Motors\",\"work\":[{\"employer\":{\"id\":\"463928460285659\",\"name\":\"trust.cc\"},\"location\":{\"id\":\"114952118516947\",\"name\":\"San
+        Francisco, California\"},\"position\":{\"id\":\"142979352398617\",\"name\":\"Founder
+        and CEO\"},\"description\":\"Social Fraud Prevention.\",\"start_date\":\"2012-01\"},{\"employer\":{\"id\":\"202602139772492\",\"name\":\"WTA
+        Consulting, Inc.\"},\"location\":{\"id\":\"114952118516947\",\"name\":\"San
+        Francisco, California\"},\"position\":{\"id\":\"130875350283931\",\"name\":\"CEO
+        & Founder\"},\"description\":\"Rails, TDD, Agile & Mobile Technology Consulting\",\"start_date\":\"2008-07\"},{\"employer\":{\"id\":\"107262812639931\",\"name\":\"Papercheck.com\"},\"location\":{\"id\":\"114952118516947\",\"name\":\"San
+        Francisco, California\"},\"position\":{\"id\":\"116566561728916\",\"name\":\"VP
+        of Engineering\"},\"start_date\":\"2010-01\",\"end_date\":\"2012-01\"},{\"employer\":{\"id\":\"110096322346646\",\"name\":\"Real
+        Girls Media\"},\"location\":{\"id\":\"114952118516947\",\"name\":\"San Francisco,
+        California\"},\"position\":{\"id\":\"110265725662722\",\"name\":\"Senior Software
+        Engineer\"},\"with\":[{\"id\":\"690514007\",\"name\":\"Nick Kallen\"},{\"id\":\"1213494587\",\"name\":\"Andrew
+        Trice\"},{\"id\":\"727136513\",\"name\":\"Nathan Wilmes\"},{\"id\":\"595822764\",\"name\":\"Davis
+        W. Frank\"},{\"id\":\"668046932\",\"name\":\"Aram Price\"}],\"description\":\"Building
+        the CMS in Rails...\",\"start_date\":\"2006-11\",\"end_date\":\"2007-08\"}],\"education\":[{\"school\":{\"id\":\"108510145846959\",\"name\":\"Christian-Wirth-Schule\"},\"year\":{\"id\":\"131367623569918\",\"name\":\"1990\"},\"type\":\"High
+        School\",\"with\":[{\"id\":\"1450761515\",\"name\":\"Regine Hungerb\\u00fchler\"},{\"id\":\"100000068682547\",\"name\":\"Jens
+        Heuser\"}]},{\"school\":{\"id\":\"10515469841\",\"name\":\"University of Oregon\"},\"degree\":{\"id\":\"170434169669210\",\"name\":\"PhD\"},\"year\":{\"id\":\"143018465715205\",\"name\":\"2000\"},\"concentration\":[{\"id\":\"103735996332544\",\"name\":\"Materials
+        Science\"},{\"id\":\"109279729089828\",\"name\":\"Physics\"}],\"type\":\"Graduate
+        School\"}],\"gender\":\"male\",\"relationship_status\":\"Married\",\"political\":\"Liberal\",\"email\":\"wolfram\\u0040arnold.name\",\"timezone\":-7,\"locale\":\"en_US\",\"verified\":true,\"updated_time\":\"2012-06-23T22:46:18+0000\"}"},{"code":200,"headers":[{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"Cache-Control","value":"private,
+        no-cache, no-store, must-revalidate"},{"name":"Connection","value":"close"},{"name":"Content-Type","value":"text\/javascript;
+        charset=UTF-8"},{"name":"ETag","value":"\"ae950037f79560d6da3fe38345b5847b9ea4c430\""},{"name":"Expires","value":"Sat,
+        01 Jan 2000 00:00:00 GMT"},{"name":"Pragma","value":"no-cache"}],"body":"{\"data\":[{\"uid\":563900754,\"name\":\"Weidong
+        Yang\",\"first_name\":\"Weidong\",\"last_name\":\"Yang\",\"pic\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-snc4\\\/370434_563900754_1952612728_s.jpg\",\"pic_square\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-snc4\\\/370434_563900754_1952612728_q.jpg\",\"pic_big\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-snc4\\\/370434_563900754_1952612728_n.jpg\",\"affiliations\":[],\"timezone\":null,\"religion\":\"Spiritual\",\"birthday\":null,\"birthday_date\":null,\"devices\":[{\"os\":\"iOS\",\"hardware\":\"iPhone\"}],\"hometown_location\":null,\"current_location\":{\"city\":\"San
+        Francisco\",\"state\":\"California\",\"country\":\"United States\",\"zip\":\"\",\"id\":114952118516947,\"name\":\"San
+        Francisco, California\"},\"sex\":\"male\",\"relationship_status\":null,\"significant_other_id\":null,\"political\":\"\",\"interests\":\"\",\"music\":\"\",\"tv\":\"Take
+        This Lollipop\",\"movies\":\"\",\"books\":\"\",\"quotes\":\"\",\"about_me\":\"http:\\\/\\\/www.lightisdance.com\\r\\nhttp:\\\/\\\/www.mamboreflection.com\",\"notes_count\":0,\"wall_count\":186,\"status\":null,\"locale\":\"en_US\",\"profile_url\":\"http:\\\/\\\/www.facebook.com\\\/weidong.yang\",\"pic_cover\":{\"cover_id\":\"10150822950485755\",\"source\":\"https:\\\/\\\/sphotos.xx.fbcdn.net\\\/hphotos-prn1\\\/s720x720\\\/534366_10150822950485755_716588353_n.jpg\",\"offset_y\":0},\"verified\":null,\"profile_blurb\":\"\",\"family\":[],\"website\":\"www.lightisdance.com\",\"email\":null,\"name_format\":\"{first}
+        {last}\",\"work\":[],\"education\":[{\"school\":{\"id\":142644165783748,\"name\":\"wulumuqi\"},\"type\":\"High
+        School\"},{\"school\":{\"id\":105504456149925,\"name\":\"Fudan University\"},\"type\":\"College\"},{\"school\":{\"id\":10515469841,\"name\":\"University
+        of Oregon\"},\"type\":\"College\"}],\"inspirational_people\":[],\"languages\":[{\"id\":111735208843636,\"name\":\"Chinese\"}],\"likes_count\":37,\"friend_count\":839,\"mutual_friend_count\":15,\"can_post\":true},{\"uid\":553647753,\"name\":\"Lars
+        Kamp\",\"first_name\":\"Lars\",\"last_name\":\"Kamp\",\"pic\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-ash2\\\/27430_553647753_3455_s.jpg\",\"pic_square\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-ash2\\\/27430_553647753_3455_q.jpg\",\"pic_big\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-snc4\\\/48904_553647753_8844_n.jpg\",\"affiliations\":[{\"nid\":50431658,\"name\":\"Accenture\",\"type\":\"work\"}],\"timezone\":null,\"religion\":\"\",\"birthday\":\"December
+        31, 1973\",\"birthday_date\":\"12\\\/31\\\/1973\",\"devices\":[{\"os\":\"iOS\",\"hardware\":\"iPhone\"}],\"hometown_location\":null,\"current_location\":{\"city\":\"San
+        Francisco\",\"state\":\"California\",\"country\":\"United States\",\"zip\":\"\",\"id\":114952118516947,\"name\":\"San
+        Francisco, California\"},\"sex\":\"male\",\"relationship_status\":\"Married\",\"significant_other_id\":null,\"political\":\"\",\"interests\":\"\",\"music\":\"Barry
+        White\",\"tv\":\"\",\"movies\":\"The Ramp\",\"books\":\"\",\"quotes\":\"\",\"about_me\":\"\",\"notes_count\":0,\"wall_count\":151,\"status\":null,\"locale\":\"en_US\",\"profile_url\":\"http:\\\/\\\/www.facebook.com\\\/Larskamp\",\"pic_cover\":null,\"verified\":null,\"profile_blurb\":\"\",\"family\":[{\"relationship\":\"wife\",\"uid\":1466344023}],\"website\":\"\",\"email\":null,\"name_format\":\"{first}
+        {last}\",\"work\":[{\"employer\":{\"id\":23802140373,\"name\":\"Accenture\"}}],\"education\":[{\"school\":{\"id\":108137479219860,\"name\":\"Uni
+        Passau\"},\"type\":\"College\",\"classes\":[{\"id\":198782253469572,\"name\":\"Defense
+        Against the Dark Arts\",\"with\":[{\"id\":645851526,\"name\":\"Eva Pet-Ritz\"}],\"from\":{\"id\":645851526,\"name\":\"Eva
+        Pet-Ritz\"}}]}],\"inspirational_people\":[],\"languages\":[],\"likes_count\":47,\"friend_count\":494,\"mutual_friend_count\":5,\"can_post\":true}]}"}]'
+    http_version: 
+  recorded_at: Sat, 23 Jun 2012 23:07:29 GMT
+recorded_with: VCR 2.2.2

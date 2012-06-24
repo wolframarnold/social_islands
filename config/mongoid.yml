@@ -1,20 +1,20 @@
+common: &default_settings
+  identity_map_enabled: true
+  logger: true
+#  allow_dynamic_fields: false  # must declare all fields before they can be used in Rails
+
 development:
-#  identity_map_enabled: true
-#  logger: true
-#  host: localhost
-#  database: trust_exchange_development
+  <<: *default_settings
   uri: "mongodb://:@127.0.0.1:27017/trust_exchange_development"
 
 test:
-  identity_map_enabled: true
-  logger: true
+  <<: *default_settings
   host: localhost
   database: trust_exchange_test
 
 # set these environment variables on your prod server
 production:
-  identity_map_enabled: true
-  logger: true
+  <<: *default_settings
   uri: <%= ENV['MONGOHQ_URL'] %>
   # slaves:
   #   - host: slave1.local

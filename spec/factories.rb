@@ -1,5 +1,22 @@
 # encoding: utf-8
 
+def FactoryGirl.fb_credentials(name)
+  @fb_credentials ||= YAML.load_file(File.expand_path('../fixtures/facebook_credentials.yml', __FILE__))
+  @fb_credentials[name.to_s]
+end
+
+def FactoryGirl.info_fixture(name)
+  path = File.expand_path('../fixtures/facebook_info_response.json', __FILE__)
+  @json ||= JSON.parse(File.read(path))
+  @json[name.to_s]
+end
+
+def FactoryGirl.friends_fixture(name)
+  path = File.expand_path('../fixtures/facebook_friends_response.json', __FILE__)
+  @json_friends ||= JSON.parse(File.read(path))
+  @json_friends[name.to_s]
+end
+
 FactoryGirl.define do
 
   sequence :uid do |n|
@@ -15,21 +32,18 @@ FactoryGirl.define do
     secret 'HIJKLMNO'
   end
 
-  def Factory.info_fixture(name)
-    path = File.expand_path('../fixtures/facebook_info_response.json', __FILE__)
-    @json ||= JSON.parse(File.read(path))[name]
-  end
-
-  def Factory.friends_fixture(name)
-    path = File.expand_path('../fixtures/facebook_friends_response.json', __FILE__)
-    @json_friends ||= JSON.parse(File.read(path))[name]
+  factory :wolf_user, parent: :fb_user do
+    wolf_credentials = FactoryGirl.fb_credentials(:wolf)
+    %w(uid token name).each do |attr|
+      send(attr, wolf_credentials[attr])
+    end
   end
 
   factory :wei_fb_profile, class: FacebookProfile do
     user factory: :fb_user#, name: info_fixture("wei")["name"]
-    uid Factory.info_fixture("wei")['id']
-    friends Factory.friends_fixture("wei")
-    info Factory.info_fixture("wei")
+    uid FactoryGirl.info_fixture("wei")['id']
+    friends FactoryGirl.friends_fixture("wei")
+    info FactoryGirl.info_fixture("wei")
   end
 
   factory :facebook_profile do
