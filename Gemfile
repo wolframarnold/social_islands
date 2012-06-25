@@ -66,9 +66,9 @@ group :test do
   # Don't put this in the development group, because it disables all net connections by default !!!
   gem 'database_cleaner', '~> 0.8.0'
   gem 'spork', '~> 0.9.2'
-  gem 'factory_girl_rails', '~> 3.3.0', require: false
+  gem 'factory_girl_rails', '~> 3.5.0', require: false
   gem 'webmock', '~> 1.8.7'
-  gem 'vcr', '~> 2.2.0'
+  gem 'vcr', '~> 2.2.2'
 end
 
 group :production do
