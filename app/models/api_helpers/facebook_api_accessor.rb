@@ -4,7 +4,7 @@ module ApiHelpers::FacebookApiAccessor
 
   included do
 
-    field :uid,               type: String
+    field :uid,               type: Integer
     field :image,             type: String
     field :name,              type: String
     # TODO: move 'graph' elsewhere
@@ -16,19 +16,21 @@ module ApiHelpers::FacebookApiAccessor
     field :statuses,          type: Array
     field :likes,             type: Array
     field :checkins,          type: Array
-    field :info,              type: Hash
     field :permissions,       type: Hash
     field :joined_on,         type: Date
+    field :about_me,          type: Hash
 
     # TODO: Move the computed values to the User model
     field :trust_score,       type: Integer
     field :profile_maturity,  type: Integer
 
     field :user_stat,         type: Hash
-    field :info_via_friend,   type: Hash
+    field :fields_via_friend,   type: Hash
 
     index :user_id, unique: true
     index :uid, unique: true
+
+    attr_accessor :friends, :edges
 
   end
 
@@ -85,24 +87,57 @@ module ApiHelpers::FacebookApiAccessor
 
   module ClassMethods
 
-    def get_uid(token)
-      fields = Koala::Facebook::API.new(token).get_object('me', fields: 'id')
-      fields['id']
+    def get_uid_name_image(token)
+      fields = Koala::Facebook::API.new(token).get_object('me', fields: 'id,name,picture')
+      # NOTE: FB also returns a "type" field which is, e.g "user" but probably indicates 'page' or similar for other entities
+      fields['image'] = fields['picture']
+      fields['uid'] = fields['id']
+      fields.slice *%w(uid name image)
     end
 
   end
 
   # Instance Methods
 
+  def import_profile_and_network!
+    get_about_me_and_friends
+    get_engagement_data_and_network_graph
+    save!  # if this is going to SQL, put save! last to take advantage of transaction
+    generate_friends_records!
+  end
+
+  def koala_client
+    @koala_client ||= Koala::Facebook::API.new(self.token)
+  end
+
   def get_about_me_and_friends(friend_uids = nil)
-    queue_user_info
+    queue_user_about_me
     queue_all_friends(friend_uids)
 
     execute_fb_batch_query
 
-    self.uid = self.info['id']
-    self.name = self.info['name']
+    self.uid = self.about_me['id']
+    self.name = self.about_me['name']
   end
+
+  def generate_friends_records!
+    friends.each do |friend|
+      fp = self.class.find_or_create_by_uid_and_api_key friend.merge({token: token, api_key: api_key})
+      fp.map_friend_to_ego_attributes(friend)
+      fp.save
+      create_or_update_friendships(fp, friend)
+    end
+  end
+
+  # (Partial) mapping of the FB-returned attributes of a friend
+  # into the record of a direct user (ego) -- this is to normalize access
+  def map_friend_to_ego_attributes(friend_raw)
+    self.fields_via_friend = friend_raw
+    self.name = friend_raw['name']
+    self.image = friend_raw['pic']
+  end
+
+  private
 
   def get_engagement_data_and_network_graph
     queue_user_permissions
@@ -119,14 +154,15 @@ module ApiHelpers::FacebookApiAccessor
     execute_fb_batch_query
   end
 
-  def import_profile_and_network!
-    get_about_me_and_friends
-    get_engagement_data_and_network_graph
-    save!  # if this is going to SQL, put save! last to take advantage of transaction
-    generate_friends_records!
-  end
+  def create_or_update_friendships(friend_fp, friend_raw)
+    outbound_friendship_uids = {facebook_profile_from_uid: self.uid, facebook_profile_to_uid: friend_fp.uid}
+    outbound_friendship_params = outbound_friendship_uids.merge friend_raw.slice *(FB_FIELDS_FRIENDSHIP_DIRECTED + FB_FIELDS_FRIENDSHIP_UNDIRECTED)
+    FacebookFriendship.collection.update(outbound_friendship_uids, {:$set => outbound_friendship_params}, upsert: true)
 
-  private
+    inbound_friendship_uids = {facebook_profile_from_uid: friend_fp.uid, facebook_profile_to_uid: self.uid}
+    inbound_friendship_params = inbound_friendship_uids.merge friend_raw.slice(*FB_FIELDS_FRIENDSHIP_UNDIRECTED)
+    FacebookFriendship.collection.update(inbound_friendship_uids, {:$set => inbound_friendship_params}, upsert: true)
+  end
 
   def queue_user_permissions
     add_to_fb_batch_query(:permissions) { |batch_client| batch_client.get_connections("me", "permissions") }
@@ -164,7 +200,7 @@ module ApiHelpers::FacebookApiAccessor
     add_to_fb_batch_query(:tagged) { |batch_client| batch_client.get_connections("me", "tagged") }
   end
 
-  def queue_user_info
+  def queue_user_about_me
     add_to_fb_batch_query(:about_me) { |batch_client| batch_client.get_object("me") }
   end
 
@@ -237,28 +273,6 @@ module ApiHelpers::FacebookApiAccessor
     end
     # reset batch client and array, for next batch
     @batch_client = @batched_attributes = nil
-  end
-
-  def koala_client
-    @koala_client ||= Koala::Facebook::API.new(self.token)
-  end
-
-  def generate_friends_records!
-    friends.each do |friend|
-      user, fp = User.find_or_create_with_facebook_profile_by_uid(uid: friend['uid'], name: friend['name'], image: friend['pic'])
-      fp.update_attribute(:info_via_friend, friend)
-      create_or_update_friendships(fp, friend)
-    end
-  end
-
-  def create_or_update_friendships(friend_fp, friend_raw)
-    outbound_friendship_ids = {facebook_profile_from_id: self.id, facebook_profile_to_id: friend_fp.id}
-    outbound_friendship_params = outbound_friendship_ids.merge friend_raw.slice *(FB_FIELDS_FRIENDSHIP_DIRECTED + FB_FIELDS_FRIENDSHIP_UNDIRECTED)
-    FacebookFriendship.collection.update(outbound_friendship_ids, {:$set => outbound_friendship_params}, upsert: true)
-
-    inbound_friendship_ids = {facebook_profile_from_id: friend_fp.id, facebook_profile_to_id: self.id}
-    inbound_friendship_params = inbound_friendship_ids.merge friend_raw.slice(*FB_FIELDS_FRIENDSHIP_UNDIRECTED)
-    FacebookFriendship.collection.update(inbound_friendship_ids, {:$set => inbound_friendship_params}, upsert: true)
   end
 
 end

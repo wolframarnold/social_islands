@@ -11,15 +11,14 @@ module Computations::FacebookProfileComputations
   end
 
   def compute_joined_on
-    lid = (self.uid).to_i
-    if(lid<100000)
+    if(uid<100000)
       self.joined_on = Date.parse('2004-01-01')
-    elsif(lid<100000000)
+    elsif(uid<100000000)
       self.joined_on = Date.parse('2007-01-01')
-    elsif (lid <1000000000000)
+    elsif (uid <1000000000000)
       self.joined_on = Date.parse('2009-06-01')
     else
-      self.joined_on = interpolate_date(lid)
+      self.joined_on = interpolate_date(uid)
     end
     #  #self.joined_on = f(self.uid)
     #  # notice, there are Rails time helpers like 1.month.ago or 1.day.ago + 1.month.from_now, google it/see docs, etc.

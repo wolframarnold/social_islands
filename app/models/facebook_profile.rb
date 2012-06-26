@@ -22,7 +22,17 @@ class FacebookProfile
   has_one :photo_engagements, autosave: true, as: :engagements, class_name: 'PhotoEngagements', inverse_of: :facebook_profile
   has_one :status_engagements, autosave: true, as: :engagements, class_name: 'StatusEngagements', inverse_of: :facebook_profile
 
-  has_many :facebook_friendships, foreign_key: :facebook_profile_from_id
+  # All the records for a given profile that match the UID
+  scope :profile_variants, lambda { |fp| where(uid: fp.uid) }
+
+  def friends_variants
+    uids = FacebookFriendship.from(self).only(:facebook_profile_to_uid).map(&:facebook_profile_to_uid)
+    self.class.any_in(uid: uids)
+  end
+
+  def friendships
+    FacebookFriendship.from(self)
+  end
 
   #HEAVY_FIELDS = [:friends, :edges, :graph, :histogram_num_connections]
 
@@ -40,7 +50,7 @@ class FacebookProfile
     fp = FacebookProfile.where(params).first
     return fp unless fp.nil?
 
-    params[:uid] = self.get_uid(params[:token])  # FB API call to get UID from token
+    params.merge! self.get_uid_name_image(params[:token])  # FB API call to get UID, name, image from token
     self.find_or_create_by_uid_and_api_key(params)
   end
 
@@ -48,8 +58,10 @@ class FacebookProfile
   # uid:     Facebook UID
   # api_key: trust.cc API key
   # token:   Facebook OAuth token, when record is to be created
+  # name:    Name of user (optional)
+  # image:   Image of user (optional)
   def self.find_or_create_by_uid_and_api_key(params)
-    params = params.with_indifferent_access.slice(:token, :api_key, :uid)
+    params = params.with_indifferent_access.slice(:uid, :api_key, :token, :name, :image)
     raise ArgumentError.new(':uid and :api_key parameters are required!') if params[:uid].blank? || params[:api_key].blank?
 
     fp = FacebookProfile.where(params.except(:token)).first
@@ -59,12 +71,13 @@ class FacebookProfile
       if fp_with_same_uid = FacebookProfile.where(uid: params[:uid]).first
         fp.user_id = fp_with_same_uid.user_id
       else
-        fp.user = User.new # fp.build_user -- throws method_missing error for some reason?
+        fp.user = User.new params.slice(:name, :image) # fp.build_user -- throws method_missing error for some reason?
       end
       fp.save
     end
     fp
   end
+
 
   ## 1. Look up by token.
   ## 2. If that fails, go to FB and get UID then try to find record by UID.

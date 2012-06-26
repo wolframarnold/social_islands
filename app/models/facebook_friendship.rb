@@ -2,16 +2,16 @@ class FacebookFriendship
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :facebook_profile_from, class_name: 'FacebookProfile', inverse_of: :facebook_profile, index: true
-  belongs_to :facebook_profile_to, class_name: 'FacebookProfile', inverse_of: :facebook_profile, index: true
+  field :can_post,                  type: Boolean
+  field :mutual_friend_count,       type: Integer
+  field :facebook_profile_from_uid, type: Integer
+  field :facebook_profile_to_uid, type: Integer
 
-  field :can_post,            type: Boolean
-  field :mutual_friend_count, type: Integer
+  index :facebook_profile_from_uid, unique: true
+  index :facebook_profile_to_uid, unique: true
 
-  index [ [ :facebook_profile_from, Mongo::ASCENDING ],
-          [ :facebook_profile_to, Mongo::ASCENDING ] ],
-        unique: true
+  validates :facebook_profile_from_uid, :facebook_profile_to_uid, presence: true
 
-  validates :facebook_profile_from_id, :facebook_profile_to_id, presence: true
+  scope :from, lambda { |facebook_profile| where(facebook_profile_from_uid: facebook_profile.uid) }
 
 end

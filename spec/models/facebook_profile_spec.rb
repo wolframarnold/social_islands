@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'spec_helper'
 
 describe FacebookProfile do
@@ -137,7 +135,8 @@ describe FacebookProfile do
 
     context 'FB Profile for token and API key does not exist' do
       it 'looks up UID from FB and calls .find_or_create_by_uid_and_api_key' do
-        FacebookProfile.should_receive(:get_uid).with('token_123qwer').and_return('uid_7654321')
+        FacebookProfile.should_receive(:get_uid_name_image).with('token_123qwer').
+            and_return('uid' => 'uid_7654321', 'name' => 'John Smith', 'image' => 'http://example.com/john_smith.jpg')
         FacebookProfile.should_receive(:find_or_create_by_uid_and_api_key).with hash_including(api_key: 'api_key_zzzxxxcccvvv', uid: 'uid_7654321', token: 'token_123qwer')
 
         FacebookProfile.find_or_create_by_token_and_api_key(
@@ -158,13 +157,15 @@ describe FacebookProfile do
       end
     end
     context 'FB Profile for UID *and* API key does not exist' do
-      let(:params) { {uid: 'uid_123abc', api_key: 'api_key_098zyx', token: 'token_567dfg'} }
+      let(:params) { {uid: 'uid_123abc', api_key: 'api_key_098zyx', token: 'token_567dfg', name: 'John Smith', image: 'http://example.com/john_smith.jpg'} }
       it 'creates FB Profile and User' do
         expect {
           expect {
             fp = FacebookProfile.find_or_create_by_uid_and_api_key(params)
             fp.should be_kind_of(FacebookProfile)
             fp.user.should_not be_nil
+            fp.user.name.should == 'John Smith'
+            fp.user.image.should == 'http://example.com/john_smith.jpg'
           }.to change(FacebookProfile,:count).by(1)
         }.to change(User,:count).by(1)
       end

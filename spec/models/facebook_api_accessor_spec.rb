@@ -2,50 +2,35 @@
 
 require 'spec_helper'
 
-def verify_lars(user, ff, uid)
-  user.name.should == 'Lars Kamp'
-  user.uid.should == uid.to_s
-  ff.mutual_friend_count.should == 5 # current FB data
-  ff.can_post.should be_true
-end
-
-def verify_weidong(user, ff, uid)
-  user.name.should == 'Weidong Yang'
-  user.uid.should == uid.to_s
-  ff.mutual_friend_count.should == 15 # current FB data
-  ff.can_post.should be_true
-end
-
 describe FacebookProfile do
 
-  context 'FB request batching' do
-    let(:fp) { FactoryGirl.create(:facebook_profile, user: user) }
-
-    before do
-      fp.info = {'name' => 'joe', 'uid' => '222222'}
-      fp.should_receive(:execute_fb_batch_query).twice
-    end
-
-    it 'batches all requests' do
-      fp.get_profile_and_network_graph!
-      batched_attrs = fp.instance_variable_get(:@batched_attributes)
-      batched_attrs.should include(attr: :edges, chunked: true)
-      batched_attrs.should include(attr: :photos, chunked: false)
-      batched_attrs.should include(attr: :image, chunked: false)
-      batched_attrs.should include(attr: :posts, chunked: false)
-      batched_attrs.should include(attr: :tagged, chunked: false)
-      batched_attrs.should include(attr: :locations, chunked: false)
-      batched_attrs.should include(attr: :statuses, chunked: false)
-      batched_attrs.should include(attr: :info, chunked: false)
-    end
-
-  end
+  #context 'FB request batching' do
+  #  let(:fp) { create :facebook_profile }
+  #
+  #  before do
+  #    fp.info = {'name' => 'joe', 'uid' => '222222'}
+  #    fp.should_receive(:execute_fb_batch_query).twice
+  #  end
+  #
+  #  it 'batches all requests' do
+  #    fp.import_profile_and_network!
+  #    batched_attrs = fp.instance_variable_get(:@batched_attributes)
+  #    batched_attrs.should include(attr: :edges, chunked: true)
+  #    batched_attrs.should include(attr: :photos, chunked: false)
+  #    batched_attrs.should include(attr: :image, chunked: false)
+  #    batched_attrs.should include(attr: :posts, chunked: false)
+  #    batched_attrs.should include(attr: :tagged, chunked: false)
+  #    batched_attrs.should include(attr: :locations, chunked: false)
+  #    batched_attrs.should include(attr: :statuses, chunked: false)
+  #    batched_attrs.should include(attr: :info, chunked: false)
+  #  end
+  #
+  #end
 
   context '#import_profile_and_network!'
 
   context 'FB Queries' do
-    let!(:wolf_user) {FactoryGirl.create(:wolf_user)}
-    let!(:wolf_fp)   {wolf_user.create_facebook_profile.reload}  # need reload here, otherwise we get some decorated Mongoid object, because Mongo doesn't return the object after a create operation unless 'safe' is on
+    let!(:wolf_fp)   { create :facebook_profile }
     let!(:batch_client_mock) { mock('batch_client_mock') }
 
     before do
@@ -73,20 +58,17 @@ describe FacebookProfile do
   end
 
   context '#generate_friends_records!' do
-    let!(:wolf_user)  { FactoryGirl.create(:wolf_user) }
-    let!(:wolf_fp)    { wolf_user.create_facebook_profile }
+    let!(:wolf_fp)    { create :facebook_profile }
     let(:lars_uid)    { 553647753 }
     let(:weidong_uid) { 563900754 }
 
     before :all do
       VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong') do
-        wolf_fp.friends.should be_nil
         wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid])
-        wolf_fp.friends.should_not be_empty
       end
     end
 
-    it 'generates a User and FacebookProfile record for every friend and sets up friendships' do
+    it 'generates a User and FacebookProfile record for every friend' do
       expect {
       expect {
         wolf_fp.generate_friends_records!
@@ -94,42 +76,68 @@ describe FacebookProfile do
       }.to change(FacebookProfile,:count).by(2)
     end
 
-    it '#create_or_update_friendships(friend_fp, friend_raw) enters two friendship records for each friend' do
-      expect {
-        wolf_fp.generate_friends_records!
-      }.to change{wolf_fp.facebook_friendships.count}.by(2)
-      ffs = wolf_fp.facebook_friendships.all
+    it "writes about me data on friends from FB into fields_via_friend" do
+      wolf_fp.generate_friends_records!
+      wei = FacebookProfile.where(uid: weidong_uid).first
 
-      user1 = FacebookProfile.find(ffs[0].facebook_profile_to_id)
-      user2 = FacebookProfile.find(ffs[1].facebook_profile_to_id)
-
-      if user1.name == 'Lars Kamp'
-        verify_lars(lars = user1, ff_lars = ffs[0], lars_uid)
-        verify_weidong(weidong = user2, ff_weidong = ffs[1], weidong_uid)
-      else
-        verify_weidong(weidong = user1, ff_weidong = ffs[0], weidong_uid)
-        verify_lars(lars = user2, ff_lars = ffs[1], lars_uid)
-      end
-
-      # reciprocal connections
-      ff_lars = FacebookFriendship.where(facebook_profile_from_id: lars.id).first
-      ff_lars.mutual_friend_count.should == 5
-      ff_lars.can_post.should be_nil  # not set on reciprocal relationship (directional attribute)
-      ff_weidong = FacebookFriendship.where(facebook_profile_from_id: weidong.id).first
-      ff_weidong.mutual_friend_count.should == 15
-      ff_weidong.can_post.should be_nil  # not set on reciprocal relationship (directional attribute)
+      wei.about_me.should be_nil
+      wei.locations.should be_nil
+      wei.fields_via_friend.keys.should == ApiHelpers::FacebookApiAccessor::FB_FIELDS_FRIENDS
+      # Note: Not all fields om fields_via_friend are non-null
     end
 
-    it "writes data on friends from FB into info_via_friend" do
+    it "for a friend record denormalizes name, image, token, api_key" do
       wolf_fp.generate_friends_records!
       wei = FacebookProfile.where(uid: weidong_uid).first
 
       wei.name.should == 'Weidong Yang'
       wei.image.should == 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/370434_563900754_1952612728_s.jpg'
-      wei.info.should be_nil
-      wei.locations.should be_nil
-      wei.info_via_friend.keys.should == ApiHelpers::FacebookApiAccessor::FB_FIELDS_FRIENDS
-      # Note: Not all fields om info_via_friend are non-null
+      wei.token.should == wolf_fp.token
+      wei.api_key.should == wolf_fp.api_key
+    end
+
+    context '#create_or_update_friendships' do
+
+      it 'creates two friendship records for each friend, by UID' do
+        expect {
+          expect {
+            wolf_fp.generate_friends_records!
+          }.to change{FacebookFriendship.from(wolf_fp).count}.by(2)
+        }.to change{FacebookFriendship.count}.by(4)
+      end
+
+      it 'can retrieve friends using scope: friends_with_variations' do
+        wolf_fp.generate_friends_records!
+        lars, weidong = wolf_fp.friends_variants.order([:name, :asc]).all
+
+        lars.name.should == 'Lars Kamp'
+        lars.uid.should == lars_uid
+
+        weidong.name.should == 'Weidong Yang'
+        weidong.uid.should == weidong_uid
+      end
+
+      it 'can retrieve friendship; records "can_post" uni-directionally and "mutual_friend_count" bi-directionally' do
+        wolf_fp.generate_friends_records!
+        friendships = wolf_fp.friendships
+        friendships.count.should == 2
+        friendships.map(&:facebook_profile_to_uid).should =~ [lars_uid, weidong_uid]
+        friendships.map(&:can_post).should == [true, true]
+        friendships.map(&:mutual_friend_count).should =~ [5, 15]
+
+        lars, weidong = wolf_fp.friends_variants.order([:name, :asc]).to_a
+
+        lars.friendships.count.should == 1
+        lars.friendships[0].mutual_friend_count.should == 5 # current FB data
+        lars.friendships[0].can_post.should be_nil
+        weidong.friendships.count.should == 1
+        weidong.friendships[0].mutual_friend_count.should == 15 # current FB data
+        weidong.friendships[0].can_post.should be_nil
+      end
+
+      it 'does not write duplicate friendships if they exist already' do
+        # This can happen since we allow multiple FB Profile records with the same
+      end
     end
 
   end
