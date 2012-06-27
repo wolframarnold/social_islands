@@ -2,43 +2,20 @@ require 'spec_helper'
 
 describe FacebookProfilesController do
 
-  let!(:user) { FactoryGirl.create(:fb_user) }
+  let!(:facebook_profile) { create(:facebook_profile) }
 
   before do
-    controller.stub!(:current_user).and_return(user)
-    session[:user_id] = user.to_param
+    controller.stub!(:current_facebook_profile).and_return(facebook_profile)
+    session[:facebook_profile_id] = facebook_profile.to_param
   end
 
-  context 'profile exists' do
-
+  context '#show' do
     before do
-      Resque.should_receive(:enqueue).with(FacebookFetcher, user.to_param, 'viz')
+      Resque.should_receive(:enqueue).with(FacebookFetcher, facebook_profile.to_param, 'viz')
     end
-
-    let!(:facebook_profile) { user.create_facebook_profile }
-
-    it 'assigns @facebook_profile' do
+    it 'pushes job on queue and sets @has_graph' do
       get :show
-
-      facebook_profile.should be_persisted
-      assigns[:facebook_profile].should == facebook_profile
-    end
-
-  end
-
-  context 'profile does not exist' do
-
-    before do
-      Resque.should_receive(:enqueue).with(FacebookFetcher, user.to_param, 'viz')
-    end
-
-    it 'creates a new facebook_profile instance from the current user' do
-      expect {
-        get :show
-      }.to change(FacebookProfile,:count)
-
-      assigns[:facebook_profile].should_not be_nil
-      assigns[:facebook_profile].should be_persisted
+      assigns(:has_graph).should_not be_nil
     end
   end
 

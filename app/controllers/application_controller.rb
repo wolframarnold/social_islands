@@ -4,15 +4,15 @@ class ApplicationController < ActionController::Base
   protected
 
   def signed_in?
-    session[:user_id] = params[:user_id] if params[:user_id] && Rails.env.development?
-    session[:user_id].present?
+    session[:facebook_profile_id] = params[:facebook_profile_id] if params[:facebook_profile_id] && Rails.env.development?
+    session[:facebook_profile_id].present?
   end
   helper_method :signed_in?
 
-  def current_user
-    User.find(session[:user_id])
+  def current_facebook_profile
+    FacebookProfile.find(session[:facebook_profile_id])
   end
-  helper_method :current_user
+  helper_method :current_facebook_profile
 
   def authenticate!
     redirect_to root_path unless signed_in?

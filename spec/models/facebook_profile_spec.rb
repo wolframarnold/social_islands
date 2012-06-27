@@ -157,8 +157,12 @@ describe FacebookProfile do
       end
     end
     context 'FB Profile for UID *and* API key does not exist' do
-      let(:params) { {uid: 'uid_123abc', api_key: 'api_key_098zyx', token: 'token_567dfg', name: 'John Smith', image: 'http://example.com/john_smith.jpg'} }
-      it 'creates FB Profile and User' do
+      before { Time.stub!(:now).and_return(Time.utc(2012)) }
+      let(:params) { {uid: 'uid_123abc', api_key: 'api_key_098zyx',
+                      token: 'token_567dfg', token_expires: true, token_expires_at: 3.months.from_now,
+                      name: 'John Smith', image: 'http://example.com/john_smith.jpg'} }
+
+      it 'creates FB Profile and User, setting optional parameters' do
         expect {
           expect {
             fp = FacebookProfile.find_or_create_by_uid_and_api_key(params)
@@ -169,11 +173,15 @@ describe FacebookProfile do
           }.to change(FacebookProfile,:count).by(1)
         }.to change(User,:count).by(1)
       end
-      it 'sets UID, API Key and Token on FacebookProfile' do
+      it 'sets UID, API Key, Token and Token Expiry on FacebookProfile' do
         fp = FacebookProfile.find_or_create_by_uid_and_api_key(params)
         fp.uid.should == 'uid_123abc'
         fp.api_key.should == 'api_key_098zyx'
         fp.token.should == 'token_567dfg'
+        fp.token_expires.should be_true
+        # There seems to be some subtle issue with time comparison where the value
+        # differs by a few milliseconds, even when stubbed -- may be a platform-specific issue
+        fp.token_expires_at.utc.to_s.should == 3.months.from_now.to_datetime.to_s
       end
     end
     context 'FB Profile for UID but different API key exists' do

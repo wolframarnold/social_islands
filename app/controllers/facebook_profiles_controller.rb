@@ -1,27 +1,27 @@
 class FacebookProfilesController < ApplicationController
 
   before_filter :authenticate!, except: :login
-  before_filter :load_fb_profile, only: [:show, :label]
 
   def login
     return redirect_to(facebook_profile_path) if signed_in?
   end
 
   def show
-    @facebook_profile = current_user.create_facebook_profile if @facebook_profile.nil?
-    @has_graph = @facebook_profile.has_graph?
-    # We always enqueue -- Fetcher is smart enough to not fetch or compute graph if it's been done already
-    if Rails.env.development?
-      FacebookFetcher.perform(current_user.to_param, 'viz')
-    else
-      Resque.enqueue(FacebookFetcher, current_user.to_param, 'viz')
-    end
+    # Note: Job will be a no-op if fetch already occurred and graph exists,
+    # otherwise it does what's necessary
+    @has_graph = current_facebook_profile.facebook_graph.count !=0
 
+    # Hack for dev environment: run direct w/o resque queue for easier setup and debugging
+    if Rails.env.development?
+      FacebookFetcher.perform(current_facebook_profile.to_param, 'viz')
+    else
+      Resque.enqueue(FacebookFetcher, current_facebook_profile.to_param, 'viz')
+    end
   end
 
   def graph
-    # current_user.facebook_profile.only(:graph) is not supported by Mongoid...
-    render :text => FacebookProfile.graph_only.where(user_id: current_user.id).first.graph, :content_type => 'application/gexf+xml', :layout => false
+    # current_facebook_profile.facebook_profile.only(:graph) is not supported by Mongoid...
+    render :text => FacebookProfile.graph_only.where(user_id: current_facebook_profile.id).first.graph, :content_type => 'application/gexf+xml', :layout => false
   end
 
   def label
@@ -36,10 +36,4 @@ class FacebookProfilesController < ApplicationController
     #render json: {error: "miserable failure"}, status: 500
   end
 
-
-  private
-
-  def load_fb_profile
-    @facebook_profile = current_user.facebook_profile
-  end
 end

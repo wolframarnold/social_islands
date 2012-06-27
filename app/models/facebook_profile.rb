@@ -5,10 +5,16 @@ class FacebookProfile
   include ApiHelpers::FacebookApiAccessor
   include Computations::FacebookProfileComputations
 
-  attr_accessible :uid, :name, :image, :token
+  attr_accessible :uid, :name, :image, :token, :token_expires, :token_expires_at
 
-  field :token,   type: String
-  field :api_key, type: String
+  field :uid,              type: Integer
+  field :name,             type: String
+  field :image,            type: String
+  field :token,            type: String
+  field :api_key,          type: String
+  field :token_expires,    type: Boolean
+  field :token_expires_at, type: DateTime
+  field :last_fetched_at,  type: DateTime
 
   belongs_to :user, autosave: true, index: true
 
@@ -17,7 +23,7 @@ class FacebookProfile
   index [:uid, :api_key], unique: true
   index [:token, :api_key], unique: true
 
-  embeds_many :labels, inverse_of: :facebook_profile
+  has_one :facebook_graph, dependent: :destroy
 
   has_one :photo_engagements, autosave: true, as: :engagements, class_name: 'PhotoEngagements', inverse_of: :facebook_profile
   has_one :status_engagements, autosave: true, as: :engagements, class_name: 'StatusEngagements', inverse_of: :facebook_profile
@@ -55,16 +61,18 @@ class FacebookProfile
   end
 
   # expected params:
-  # uid:     Facebook UID
-  # api_key: trust.cc API key
-  # token:   Facebook OAuth token, when record is to be created
-  # name:    Name of user (optional)
-  # image:   Image of user (optional)
+  # uid:              Facebook UID
+  # api_key:          trust.cc API key
+  # token:            Facebook OAuth token, when record is to be created
+  # name:             Name of user (String, optional)
+  # image:            Image of user (String (url), optional)
+  # token_expires:    From FB OAuth response (boolean, optional)
+  # token_expires_at: From OmniAuth (DateTime, optional)
   def self.find_or_create_by_uid_and_api_key(params)
-    params = params.with_indifferent_access.slice(:uid, :api_key, :token, :name, :image)
+    params = params.with_indifferent_access.slice(:uid, :api_key, :token, :name, :image, :token_expires, :token_expires_at)
     raise ArgumentError.new(':uid and :api_key parameters are required!') if params[:uid].blank? || params[:api_key].blank?
 
-    fp = FacebookProfile.where(params.except(:token)).first
+    fp = FacebookProfile.where(params.slice(:uid, :api_key)).first
     if fp.nil?
       fp = self.new(params.except(:api_key))
       fp.api_key = params[:api_key]  # not mass-assignable for spoofing protection

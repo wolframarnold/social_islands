@@ -4,9 +4,6 @@ module ApiHelpers::FacebookApiAccessor
 
   included do
 
-    field :uid,               type: Integer
-    field :image,             type: String
-    field :name,              type: String
     # TODO: move 'graph' elsewhere
     field :graph,             type: String
     field :photos,            type: Array
@@ -102,6 +99,7 @@ module ApiHelpers::FacebookApiAccessor
   def import_profile_and_network!
     get_about_me_and_friends
     get_engagement_data_and_network_graph
+    self.last_fetched_at = Time.now.utc
     save!  # if this is going to SQL, put save! last to take advantage of transaction
     generate_friends_records!
   end
@@ -261,7 +259,7 @@ module ApiHelpers::FacebookApiAccessor
 
   def execute_fb_batch_query
     # Batch execution returns an array of combined results, in the order they were queued
-    Rails.logger.tagged("User#_id=#{self.user_id}") { Rails.logger.info "FB Batch call for attrs: [#{@batched_attributes.join(', ')}]" }
+    Rails.logger.tagged("FacebookProfile#_id=#{self.to_param}") { Rails.logger.info "FB Batch call for attrs: [#{@batched_attributes.join(', ')}]" }
     @batch_client.execute.each_with_index do |result, idx|
       attr = @batched_attributes[idx]
       if attr[:chunked]

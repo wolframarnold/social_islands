@@ -4,33 +4,43 @@ require 'spec_helper'
 
 describe FacebookProfile do
 
-  #context 'FB request batching' do
-  #  let(:fp) { create :facebook_profile }
-  #
-  #  before do
-  #    fp.info = {'name' => 'joe', 'uid' => '222222'}
-  #    fp.should_receive(:execute_fb_batch_query).twice
-  #  end
-  #
-  #  it 'batches all requests' do
-  #    fp.import_profile_and_network!
-  #    batched_attrs = fp.instance_variable_get(:@batched_attributes)
-  #    batched_attrs.should include(attr: :edges, chunked: true)
-  #    batched_attrs.should include(attr: :photos, chunked: false)
-  #    batched_attrs.should include(attr: :image, chunked: false)
-  #    batched_attrs.should include(attr: :posts, chunked: false)
-  #    batched_attrs.should include(attr: :tagged, chunked: false)
-  #    batched_attrs.should include(attr: :locations, chunked: false)
-  #    batched_attrs.should include(attr: :statuses, chunked: false)
-  #    batched_attrs.should include(attr: :info, chunked: false)
-  #  end
-  #
-  #end
+  let!(:wolf_fp)    { create :facebook_profile }
+  let(:lars_uid)    { 553647753 }
+  let(:weidong_uid) { 563900754 }
 
-  context '#import_profile_and_network!'
+  before :all do
+    VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong') do
+      wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid])
+    end
+  end
+
+  context '#import_profile_and_network!' do
+
+    before do
+      wolf_fp.should_receive(:execute_fb_batch_query).twice
+      wolf_fp.about_me = {'id' => wolf_fp.to_param, 'name' => wolf_fp.name}
+    end
+
+    it 'batches all requests' do
+      wolf_fp.import_profile_and_network!
+      batched_attrs = wolf_fp.instance_variable_get(:@batched_attributes)
+      batched_attrs.should include(attr: :edges, chunked: true)
+      batched_attrs.should include(attr: :photos, chunked: false)
+      batched_attrs.should include(attr: :image, chunked: false)
+      batched_attrs.should include(attr: :posts, chunked: false)
+      batched_attrs.should include(attr: :tagged, chunked: false)
+      batched_attrs.should include(attr: :locations, chunked: false)
+      batched_attrs.should include(attr: :statuses, chunked: false)
+      batched_attrs.should include(attr: :about_me, chunked: false)
+    end
+
+    it 'sets last_fetched_at' do
+      wolf_fp.import_profile_and_network!
+      wolf_fp.last_fetched_at.should_not be_nil
+    end
+  end
 
   context 'FB Queries' do
-    let!(:wolf_fp)   { create :facebook_profile }
     let!(:batch_client_mock) { mock('batch_client_mock') }
 
     before do
@@ -58,16 +68,6 @@ describe FacebookProfile do
   end
 
   context '#generate_friends_records!' do
-    let!(:wolf_fp)    { create :facebook_profile }
-    let(:lars_uid)    { 553647753 }
-    let(:weidong_uid) { 563900754 }
-
-    before :all do
-      VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong') do
-        wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid])
-      end
-    end
-
     it 'generates a User and FacebookProfile record for every friend' do
       expect {
       expect {

@@ -69,7 +69,7 @@ Spork.prefork do
   OmniAuth.config.test_mode = true
   OmniAuth.config.add_mock(:facebook, {
     info: {name: 'Joe Smith', image: 'http://example.com/joesmith.png'},
-    credentials: {token: 'abcdefg', secret: 'hijklmnop'},
+    credentials: {token: 'abcdefg', secret: 'hijklmnop', expires: true, expires_at: 3.months.from_now.to_i},
     uid: '123456790'
   })
 end

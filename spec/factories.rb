@@ -61,8 +61,6 @@ FactoryGirl.define do
     #          "pic"=>"https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/27430_553647753_3455_s.jpg", "pic_square"=>"https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/27430_553647753_3455_q.jpg",
     #          "sex"=>"male", "verified"=>nil, "likes_count"=>46, "mutual_friend_count"=>2}]
     #edges   [{"uid1"=>"563900754", "uid2"=>"553647753"}, {"uid1"=>"553647753", "uid2"=>"563900754"}]
-    #graph   '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gexf xmlns=\"http://www.gexf.net/1.2draft\" version=\"1.2\" xmlns:viz=\"http://www.gexf.net/1.2draft/viz\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd\"></gexf>'
-    #labels []
     photos  { [{"id" => "10150701778989412",
                "from" => {"name" => "Yannis Adoniou's KUNST-STOFF",
                           "category" => "Non-profit organization",
@@ -246,6 +244,11 @@ FactoryGirl.define do
                                        "name" => "Angie Simmons"}],
                            "paging" => {"next" => "https://graph.facebook.com/426734264008786/likes?access_token=AAAE77rDZABK8BACHHscqqUhHtqsyWWGdChYAA71azLZBjoZBOv8T3ksHcI6lfUWefZC6qZAAVAbATgGiRbnPKWEDZCxwOoW7jSFhNOgVdZCwAZDZD&limit=25&offset=25&__after_id=1269520910"}}}
              ] }
+  end
+
+  factory :facebook_graph do
+    facebook_profile
+    gexf '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gexf xmlns=\"http://www.gexf.net/1.2draft\" version=\"1.2\" xmlns:viz=\"http://www.gexf.net/1.2draft/viz\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd\"></gexf>'
   end
 
   factory :api_client do

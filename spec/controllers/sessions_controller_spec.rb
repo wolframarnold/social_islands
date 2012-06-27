@@ -22,38 +22,33 @@ describe SessionsController do
       controller.should be_signed_in
     end
 
-    it 'sets current_user' do
+    it 'sets current_facebook_profile' do
       get :create, :provider => 'facebook'
-      user = controller.current_user
-      user.should be_kind_of(User)
-      user.uid.should == OmniAuth.mock_auth_for(:facebook)[:uid]
-      user.name.should == OmniAuth.mock_auth_for(:facebook)[:info][:name]
-      user.image.should == OmniAuth.mock_auth_for(:facebook)[:info][:image]
-      user.token.should == OmniAuth.mock_auth_for(:facebook)[:credentials][:token]
-      user.secret.should == OmniAuth.mock_auth_for(:facebook)[:credentials][:secret]
+      fp = controller.current_facebook_profile
+      fp.should be_kind_of(FacebookProfile)
+      fp.uid.should == OmniAuth.mock_auth_for(:facebook)[:uid].to_i
+      fp.api_key.should == 'social_islands'
+      fp.name.should == OmniAuth.mock_auth_for(:facebook)[:info][:name]
+      fp.image.should == OmniAuth.mock_auth_for(:facebook)[:info][:image]
+      fp.token.should == OmniAuth.mock_auth_for(:facebook)[:credentials][:token]
+      fp.token_expires.should be_true
+      fp.token_expires_at.should > 2.months.from_now
     end
 
-    it 'creates a user if not found' do
-      expect {
-        get :create, :provider => 'facebook'
-      }.to change(User,:count).by(1)
-    end
-
-    it 'does not create a user if one exists' do
-      FactoryGirl.create(:fb_user, uid: OmniAuth.mock_auth_for(:facebook)[:uid])
+    it 'does not create a FacebookProfile if one exists' do
+      create(:facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY)
 
       expect {
         get :create, :provider => 'facebook'
-      }.to_not change(User,:count)
+      }.to_not change(FacebookProfile,:count)
     end
 
-    it 'sets user_id in session' do
-      user = FactoryGirl.create(:fb_user, uid: OmniAuth.mock_auth_for(:facebook)[:uid])
+    it 'sets facebook_profile_id in session' do
+      fp = create(:facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY)
 
       get :create, :provider => 'facebook'
-      session[:user_id].should == user.to_param
+      session[:facebook_profile_id].should == fp.to_param
     end
-
 
   end
 
@@ -73,23 +68,23 @@ describe SessionsController do
 
   context '#destroy' do
     before do
-      @user = FactoryGirl.create(:fb_user)
-      controller.stub(:current_user).and_return(@user)
+      @fp = create(:facebook_profile)
+      controller.stub(:current_facebook_profile).and_return(@fp)
       class << controller
         public :facebook_sign_out_url
       end
     end
 
     it 'deletes session' do
-      session[:user_id] = 'some user_id'
+      session[:facebook_profile_id] = 'some fp_id'
       expect {
         get :destroy
-      }.to change{session[:user_id]}.from('some user_id').to(nil)
+      }.to change{session[:facebook_profile_id]}.from('some fp_id').to(nil)
     end
 
     it 'redirects to root_path' do
       get :destroy
-      response.should redirect_to(controller.facebook_sign_out_url(@user.token))
+      response.should redirect_to(controller.facebook_sign_out_url(@fp.token))
     end
   end
 end

@@ -2,26 +2,16 @@ class SessionsController < ApplicationController
 
   def create
     omni = request.env['omniauth.auth']
+    Rails.logger.info omni.inspect
 
-    if omni['uid'].blank? || omni['provider'].blank?
+    if omni['uid'].blank? || omni['provider'].blank? || omni['provider'] != 'facebook'
       # Ward off robots, etc, that may be hitting this url with get requests
       redirect_to auth_failure_path
     else
       flash[:notice] = "Successfully logged in"
 
-      user = User.where(provider: omni['provider'], uid: omni['uid']).first
-      if user.nil?
-        user = User.new(provider: omni['provider'], uid: omni['uid'], image: omni['info']['image'], name: omni['info']['name'])
-        set_credentials(user,omni['credentials'])
-        user.save!
-      else
-        # TODO: Possibly not a good idea to store the token and secret here -- is this vulnerable?
-        set_credentials(user,omni['credentials'])
-        user.save!
-      end
-
-      # TODO: Is the session automatically secure with a fingerprint digest? I think so, but need to double check
-      session[:user_id] = user.to_param
+      fp = FacebookProfile.find_or_create_by_uid_and_api_key profile_attributes_from_omni(omni)
+      session[:facebook_profile_id] = fp.to_param
       redirect_to send("#{omni['provider']}_profile_path")
     end
   end
@@ -32,19 +22,30 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    token = current_user.token
+    token = current_facebook_profile.token
     reset_session
     redirect_to facebook_sign_out_url(token)
   end
 
   private
 
-  def set_credentials(user,omni_credentials)
-    user.token = omni_credentials['token']
-    user.secret = omni_credentials['secret']
-    user.expires_at = Time.at(omni_credentials['expires_at']) unless omni_credentials['expired_at'].blank?
-    user.expires = omni_credentials['expires']
+  def profile_attributes_from_omni(omni)
+    { uid: omni['uid'],
+      api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY,
+      token: omni['credentials']['token'],
+      image: omni['info']['image'],
+      name: omni['info']['name'],
+      token_expires: omni['credentials']['expires']
+    }.tap do |h|
+      h[:token_expires_at] = Time.at(omni['credentials']['expires_at']) unless omni['credentials']['expires_at'].blank?
+    end
   end
+  #
+  #def set_credentials(user,omni_credentials)
+  #  user.token = omni_credentials['token']
+  #  user.expires_at = Time.at(omni_credentials['expires_at']) unless omni_credentials['expires_at'].blank?
+  #  user.expires = omni_credentials['expires']
+  #end
 
   def facebook_sign_out_url(token)
     "https://www.facebook.com/logout.php?next=#{root_url}&access_token=#{token}"
