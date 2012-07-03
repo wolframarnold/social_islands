@@ -5,7 +5,7 @@ describe FacebookProfile do
 
   context '#collect_friends_location_stats' do
 
-    it 'returns locations map from friends sorted by frequency' do
+    xit 'returns locations map from friends sorted by frequency' do
       exp = [["San Francisco, California, United States", 252], ["Oakland, California, United States", 48],
              ["Berkeley, California, United States", 16], ["New York, New York, United States", 14],
              ["Los Angeles, California, United States", 13], ["San Jose, California, United States", 12],

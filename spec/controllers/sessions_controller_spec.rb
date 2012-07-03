@@ -36,7 +36,7 @@ describe SessionsController do
     end
 
     it 'does not create a FacebookProfile if one exists' do
-      create(:facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY)
+      create(:wolf_facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY)
 
       expect {
         get :create, :provider => 'facebook'
@@ -44,7 +44,7 @@ describe SessionsController do
     end
 
     it 'sets facebook_profile_id in session' do
-      fp = create(:facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY)
+      fp = create(:wolf_facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY)
 
       get :create, :provider => 'facebook'
       session[:facebook_profile_id].should == fp.to_param
@@ -68,7 +68,7 @@ describe SessionsController do
 
   context '#destroy' do
     before do
-      @fp = create(:facebook_profile)
+      @fp = create(:wolf_facebook_profile)
       controller.stub(:current_facebook_profile).and_return(@fp)
       class << controller
         public :facebook_sign_out_url

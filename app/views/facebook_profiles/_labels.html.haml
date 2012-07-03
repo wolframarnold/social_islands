@@ -1,5 +1,5 @@
-- @facebook_profile.labels.each do |label|
-  = form_for @facebook_profile, url: label_facebook_profile_path, html: {class: 'form-inline island-form', id: nil} do |f|
+- facebook_profile.facebook_graph_lightweight.labels.each do |label|
+  = form_for facebook_profile, url: label_facebook_profile_path, html: {class: 'form-inline island-form', id: nil} do |f|
     .island-label
       %button.btn.island-show{style: "color: #{css_rgb_from_rgb_hash(label.color)}", title: "Click to show"}
         %strong= label.name

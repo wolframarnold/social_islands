@@ -12,7 +12,8 @@ class PushToWebController < ApplicationController
     ESHQ.send(channel: 'graph_ready_'+Digest::SHA1.hexdigest(params[:facebook_profile_id]),
               data: {message: 'graph_ready',
                      # render returns an array -- why?
-                     labels_html: render(partial: 'facebook_profiles/labels').first}.to_json,
+                     labels_html: render(partial: 'facebook_profiles/labels',
+                                         locals: {facebook_profile: @facebook_profile}).first}.to_json,
               type: 'message')
     head 200
   end

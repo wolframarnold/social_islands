@@ -6,6 +6,9 @@ class FacebookGraph
   field :gexf, type: String
 
   belongs_to :facebook_profile, index: true
-  embeds_many :facebook_graph_labels, inverse_of: :facebook_graph
+
+  embeds_many :labels, class_name: 'FacebookGraphLabel', inverse_of: :facebook_graph
+
+  scope :without_gexf, without(:gexf)
 
 end

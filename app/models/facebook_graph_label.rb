@@ -2,7 +2,7 @@ class FacebookGraphLabel
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  embedded_in :facebook_graph, inverse_of: :facebook_graph_labels
+  embedded_in :facebook_graph, inverse_of: :labels
 
   field :name,        type: String
   field :group_index, type: Integer

@@ -7,6 +7,8 @@ SocialIslands::Application.routes.draw do
   post '/profile' => 'api#create_profile'
   get '/score' => 'api#score'
 
+  get '/faq' => 'pages#faq'
+
   # Omniauth routes
   match '/auth/:provider/callback' => 'sessions#create'
   match '/auth/failure' => 'sessions#failure'

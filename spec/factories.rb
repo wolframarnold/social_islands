@@ -28,13 +28,11 @@ FactoryGirl.define do
     name 'Joe Smith'
     provider 'facebook'
     image 'http://example.com/joesmith.png'
-    token 'BCDEFG'
-    secret 'HIJKLMNO'
   end
 
   factory :wolf_user, parent: :fb_user do
     wolf_credentials = FactoryGirl.fb_credentials(:wolf)
-    %w(uid token name).each do |attr|
+    %w(uid name).each do |attr|
       send(attr, wolf_credentials[attr])
     end
   end
@@ -43,15 +41,15 @@ FactoryGirl.define do
     user factory: :fb_user#, name: info_fixture("wei")["name"]
     uid FactoryGirl.info_fixture("wei")['id']
     friends FactoryGirl.friends_fixture("wei")
-    info FactoryGirl.info_fixture("wei")
+    about_me FactoryGirl.info_fixture("wei")
   end
 
-  factory :facebook_profile do
-    user factory: :fb_user
+  factory :wolf_facebook_profile, class: FacebookProfile do
+    user factory: :wolf_user
     uid  { user.uid }
     name { user.name }
+    token FactoryGirl.fb_credentials(:wolf)['token']
     api_key 'zxcv0987'
-    token 'BCDEFG'
     #friends [{"uid"=>'563900754', "name"=>"Weidong Yang",
     #          "first_name"=>"Weidong", "last_name"=>"Yang",
     #          "pic"=>"https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/186383_563900754_1786047058_s.jpg", "pic_square"=>"https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/186383_563900754_1786047058_q.jpg",
@@ -247,7 +245,7 @@ FactoryGirl.define do
   end
 
   factory :facebook_graph do
-    facebook_profile
+    facebook_profile factory: :wolf_facebook_profile
     gexf '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gexf xmlns=\"http://www.gexf.net/1.2draft\" version=\"1.2\" xmlns:viz=\"http://www.gexf.net/1.2draft/viz\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd\"></gexf>'
   end
 

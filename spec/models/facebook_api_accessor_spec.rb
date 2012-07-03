@@ -4,13 +4,15 @@ require 'spec_helper'
 
 describe FacebookProfile do
 
-  let!(:wolf_fp)    { create :facebook_profile }
+  let!(:wolf_fp)    { create :wolf_facebook_profile }
   let(:lars_uid)    { 553647753 }
   let(:weidong_uid) { 563900754 }
 
-  before :all do
-    VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong') do
+  before do
+    class << wolf_fp; public :get_engagement_data_and_network_graph; end
+    VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong', allow_playback_repeats: true) do
       wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid])
+      wolf_fp.get_engagement_data_and_network_graph
     end
   end
 
@@ -24,7 +26,7 @@ describe FacebookProfile do
     it 'batches all requests' do
       wolf_fp.import_profile_and_network!
       batched_attrs = wolf_fp.instance_variable_get(:@batched_attributes)
-      batched_attrs.should include(attr: :edges, chunked: true)
+      batched_attrs.should include(attr: :mutual_friends_raw, chunked: true)
       batched_attrs.should include(attr: :photos, chunked: false)
       batched_attrs.should include(attr: :image, chunked: false)
       batched_attrs.should include(attr: :posts, chunked: false)
@@ -59,7 +61,7 @@ describe FacebookProfile do
       end
 
       it "only queries the UID's provided" do
-        wolf_fp.should_receive(:add_to_fb_batch_query).with(:friends).and_yield batch_client_mock
+        wolf_fp.should_receive(:add_to_fb_batch_query).with(:friends_raw).and_yield batch_client_mock
         batch_client_mock.should_receive(:fql_query).with(/FROM user WHERE uid IN \(123098,98543\)/)
 
         wolf_fp.queue_all_friends([123098, 98543])
@@ -86,6 +88,25 @@ describe FacebookProfile do
       # Note: Not all fields om fields_via_friend are non-null
     end
 
+    it "includes friends array (as facebook_profile_uids) in direct user's record" do
+      wolf_fp.generate_friends_records!
+      wolf_fp.facebook_profile_uids.should =~ [lars_uid, weidong_uid]
+    end
+
+    it "friends arrays are many-to-many relationships with indirect users' (friends') records" do
+      wolf_fp.generate_friends_records!
+      friends = wolf_fp.facebook_profiles.order_by([:uid, :asc]).all # Lars has lower uid
+      # Wolf & Lars mutual friends
+      scott_thorpe_uid = 503484735
+      moritz_von_der_linden_uid = 642633629
+      meghan_hughes_uid = 697626226
+      jutta_kamp_uid = 1466344023
+      friends[0].facebook_profile_uids.should =~ [wolf_fp.uid, weidong_uid, scott_thorpe_uid, moritz_von_der_linden_uid, meghan_hughes_uid, jutta_kamp_uid]
+      # Wolf & Weidong mutual friends
+      weidong_wolf_mutual_friend_uids = [223888, 1200385, 532933782, 538362618, 567455648, 633819791, 641972802, 656512960, 746870400, 781849541, 1050211056, 1519692151, 100000549325522]
+      friends[1].facebook_profile_uids.should =~ [wolf_fp.uid, lars_uid] + weidong_wolf_mutual_friend_uids
+    end
+
     it "for a friend record denormalizes name, image, token, api_key" do
       wolf_fp.generate_friends_records!
       wei = FacebookProfile.where(uid: weidong_uid).first
@@ -96,47 +117,23 @@ describe FacebookProfile do
       wei.api_key.should == wolf_fp.api_key
     end
 
-    context '#create_or_update_friendships' do
+    it 'sets can_post on self' do
+      wolf_fp.generate_friends_records!
+      wolf_fp.can_post.should =~ [lars_uid, weidong_uid]
+    end
 
-      it 'creates two friendship records for each friend, by UID' do
-        expect {
-          expect {
-            wolf_fp.generate_friends_records!
-          }.to change{FacebookFriendship.from(wolf_fp).count}.by(2)
-        }.to change{FacebookFriendship.count}.by(4)
+    context '#gather_friends_by_uid_from_raw_data' do
+      before do
+        class << wolf_fp; public :gather_friends_by_uid_from_raw_data; end
       end
-
-      it 'can retrieve friends using scope: friends_with_variations' do
-        wolf_fp.generate_friends_records!
-        lars, weidong = wolf_fp.friends_variants.order([:name, :asc]).all
-
-        lars.name.should == 'Lars Kamp'
-        lars.uid.should == lars_uid
-
-        weidong.name.should == 'Weidong Yang'
-        weidong.uid.should == weidong_uid
+      let(:mutual_friends_raw) { [{'uid1'=>'123','uid2'=>'456'}, {'uid1'=>'123','uid2'=>'457'}, {'uid1'=>'456','uid2'=>'123'}, {'uid1'=>'456','uid2'=>'457'}, {'uid1'=>'457','uid2'=>'456'}, {'uid1'=>'457','uid2'=>'123'}] }
+      it 'groups by uid and turns into numbers' do
+        wolf_fp.mutual_friends_raw = mutual_friends_raw
+        wolf_fp.gather_friends_by_uid_from_raw_data.should == {123=>Set.new([456,457]), 456=>Set.new([123,457]), 457=>Set.new([123,456])}
       end
-
-      it 'can retrieve friendship; records "can_post" uni-directionally and "mutual_friend_count" bi-directionally' do
-        wolf_fp.generate_friends_records!
-        friendships = wolf_fp.friendships
-        friendships.count.should == 2
-        friendships.map(&:facebook_profile_to_uid).should =~ [lars_uid, weidong_uid]
-        friendships.map(&:can_post).should == [true, true]
-        friendships.map(&:mutual_friend_count).should =~ [5, 15]
-
-        lars, weidong = wolf_fp.friends_variants.order([:name, :asc]).to_a
-
-        lars.friendships.count.should == 1
-        lars.friendships[0].mutual_friend_count.should == 5 # current FB data
-        lars.friendships[0].can_post.should be_nil
-        weidong.friendships.count.should == 1
-        weidong.friendships[0].mutual_friend_count.should == 15 # current FB data
-        weidong.friendships[0].can_post.should be_nil
-      end
-
-      it 'does not write duplicate friendships if they exist already' do
-        # This can happen since we allow multiple FB Profile records with the same
+      it 'fills data gaps to make relationships symmetrical' do
+        wolf_fp.mutual_friends_raw = mutual_friends_raw.values_at(0,3,5)
+        wolf_fp.gather_friends_by_uid_from_raw_data.should == {123=>Set.new([456,457]), 456=>Set.new([123,457]), 457=>Set.new([123,456])}
       end
     end
 

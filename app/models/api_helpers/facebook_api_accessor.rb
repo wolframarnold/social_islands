@@ -16,19 +16,32 @@ module ApiHelpers::FacebookApiAccessor
     field :permissions,       type: Hash
     field :joined_on,         type: Date
     field :about_me,          type: Hash
+    field :can_post,          type: Array, default: []  # UID's where self has permission to make wall posts
+
+    field :facebook_profile_uids, type: Array, default: []  # for mutual friends
 
     # TODO: Move the computed values to the User model
     field :trust_score,       type: Integer
     field :profile_maturity,  type: Integer
-
+    # Move this to stats table
     field :user_stat,         type: Hash
+
     field :fields_via_friend,   type: Hash
 
     index :user_id, unique: true
     index :uid, unique: true
 
-    attr_accessor :friends, :edges
+    attr_accessor :friends_raw, :mutual_friends_raw
 
+  end
+
+  # Note: We're not using has_and_belongs_to_many, because Mongoid's implementation
+  # of this wants to save both records after adding a reference on either side
+  # which does not scale well. Since we only write the relationships once and all other
+  # access is to read, the Mongoid has_and_belongs_to_many relationship doesn't add that
+  # much for us anyway; we simply implement the read accessor here
+  def facebook_profiles
+    FacebookProfile.any_in(uid: facebook_profile_uids)
   end
 
   # Profile info on a user
@@ -100,8 +113,7 @@ module ApiHelpers::FacebookApiAccessor
     get_about_me_and_friends
     get_engagement_data_and_network_graph
     self.last_fetched_at = Time.now.utc
-    save!  # if this is going to SQL, put save! last to take advantage of transaction
-    generate_friends_records!
+    generate_friends_records!  # will save
   end
 
   def koala_client
@@ -119,12 +131,16 @@ module ApiHelpers::FacebookApiAccessor
   end
 
   def generate_friends_records!
-    friends.each do |friend|
-      fp = self.class.find_or_create_by_uid_and_api_key friend.merge({token: token, api_key: api_key})
-      fp.map_friend_to_ego_attributes(friend)
-      fp.save
-      create_or_update_friendships(fp, friend)
+    mutual_friends_ids = gather_friends_by_uid_from_raw_data
+    friends_raw.each do |friend_raw|
+      fp = self.class.find_or_create_by_uid_and_api_key friend_raw.merge({token: token, api_key: api_key})
+      fp.map_friend_to_ego_attributes(friend_raw)
+      fp.facebook_profile_uids = mutual_friends_ids[fp.uid].to_a + [self.uid]
+      fp.save!
+      self.can_post << fp.uid if friend_raw['can_post']
+      self.facebook_profile_uids << fp.uid
     end
+    save!
   end
 
   # (Partial) mapping of the FB-returned attributes of a friend
@@ -152,14 +168,19 @@ module ApiHelpers::FacebookApiAccessor
     execute_fb_batch_query
   end
 
-  def create_or_update_friendships(friend_fp, friend_raw)
-    outbound_friendship_uids = {facebook_profile_from_uid: self.uid, facebook_profile_to_uid: friend_fp.uid}
-    outbound_friendship_params = outbound_friendship_uids.merge friend_raw.slice *(FB_FIELDS_FRIENDSHIP_DIRECTED + FB_FIELDS_FRIENDSHIP_UNDIRECTED)
-    FacebookFriendship.collection.update(outbound_friendship_uids, {:$set => outbound_friendship_params}, upsert: true)
-
-    inbound_friendship_uids = {facebook_profile_from_uid: friend_fp.uid, facebook_profile_to_uid: self.uid}
-    inbound_friendship_params = inbound_friendship_uids.merge friend_raw.slice(*FB_FIELDS_FRIENDSHIP_UNDIRECTED)
-    FacebookFriendship.collection.update(inbound_friendship_uids, {:$set => inbound_friendship_params}, upsert: true)
+  # Converts edged from FB raw data, like [{'123' => '456'}, {'123' => '457'}, ...]
+  # into a hash where each key is a (numerical) UID and each value is a list of friend UID's, e.g.:
+  # {123 => [456, 789], 456 => [123, 789], ...}
+  def gather_friends_by_uid_from_raw_data
+    mutual_friends_raw.reduce({}) do |hash, uid_pair|  # uid_pair: {'123' => '456'}
+      uid1, uid2 = uid_pair.values.map(&:to_i)
+      #next hash if uid1 == self.uid || uid2 == self.uid
+      hash[uid1] ||= Set.new
+      hash[uid1] << uid2
+      hash[uid2] ||= Set.new
+      hash[uid2] << uid1
+      hash
+    end
   end
 
   def queue_user_permissions
@@ -211,7 +232,7 @@ module ApiHelpers::FacebookApiAccessor
       fql = "SELECT #{FB_FIELDS_FRIENDS.join(',')} FROM user WHERE uid IN (#{friend_uids.join(',')}) ORDER by mutual_friend_count DESC"
     end
 
-    add_to_fb_batch_query(:friends) { |batch_client| batch_client.fql_query(fql) }
+    add_to_fb_batch_query(:friends_raw) { |batch_client| batch_client.fql_query(fql) }
   end
 
   # Returns an array of arrays of friends, chunked such that neither sub-array
@@ -220,7 +241,7 @@ module ApiHelpers::FacebookApiAccessor
     row_ct = 0
     chunks = []
     curr_chunk = []
-    friends.each do |friend|
+    friends_raw.each do |friend|
       mf_ct = (friend['mutual_friend_count'] || 5) # sometimes mutual_friend_count returns nil, FB bug? https://developers.facebook.com/bugs/249611311795121  Assume 5 mutual friends
       row_ct += mf_ct
       if row_ct >= 5000
@@ -234,7 +255,7 @@ module ApiHelpers::FacebookApiAccessor
     chunks
   end
 
-  # Returns an array of FQL queries to retrieve the edges (connections between) all the friends
+  # Returns an array of FQL queries to retrieve the egdes (connections between) all the friends
   def queue_fql_queries_for_mutual_friends
     # FB reports at most 5000 rows per query. Based on the mutual friend counts, we can calculate how many friends
     # we should include in the edges query (next) here to stay below 5000 results
@@ -246,7 +267,7 @@ module ApiHelpers::FacebookApiAccessor
       "SELECT uid1,uid2 FROM friend WHERE uid1 IN (#{ids}) AND uid2 IN (SELECT uid2 FROM friend WHERE uid1=me()) ORDER BY uid1"
     end
     fql_queries.each do |fql|
-      add_to_fb_batch_query(:edges, true) { |batch_client| batch_client.fql_query(fql) }
+      add_to_fb_batch_query(:mutual_friends_raw, true) { |batch_client| batch_client.fql_query(fql) }
     end
   end
 

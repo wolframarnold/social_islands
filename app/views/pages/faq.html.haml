@@ -1,0 +1,67 @@
+%h1 FAQ
+
+%h2 What is Social Islands?
+
+%p
+  Social Islands places your friends on Facebook in a universe around you.
+  We use the connections between your friends to naturally group them into clusters&mdash;
+  or islands&mdash;so you can visualize the social structure of your network.
+
+%p
+  In one island you might find all of your high school classmates. In another,
+  your basketball buddies. In a further island, perhaps the friends you met while
+  out traveling the world.
+
+%p
+  We loved 
+  = link_to 'InMaps on LinkedIn', 'http://inmaps.linkedinlabs.com/'
+  and wanted to have a similar visualization tool for our Facebook network,
+  so we built Social Islands.
+
+%p
+  To see your universe in islands, use your mouse to click and drag
+  %i (coming soon)
+  to move the map around. You can scroll to zoom in and out.
+  Then move your mouse to the labels on the right and click on each label
+  to edit and enter the label for each island.
+
+%p
+  You might notice that some friends have a larger dot than others.
+  This illustrates that they have many mutual friends within your network.
+  In social network terminology, they are hubs and connectors in your network.
+  In Social Islands speak, they're the island you want to be stranded on when
+  you're lost at sea or lost in space.
+
+%p
+  Some of your friends fall in between two or more islands.
+  They have friends in several communities within your network and so they serve as
+  bridges between your social islands.
+
+%p
+  You might notice it can take a long time to generate your social island universe
+  if you have a large social network of friends on Facebook.
+  That's because it's computationally intensive to create Social Islands and
+  pulling the data from Facebook itself is time consuming. At Social Islands,
+  once you log in after the first time we can cache your graph though our database
+  so that the next time you login you'll see your islands right away.
+
+%h2 What technologies are used to make Social Islands?
+
+%p
+  We use
+  #{link_to 'Gephi', 'http://gephi.org/'},
+  #{link_to 'Ruby on Rails', 'http://rubyonrails.org/'},
+  #{link_to 'Java', 'http://www.java.com/en/'} and
+  #{link_to 'R', 'http://www.r-project.org/'}
+  for graph generation and calculation.
+
+  The visualization is powered by #{link_to 'Sigma.js', 'http://sigmajs.org/'}.
+  It is compatible with Chrome, Safari, Firefox and IE9+.
+
+  -#How often do we update graph?
+  -#
+  -#What are those colors? can I change them?
+
+  -#It's beautiful, but I have no clue what it does.  Am I missing something?
+  -#
+  -#(Question from Sarah Allen on May 12, 2012)

@@ -9,7 +9,7 @@ class FacebookProfilesController < ApplicationController
   def show
     # Note: Job will be a no-op if fetch already occurred and graph exists,
     # otherwise it does what's necessary
-    @has_graph = current_facebook_profile.facebook_graph.count !=0
+    @has_graph = !current_facebook_profile.facebook_graph.blank?
 
     # Hack for dev environment: run direct w/o resque queue for easier setup and debugging
     if Rails.env.development?
@@ -20,8 +20,7 @@ class FacebookProfilesController < ApplicationController
   end
 
   def graph
-    # current_facebook_profile.facebook_profile.only(:graph) is not supported by Mongoid...
-    render :text => FacebookProfile.graph_only.where(user_id: current_facebook_profile.id).first.graph, :content_type => 'application/gexf+xml', :layout => false
+    render :text => FacebookGraph.where(facebook_profile_id: current_facebook_profile.id).first.gexf, :content_type => 'application/gexf+xml', :layout => false
   end
 
   def label
@@ -29,11 +28,12 @@ class FacebookProfilesController < ApplicationController
     # this code is currently handling only one
     labels_params = params[:label].first[1]  # get the label hash, i.e. {name: 'abc', group_index: 123}
     group_index = labels_params.delete(:group_index).to_i
-    label = @facebook_profile.labels.find_or_initialize_by(group_index: group_index)
+    graph = current_facebook_profile.facebook_graph
+    return head 404 if graph.nil?
+    label = graph.labels.find_or_initialize_by(group_index: group_index)
     label.attributes = labels_params
-    @facebook_profile.save
+    graph.save
     head 200
-    #render json: {error: "miserable failure"}, status: 500
   end
 
 end

@@ -2,7 +2,6 @@ class SessionsController < ApplicationController
 
   def create
     omni = request.env['omniauth.auth']
-    Rails.logger.info omni.inspect
 
     if omni['uid'].blank? || omni['provider'].blank? || omni['provider'] != 'facebook'
       # Ward off robots, etc, that may be hitting this url with get requests
@@ -40,12 +39,6 @@ class SessionsController < ApplicationController
       h[:token_expires_at] = Time.at(omni['credentials']['expires_at']) unless omni['credentials']['expires_at'].blank?
     end
   end
-  #
-  #def set_credentials(user,omni_credentials)
-  #  user.token = omni_credentials['token']
-  #  user.expires_at = Time.at(omni_credentials['expires_at']) unless omni_credentials['expires_at'].blank?
-  #  user.expires = omni_credentials['expires']
-  #end
 
   def facebook_sign_out_url(token)
     "https://www.facebook.com/logout.php?next=#{root_url}&access_token=#{token}"

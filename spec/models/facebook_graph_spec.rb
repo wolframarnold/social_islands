@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe FacebookGraph do
 
-  let!(:wolf_fp) { create :facebook_profile }
+  let!(:wolf_fp) { create :wolf_facebook_profile }
 
   # Note: These tests are not conclusive, because I can't verify
   # anything in the log that the facebook_graph record is queried,

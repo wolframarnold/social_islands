@@ -13,7 +13,7 @@ class FacebookFetcher
     case computation
       when 'viz'
         # Don't re-generate graph if we already have it
-        return if facebook_profile.facebook_graph.exists?
+        return unless facebook_profile.facebook_graph.blank?
         # NOTE: The args parameters MUST be AN ARRAY, for Jesque to pick it up correctly. It apparently
         # cannot handle hashes.
         Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Enqueuing '#{computation}' job, postback url: '#{postback_url}'" }
