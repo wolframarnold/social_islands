@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.5'
+gem 'rails', '3.2.6'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -12,12 +12,12 @@ gem 'rails', '3.2.5'
 group :assets do
   gem 'sass-rails',   '~> 3.2.5'
   gem 'coffee-rails', '~> 3.2.2'
-  gem 'bootstrap-sass', '~> 2.0.3.1'
-  gem 'bootswatch-rails', '~> 0.0.11'
+  gem 'bootstrap-sass', '~> 2.0.4.0'
+  gem 'bootswatch-rails', '~> 0.0.12'
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platform => :ruby
 
-  gem 'uglifier', '~> 1.2.4'
+  gem 'uglifier', '~> 1.2.6'
 end
 
 gem 'jquery-rails', '~> 2.0.2'
@@ -30,7 +30,7 @@ gem 'omniauth-facebook', '~> 1.3.0'
 gem 'koala', '~> 1.5.0'
 gem 'resque', '~> 1.20.0'
 gem 'thin', '~> 1.3.1'
-gem 'newrelic_rpm', '~> 3.3.5'
+gem 'newrelic_rpm', '~> 3.4.0.1'
 gem 'eshq', '~> 0.0.4'
 gem 'simple_form', '~> 2.0.2'
 gem 'will_paginate_mongoid', '~> 1.0.5'

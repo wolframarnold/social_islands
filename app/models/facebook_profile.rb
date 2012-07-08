@@ -36,6 +36,10 @@ class FacebookProfile
     FacebookGraph.where(facebook_profile_id: self.id).without(:gexf).first
   end
 
+  def has_graph?
+    FacebookGraph.where(facebook_profile_id: self.id).where(:gexf.exists => true).without(:gexf).exists?
+  end
+
   # expected params:
   # token:   OAuth token
   # api_key: trust.cc API key for authorized client

@@ -9,7 +9,7 @@ class FacebookProfilesController < ApplicationController
   def show
     # Note: Job will be a no-op if fetch already occurred and graph exists,
     # otherwise it does what's necessary
-    @has_graph = !current_facebook_profile.facebook_graph.blank?
+    @has_graph = current_facebook_profile.has_graph?
 
     # Hack for dev environment: run direct w/o resque queue for easier setup and debugging
     if Rails.env.development?

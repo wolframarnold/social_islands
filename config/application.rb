@@ -4,7 +4,7 @@ require File.expand_path('../boot', __FILE__)
 # require "active_record/railtie"
 require "action_controller/railtie"
 require "action_mailer/railtie"
-require "active_resource/railtie"
+#require "active_resource/railtie"
 require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
@@ -43,7 +43,10 @@ module SocialIslands
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]
+    config.filter_parameters += [:password, :token]
+
+    # Enable escaping HTML in JSON.
+    config.active_support.escape_html_entities_in_json = true
 
     # Use SQL instead of Active Record's schema dumper when creating the database.
     # This is necessary if your schema can't be completely dumped by the schema dumper,
@@ -61,9 +64,5 @@ module SocialIslands
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
-
-    # To prevent the stack from being loaded during asset pre-compilation
-    # which causes issues with database connections, see: https://devcenter.heroku.com/articles/rails3x-asset-pipeline-cedar#troubleshooting
-    config.assets.initialize_on_precompile = false
   end
 end

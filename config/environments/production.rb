@@ -61,4 +61,7 @@ SocialIslands::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
+  # To prevent the stack from being loaded during asset pre-compilation
+  # which causes issues with database connections, see: https://devcenter.heroku.com/articles/rails3x-asset-pipeline-cedar#troubleshooting
+  config.assets.initialize_on_precompile = false
 end
