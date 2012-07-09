@@ -46,9 +46,11 @@ describe FacebookProfile do
     end
     context 'FB Profile for UID *and* API key does not exist' do
       before { Time.stub!(:now).and_return(Time.utc(2012)) }
+      let!(:api_client) { create(:api_client, api_key: 'api_key_098zyx')}
       let(:params) { {uid: 'uid_123abc', api_key: 'api_key_098zyx',
                       token: 'token_567dfg', token_expires: true, token_expires_at: 3.months.from_now,
-                      name: 'John Smith', image: 'http://example.com/john_smith.jpg'} }
+                      name: 'John Smith', image: 'http://example.com/john_smith.jpg',
+                      postback_url: 'http://api.example.com/postback'} }
 
       it 'creates FB Profile and User, setting optional parameters' do
         expect {
@@ -61,12 +63,13 @@ describe FacebookProfile do
           }.to change(FacebookProfile,:count).by(1)
         }.to change(User,:count).by(1)
       end
-      it 'sets UID, API Key, Token and Token Expiry on FacebookProfile' do
+      it 'sets UID, API Key, Token and Token Expiry and other attributes on FacebookProfile' do
         fp = FacebookProfile.find_or_create_by_uid_and_api_key(params)
         fp.uid.should == 'uid_123abc'
         fp.api_key.should == 'api_key_098zyx'
         fp.token.should == 'token_567dfg'
         fp.token_expires.should be_true
+        fp.postback_url.should == 'http://api.example.com/postback'
         # There seems to be some subtle issue with time comparison where the value
         # differs by a few milliseconds, even when stubbed -- may be a platform-specific issue
         fp.token_expires_at.utc.to_s.should == 3.months.from_now.to_datetime.to_s
@@ -88,6 +91,23 @@ describe FacebookProfile do
           fp = FacebookProfile.find_or_create_by_uid_and_api_key(params)
           fp.user.should == user
         }.to_not change(User, :count)
+      end
+    end
+
+    context 'postback_url domain validation' do
+      let!(:wolf_fp)    { create(:wolf_facebook_profile) }
+      let!(:api_client) { ApiClient.where(api_key: wolf_fp.api_key).first }
+
+      it 'rejects missing postback domain' do
+        api_client.update_attribute(:postback_domain,nil)
+        wolf_fp.postback_url = 'https://api.example.com/trustcc-postback'
+        wolf_fp.should_not be_valid
+        wolf_fp.errors[:postback_url].should == ["requires a 'postback_domain' on file. Cannot use postback mechanism without it. Configure it on API dashboard."]
+      end
+      it 'rejects non-matching postback domain' do
+        wolf_fp.postback_url = 'https://joe_smith.example.com/trustcc-postback'
+        wolf_fp.should_not be_valid
+        wolf_fp.errors[:postback_url].should == ["does not match 'postback_domain' on file. Postback mechanism disallowed."]
       end
     end
 

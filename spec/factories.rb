@@ -24,30 +24,33 @@ FactoryGirl.define do
   end
 
   factory :fb_user, class: User do
-    uid
     name 'Joe Smith'
-    provider 'facebook'
     image 'http://example.com/joesmith.png'
   end
 
   factory :wolf_user, parent: :fb_user do
-    wolf_credentials = FactoryGirl.fb_credentials(:wolf)
-    %w(uid name).each do |attr|
-      send(attr, wolf_credentials[attr])
+    name wolf_credentials = FactoryGirl.fb_credentials(:wolf)['name']
+    image 'http://example.com/wolf.png'
+  end
+
+  factory :wei_facebook_profile, class: FacebookProfile do
+    name 'Weidong Yang'
+    uid FactoryGirl.fb_credentials(:wei)['uid']
+    image 'https://faceboom.com/weidong.png'
+    user factory: :wolf_user, image: 'https://faceboom.com/weidong.png'
+    token FactoryGirl.fb_credentials(:wei)['token']
+    api_key 'abcdef3567'
+    about_me FactoryGirl.info_fixture("wei")
+    after(:create) do |wei_fp|
+      create(:api_client, api_key: wei_fp.api_key)
     end
   end
 
-  factory :wei_fb_profile, class: FacebookProfile do
-    user factory: :fb_user#, name: info_fixture("wei")["name"]
-    uid FactoryGirl.info_fixture("wei")['id']
-    friends FactoryGirl.friends_fixture("wei")
-    about_me FactoryGirl.info_fixture("wei")
-  end
-
   factory :wolf_facebook_profile, class: FacebookProfile do
-    user factory: :wolf_user
-    uid  { user.uid }
-    name { user.name }
+    name 'Wolfram Arnold'
+    uid 595045215
+    image 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/371822_595045215_1563438209_q.jpg'
+    user factory: :wolf_user, image: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/371822_595045215_1563438209_q.jpg'
     token FactoryGirl.fb_credentials(:wolf)['token']
     api_key 'zxcv0987'
     #friends [{"uid"=>'563900754', "name"=>"Weidong Yang",
@@ -78,8 +81,8 @@ FactoryGirl.define do
                "icon" => "http://static.ak.fbcdn.net/rsrc.php/v1/yz/r/StEh3RhPvjk.gif",
                "created_time" => "2012-04-19T07:06:05+0000",
                "position" => 2, "updated_time" => "2012-04-19T07:06:08+0000",
-               "tags" => {"data" => [{"id" => user.uid,
-                                      "name" => user.name,
+               "tags" => {"data" => [{"id" => uid,
+                                      "name" => name,
                                       "x" => 34.4828, "y" => 72.6937, "created_time" => "2012-04-19T07:07:55+0000"},
                                      {"id" => "589356473",
                                       "name" => "Yannis Adoniou",
@@ -88,8 +91,8 @@ FactoryGirl.define do
                                       "name" => "Marina Fukushima",
                                       "x" => 49.5895, "y" => 37.2694, "created_time" => "2012-04-19T07:06:33+0000"}]},
                "comments" => {"data" => [{"id" => "10150701778989412_6371450",
-                                          "from" => {"name" => user.name,
-                                                     "id" => user.uid},
+                                          "from" => {"name" => name,
+                                                     "id" => uid},
                                           "message" => "Do you know which part of Market St is it?",
                                           "can_remove" => true, "created_time" => "2012-04-19T07:12:05+0000"},
                                          {"id" => "10150701778989412_6371457",
@@ -202,8 +205,8 @@ FactoryGirl.define do
                "icon" => "http://static.ak.fbcdn.net/rsrc.php/v1/yz/r/StEh3RhPvjk.gif",
                "created_time" => "2012-04-06T22:00:20+0000",
                "position" => 8, "updated_time" => "2012-04-06T22:00:21+0000",
-               "tags" => {"data" => [{"id" => user.uid,
-                                      "name" => user.name,
+               "tags" => {"data" => [{"id" => uid,
+                                      "name" => name,
                                       "x" => 29.6504, "y" => 73.0104, "created_time" => "2012-04-06T22:00:48+0000"},
                                      {"id" => "568794740",
                                       "name" => "Chinchin Hsu",
@@ -217,8 +220,8 @@ FactoryGirl.define do
                                           "message" => "this is awesome Weidong! I know you will be a fantastic teacher!:=) I will also spread the word around that you are teaching. :=)",
                                           "created_time" => "2012-04-06T23:27:08+0000"},
                                          {"id" => "426734264008786_1528676",
-                                          "from" => {"name" => user.name,
-                                                     "id" => user.uid},
+                                          "from" => {"name" => name,
+                                                     "id" => uid},
                                           "message" => "Thanks Rico! :)",
                                           "can_remove" => true, "created_time" => "2012-04-07T03:23:40+0000"}],
                               "paging" => {"next" => "https://graph.facebook.com/426734264008786/comments?access_token=AAAE77rDZABK8BACHHscqqUhHtqsyWWGdChYAA71azLZBjoZBOv8T3ksHcI6lfUWefZC6qZAAVAbATgGiRbnPKWEDZCxwOoW7jSFhNOgVdZCwAZDZD&limit=25&offset=25&__after_id=426734264008786_1528676"}},
@@ -242,6 +245,10 @@ FactoryGirl.define do
                                        "name" => "Angie Simmons"}],
                            "paging" => {"next" => "https://graph.facebook.com/426734264008786/likes?access_token=AAAE77rDZABK8BACHHscqqUhHtqsyWWGdChYAA71azLZBjoZBOv8T3ksHcI6lfUWefZC6qZAAVAbATgGiRbnPKWEDZCxwOoW7jSFhNOgVdZCwAZDZD&limit=25&offset=25&__after_id=1269520910"}}}
              ] }
+
+    after(:create) do |wolf_fp|
+      create(:api_client, api_key: wolf_fp.api_key)
+    end
   end
 
   factory :facebook_graph do

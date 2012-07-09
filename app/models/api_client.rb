@@ -11,8 +11,8 @@ class ApiClient
 
   attr_accessible :name, :postback_domain
 
-  validates :name, :api_key, :postback_domain, presence: true
+  validates :name, :api_key, presence: true
 
-  has_and_belongs_to_many :users, dependent: :nullify, index: true
+  #has_and_belongs_to_many :users, dependent: :nullify, index: true
 
 end

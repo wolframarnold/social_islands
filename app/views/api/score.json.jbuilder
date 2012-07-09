@@ -1,1 +1,0 @@
-json.(@facebook_profile, :uid, :profile_maturity, :trust_score)

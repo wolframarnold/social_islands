@@ -2,7 +2,7 @@ class FacebookFetcher
   @queue = :fb_fetcher
 
   # computation is "viz" or "scoring"
-  def self.perform(facebook_profile_id, computation, postback_url=nil)
+  def self.perform(facebook_profile_id, computation, postback_url=nil, postback_customer_id=nil)
     facebook_profile = FacebookProfile.find(facebook_profile_id)
 
     if facebook_profile.last_fetched_at.nil?
@@ -38,6 +38,11 @@ class FacebookFetcher
 
     end
 
+ #rescue Koala::Facebook::APIError => exception
+    #respond_to do |fmt|
+    #  fmt.json { render status: :unprocessable_entity, json: {:errors => exception.message} }
+    #  fmt.html { redirect_to scoring_new_path, flash: {alert: exception.message }}
+    #end
   rescue => e
     Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}", 'Exception') {
       Rails.logger.error e.message

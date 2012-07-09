@@ -4,26 +4,27 @@ class User
 
   # TODO: Move uid, provider out of here, should only reside in FB Profile
   # Move token into a TokenSource table
-  field :uid,        type: String
-  field :provider,   type: String
+  #field :uid,        type: String
+  #field :provider,   type: String
   field :image,      type: String
   field :name,       type: String
-  field :token,      type: String
-  field :secret,     type: String
-  field :expires_at, type: DateTime
-  field :expires,    type: Boolean
+  #field :token,      type: String
+  #field :secret,     type: String
+  #field :expires_at, type: DateTime
+  #field :expires,    type: Boolean
 
-  index [[:uid, Mongo::ASCENDING], [:provider, Mongo::ASCENDING]], unique: true
-  index [[:token, Mongo::ASCENDING], [:provider, Mongo::ASCENDING]], unique: true
+
+  #index [[:uid, Mongo::ASCENDING], [:provider, Mongo::ASCENDING]], unique: true
+  #index [[:token, Mongo::ASCENDING], [:provider, Mongo::ASCENDING]], unique: true
   index :name
   index [[:created_at, Mongo::DESCENDING]]
 
-  attr_accessible :uid, :provider, :image, :name
+  attr_accessible :image, :name, :profile_authenticity, :trus_score
 
  # validates :uid, :provider, :token, presence: true
 
   has_many :facebook_profiles, dependent: :nullify#, autosave: true
-  has_and_belongs_to_many :api_clients, dependent: :nullify, index: true
+  #has_and_belongs_to_many :api_clients, dependent: :nullify, index: true
 
   #def self.find_or_create_with_facebook_profile_by_uid(params)
   #  # Note: Mongoid's find_or_create is NOT atomic!!! Not sure why. See: http://stackoverflow.com/questions/7488334/duplicate-records-created-by-find-or-create-in-railsmongoid
