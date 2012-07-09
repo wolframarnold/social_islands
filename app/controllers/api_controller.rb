@@ -3,9 +3,13 @@ class ApiController < ApplicationController
   before_filter :check_authorization
 
   def create_or_update_profile
-    @facebook_profile = FacebookProfile.find_or_create_by_token_and_api_key(params)
-    Resque.enqueue(FacebookFetcher, @facebook_profile.to_param, 'scoring')
-    head 201
+    @facebook_profile = FacebookProfile.update_or_create_by_token_and_api_key(params)
+    if @facebook_profile.valid?
+      Resque.enqueue(FacebookFetcher, @facebook_profile.to_param, 'scoring')
+      head 201
+    else
+      render json: {errors: @facebook_profile.errors}, status: 422
+    end
 
   rescue ArgumentError => e
     render json: {errors: [e.message]}, status: :unprocessable_entity

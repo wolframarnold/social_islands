@@ -53,15 +53,18 @@ class FacebookProfile
   # api_key: trust.cc API key for authorized client
   # optional params:
   # postback_url -- where to post back to when score is computed
-  def self.find_or_create_by_token_and_api_key(params)
+  def self.update_or_create_by_token_and_api_key(params)
     params = params.with_indifferent_access
     raise ArgumentError.new("'token' and 'api_key' parameters are required!") if params[:token].blank? || params[:api_key].blank?
 
     fp = FacebookProfile.where(params.slice(:token, :api_key)).first
-    return fp unless fp.nil?
-
-    params.merge! self.get_uid_name_image(params[:token])  # FB API call to get UID, name, image from token
-    self.find_or_create_by_uid_and_api_key(params)
+    if fp.present?
+      fp.update_attributes(params)
+      fp
+    else
+      params.merge! self.get_uid_name_image(params[:token])  # FB API call to get UID, name, image from token
+      self.update_or_create_by_uid_and_api_key(params)
+    end
   end
 
   # required params:
@@ -74,7 +77,7 @@ class FacebookProfile
   # token_expires:    From FB OAuth response (boolean, optional)
   # token_expires_at: From OmniAuth (DateTime, optional)
   # postback_url:     From client, Where to post back to when score is computed
-  def self.find_or_create_by_uid_and_api_key(params)
+  def self.update_or_create_by_uid_and_api_key(params)
     params = params.with_indifferent_access
     raise ArgumentError.new(':uid and :api_key parameters are required!') if params[:uid].blank? || params[:api_key].blank?
 
@@ -87,8 +90,10 @@ class FacebookProfile
       else
         fp.user = User.new params.slice(:name, :image) # fp.build_user -- throws method_missing error for some reason?
       end
-      fp.save
+    else
+      fp.attributes = params
     end
+    fp.save
     fp
   end
 

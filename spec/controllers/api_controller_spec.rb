@@ -16,7 +16,8 @@ describe ApiController do
     context 'POST /profile' do
       before do
         Resque.should_receive(:enqueue).with(FacebookFetcher, instance_of(String), 'scoring')
-        FacebookProfile.should_receive(:find_or_create_by_token_and_api_key).and_return(wolf_fp)
+        FacebookProfile.should_receive(:get_uid_name_image).with(post_params[:token]).
+            and_return('name'=>'Wolfram Arnold', 'image'=>'https://facebook.com/wolfram', 'uid'=>wolf_fp.uid)
       end
 
       it 'sends 201 Created' do
@@ -30,6 +31,14 @@ describe ApiController do
         post :create_or_update_profile, post_params.except(:token)
         response.status.should == 422
         JSON.parse(response.body).should == {'errors' => ["'token' and 'api_key' parameters are required!"]}
+      end
+
+      it 'sends 422 Unprocessable if there are errors (e.g. postback_url)' do
+        FacebookProfile.should_receive(:get_uid_name_image).with(post_params[:token]).
+            and_return('name'=>'Wolfram Arnold', 'image'=>'https://facebook.com/wolfram', 'uid'=>wolf_fp.uid)
+        post :create_or_update_profile, post_params.merge(postback_url: 'http://joesmith.example.com')
+        response.status.should == 422
+        JSON.parse(response.body).should == {'errors'=>{'postback_url'=>["does not match 'postback_domain' on file. Postback mechanism disallowed."]}}
       end
     end
 

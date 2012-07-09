@@ -133,7 +133,7 @@ module ApiHelpers::FacebookApiAccessor
   def generate_friends_records!
     mutual_friends_ids = gather_friends_by_uid_from_raw_data
     friends_raw.each do |friend_raw|
-      fp = self.class.find_or_create_by_uid_and_api_key friend_raw.merge({token: token, api_key: api_key})
+      fp = self.class.update_or_create_by_uid_and_api_key friend_raw.merge({token: token, api_key: api_key})
       fp.map_friend_to_ego_attributes(friend_raw)
       fp.facebook_profile_uids = mutual_friends_ids[fp.uid].to_a + [self.uid]
       fp.save!
