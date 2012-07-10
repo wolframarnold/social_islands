@@ -22,6 +22,7 @@ class FacebookProfile
   field :statuses,          type: Array
   field :likes,             type: Array
   field :checkins,          type: Array
+  field :feed,              type: Array
   field :info,              type: Hash
   field :permissions,       type: Hash
   field :joined_on,         type: Date
