@@ -44,8 +44,8 @@ describe FacebookProfile do
         end
       end
 
-      interpolation_samples = [ [  1_000_000_000_000, Date.civil(2009, 7, 1)], # error: Wed, 05 Feb -60207
-                                [ 10_000_000_000_000, Date.civil(2009, 7, 1)], # error: Thu, 20 Feb -54551
+      interpolation_samples = [ [  1_000_000_000_000, Date.civil(2009, 6, 1)],
+                                [ 10_000_000_000_000, Date.civil(2009, 6, 1)],
                                 [100_000_000_000_000, Date.civil(2009, 7,31)],
                                 [100_000_250_000_000, Date.civil(2009, 9,26)],
                                 [100_000_500_000_000, Date.civil(2009,11,23)],

@@ -13,6 +13,10 @@ module Computations::FacebookProfileComputations
           Date.civil(2007,1,1)
         when 100_000_000...1_000_000_000_000
           Date.civil(2009,6,1)
+        when 1_000_000_000_000...100_000_000_000_000
+          # FB's lost interval -- they supposedly skipped this
+          Rails.logger.tagged('uid2joined_on', "FacebookID=#{uid}") { Rails.logger.info "Found Facebook ID #{uid} in range 1_000_000_000_000...100_000_000_000_000 -- didn't expect this. Please investigate" }
+          Date.civil(2009,6,1)
         else
           interpolate_date(uid)
       end
