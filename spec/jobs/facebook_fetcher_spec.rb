@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe FacebookFetcher do
-  let!(:wolf_facebook_profile) { create(:wolf_facebook_profile, profile_maturity: 63, trust_score: 88) }
+  let!(:wolf_facebook_profile) { create(:wolf_facebook_profile, profile_authenticity: 63, trust_score: 88) }
 
   context "first-time profile" do
     it 'retrieves FB profile and network and pushes viz job on queue' do
@@ -26,6 +26,20 @@ describe FacebookFetcher do
 
       a_request(:post, "example.com/score").
           with(body:    {facebook_id: wolf_facebook_profile.uid, profile_authenticity: 63, trust_score: 88},
+               headers: {'Content-Type' => 'application/json'}).should have_been_made.once
+
+    end
+
+    it 'records facebook API error and sends postback with message, if received' do
+      api_error = Koala::Facebook::APIError.new('type'=>'api exception', 'code'=> 234, 'message' => "234, something went wrong")
+      FacebookProfile.any_instance.should_receive(:import_profile_and_network!).and_raise(api_error)
+      stub_http_request(:post, "example.com/score")
+
+      FacebookFetcher.perform(wolf_facebook_profile.to_param, 'scoring', 'http://example.com/score')
+
+      wolf_facebook_profile.reload.facebook_api_error.should == 'api exception: 234, something went wrong'
+      a_request(:post, "example.com/score").
+          with(body:    {errors: {'base' => ['Facebook API Error--api exception: 234, something went wrong']}},
                headers: {'Content-Type' => 'application/json'}).should have_been_made.once
 
     end

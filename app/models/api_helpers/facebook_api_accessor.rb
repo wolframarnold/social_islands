@@ -4,8 +4,6 @@ module ApiHelpers::FacebookApiAccessor
 
   included do
 
-    # TODO: move 'graph' elsewhere
-    field :graph,             type: String
     field :photos,            type: Array
     field :tagged,            type: Array
     field :posts,             type: Array
@@ -20,9 +18,8 @@ module ApiHelpers::FacebookApiAccessor
 
     field :facebook_profile_uids, type: Array, default: []  # for mutual friends
 
-    # TODO: Move the computed values to the User model
-    field :trust_score,       type: Integer
-    field :profile_maturity,  type: Integer
+    field :facebook_api_error, type: String
+
     # Move this to stats table
     field :user_stat,         type: Hash
 

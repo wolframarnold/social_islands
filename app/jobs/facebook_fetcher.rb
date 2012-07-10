@@ -30,20 +30,21 @@ class FacebookFetcher
         facebook_profile.compute_trust_score
         if postback_url.present?
           Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Pinging postback url: #{postback_url}" }
-          response = RestClient.post postback_url,
-                          {facebook_id: facebook_profile.uid,
-                           profile_authenticity: facebook_profile.profile_maturity,
-                           trust_score: facebook_profile.trust_score }.to_json,
-                           content_type: :json, accept: :json
+          RestClient.post postback_url,
+            { facebook_id: facebook_profile.uid,
+              profile_authenticity: facebook_profile.profile_authenticity,
+              trust_score: facebook_profile.trust_score }.to_json,
+            content_type: :json, accept: :json
         end
 
     end
 
- #rescue Koala::Facebook::APIError => exception
-    #respond_to do |fmt|
-    #  fmt.json { render status: :unprocessable_entity, json: {:errors => exception.message} }
-    #  fmt.html { redirect_to scoring_new_path, flash: {alert: exception.message }}
-    #end
+  rescue Koala::Facebook::APIError => exception
+    facebook_profile.update_attribute(:facebook_api_error,exception.message)
+    RestClient.post postback_url,
+      { errors: {base: ["Facebook API Error--#{exception.message}"]} }.to_json,
+      content_type: :json, accept: :json
+
   rescue => e
     Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}", 'Exception') {
       Rails.logger.error e.message
