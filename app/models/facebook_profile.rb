@@ -7,6 +7,7 @@ class FacebookProfile
 
   attr_accessible :uid, :name, :image, :token, :token_expires, :token_expires_at, :postback_url, :facebook_id
 
+  # High-level/common use profile fields
   field :uid,              type: Integer
   field :name,             type: String
   field :image,            type: String
@@ -14,12 +15,47 @@ class FacebookProfile
   field :api_key,          type: String
   field :token_expires,    type: Boolean
   field :token_expires_at, type: DateTime
-  field :last_fetched_at,  type: DateTime
 
+  index :uid, unique: true
+  index :name
+
+  # Last FB contact
+  field :last_fetched_at,  type: DateTime
+  field :last_fetched_by,  type: Integer  # FB UID of user who caused the record to be populated
+                                          # can be user him/herself (direct login) or another user (data retrieved as friend record)
+
+  # For notifying client on fetch & computation completion
   field :postback_url,     type: String
+
+  # High-level scores -- detailed stats in computed_stats field
   field :profile_authenticity, type: Float
   field :trust_score, type: Float
 
+  # Computed entities, intermediate scores, etc. -- all (re-)computable from raw data
+  # Used by module: Computations::FacebookProfileComputations
+  field :computed_stats,     type: Hash
+  field :photo_engagements,  type: Hash
+  field :status_engagements, type: Hash
+
+  # Raw data fields from Facebook
+  # Used by module: ApiHelpers::FacebookApiAccessor
+  field :photos,            type: Array
+  field :tagged,            type: Array
+  field :posts,             type: Array
+  field :locations,         type: Array
+  field :statuses,          type: Array
+  field :likes,             type: Array
+  field :checkins,          type: Array
+  field :permissions,       type: Hash
+  field :joined_on,         type: Date
+  field :about_me,          type: Hash
+  field :edge_count,        type: Integer
+  field :can_post,          type: Array, default: []  # UID's where self has permission to make wall posts
+
+  field :facebook_profile_uids, type: Array, default: []  # for friends
+
+  field :facebook_api_error, type: String
+  field :fields_via_friend,  type: Hash  # profile fields obtains via a friend's permissions
 
   belongs_to :user, autosave: true, index: true
 
@@ -32,9 +68,6 @@ class FacebookProfile
   index [:name, :api_key]
 
   has_one :facebook_graph, dependent: :destroy  # use the method facebook_graph_lightweight if you don't want the gexf file
-
-  has_one :photo_engagements, autosave: true, as: :engagements, class_name: 'PhotoEngagements', inverse_of: :facebook_profile
-  has_one :status_engagements, autosave: true, as: :engagements, class_name: 'StatusEngagements', inverse_of: :facebook_profile
 
   # All the records for a given profile that match the UID
   scope :profile_variants, lambda { |fp| where(uid: fp.uid) }

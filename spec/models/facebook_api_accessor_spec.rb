@@ -36,9 +36,16 @@ describe FacebookProfile do
       batched_attrs.should include(attr: :about_me, chunked: false)
     end
 
-    it 'sets last_fetched_at' do
+    it 'sets last_fetched_at and last_fetched_by' do
       wolf_fp.import_profile_and_network!
       wolf_fp.last_fetched_at.should_not be_nil
+      wolf_fp.last_fetched_by.should_not be_nil
+      wolf_fp.last_fetched_by.should == wolf_fp.uid
+    end
+
+    it 'sets edge_count' do
+      wolf_fp.import_profile_and_network!
+      wolf_fp.edge_count.should == 21
     end
   end
 
@@ -86,6 +93,14 @@ describe FacebookProfile do
       wei.locations.should be_nil
       wei.fields_via_friend.keys.should == ApiHelpers::FacebookApiAccessor::FB_FIELDS_FRIENDS
       # Note: Not all fields om fields_via_friend are non-null
+    end
+
+    it 'sets last_fetched_at; last_fetched_by to user through whom we got the data' do
+      Time.stub!(:now).and_return(jan1_2012 = Time.utc(2012,1,1))
+      wolf_fp.generate_friends_records!
+      wei = FacebookProfile.where(uid: weidong_uid).first
+      wei.last_fetched_at.should == jan1_2012
+      wei.last_fetched_by.should == wolf_fp.uid
     end
 
     it "includes friends array (as facebook_profile_uids) in direct user's record" do

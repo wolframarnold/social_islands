@@ -4,30 +4,6 @@ module ApiHelpers::FacebookApiAccessor
 
   included do
 
-    field :photos,            type: Array
-    field :tagged,            type: Array
-    field :posts,             type: Array
-    field :locations,         type: Array
-    field :statuses,          type: Array
-    field :likes,             type: Array
-    field :checkins,          type: Array
-    field :permissions,       type: Hash
-    field :joined_on,         type: Date
-    field :about_me,          type: Hash
-    field :can_post,          type: Array, default: []  # UID's where self has permission to make wall posts
-
-    field :facebook_profile_uids, type: Array, default: []  # for mutual friends
-
-    field :facebook_api_error, type: String
-
-    # Move this to stats table
-    field :user_stat,         type: Hash
-
-    field :fields_via_friend,   type: Hash
-
-    index :user_id, unique: true
-    index :uid, unique: true
-
     attr_accessor :friends_raw, :mutual_friends_raw
 
   end
@@ -106,10 +82,11 @@ module ApiHelpers::FacebookApiAccessor
 
   # Instance Methods
 
-  def import_profile_and_network!
-    get_about_me_and_friends
+  def import_profile_and_network!(only_uids=nil)
+    get_about_me_and_friends(only_uids)
     get_engagement_data_and_network_graph
     self.last_fetched_at = Time.now.utc
+    self.last_fetched_by = self.uid
     generate_friends_records!  # will save
   end
 
@@ -117,9 +94,9 @@ module ApiHelpers::FacebookApiAccessor
     @koala_client ||= Koala::Facebook::API.new(self.token)
   end
 
-  def get_about_me_and_friends(friend_uids = nil)
+  def get_about_me_and_friends(only_uids = nil)
     queue_user_about_me
-    queue_all_friends(friend_uids)
+    queue_all_friends(only_uids)
 
     execute_fb_batch_query
 
@@ -129,13 +106,17 @@ module ApiHelpers::FacebookApiAccessor
 
   def generate_friends_records!
     mutual_friends_ids = gather_friends_by_uid_from_raw_data
+    self.edge_count = 0
     friends_raw.each do |friend_raw|
       fp = self.class.update_or_create_by_facebook_id_and_api_key friend_raw.merge({token: token, api_key: api_key})
       fp.map_friend_to_ego_attributes(friend_raw)
       fp.facebook_profile_uids = mutual_friends_ids[fp.uid].to_a + [self.uid]
+      fp.last_fetched_at = Time.now
+      fp.last_fetched_by = self.uid
       fp.save!
       self.can_post << fp.uid if friend_raw['can_post']
       self.facebook_profile_uids << fp.uid
+      self.edge_count += fp.facebook_profile_uids.length
     end
     save!
   end
@@ -171,7 +152,6 @@ module ApiHelpers::FacebookApiAccessor
   def gather_friends_by_uid_from_raw_data
     mutual_friends_raw.reduce({}) do |hash, uid_pair|  # uid_pair: {'123' => '456'}
       uid1, uid2 = uid_pair.values.map(&:to_i)
-      #next hash if uid1 == self.uid || uid2 == self.uid
       hash[uid1] ||= Set.new
       hash[uid1] << uid2
       hash[uid2] ||= Set.new
