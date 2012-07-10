@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
     else
       flash[:notice] = "Successfully logged in"
 
-      fp = FacebookProfile.update_or_create_by_uid_and_api_key profile_attributes_from_omni(omni)
+      fp = FacebookProfile.update_or_create_by_facebook_id_and_api_key profile_attributes_from_omni(omni)
       session[:facebook_profile_id] = fp.to_param
       redirect_to send("#{omni['provider']}_profile_path")
     end

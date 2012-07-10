@@ -2,38 +2,41 @@ class ApiController < ApplicationController
 
   before_filter :check_authorization
 
-  def create_or_update_profile
-    @facebook_profile = FacebookProfile.update_or_create_by_token_and_api_key(params)
-    if @facebook_profile.valid?
-      Resque.enqueue(FacebookFetcher, @facebook_profile.to_param, 'scoring')
-      head 201
-    else
-      render json: {errors: @facebook_profile.errors}, status: 422
-    end
+  # TODO: Use single API endpoint /profile
+  # - use it to update token, postback url
+  # - it'll return score if known right away, or else makes a postback call
 
-  rescue ArgumentError => e
-    render json: {errors: [e.message]}, status: :unprocessable_entity
-  end
+  # DOCS: Always pass in a token, if available
+  # Can pass in UID if no token -- API will tell you if we ran it once before already
 
-  def score
-    @facebook_profile = FacebookProfile.where(uid: params[:facebook_profile_id]).first
-    if @facebook_profile.nil?
-      head :not_found
-    else
-      return head :forbidden if @facebook_profile.api_key != params[:api_key]
-      if @facebook_profile.profile_authenticity.present?
-        render :score_ready  # Status 200 -- "OK"
+  def trust_check
+    @facebook_profile = FacebookProfile.update_or_create_by_token_or_facebook_id_and_api_key(params)
+    if @facebook_profile.valid? and !@facebook_profile.changed? # it was saved
+      if @facebook_profile.has_scores?
+        render 'score_ready'
       else
-        if params[:postback_url].present?
-          @facebook_profile.postback_url = params[:postback_url]
-          return render(json: {errors: @facebook_profile.errors}, status: :unprocessable_entity) unless @facebook_profile.save
-        end
         Resque.enqueue(FacebookFetcher, @facebook_profile.to_param, 'scoring', @facebook_profile.postback_url)
-        render :score_not_ready, :status => 202  # "Accepted"
+        render 'score_not_ready', status: :accepted
       end
-
+    else
+      if @facebook_profile.errors[:token].present?
+        # this happens when trying to look up a record by facebook_id w/o token --> it fails creating a new record due to missing token
+        # means the record wasn't found
+        head :not_found
+      else
+        # typically postback_url errors
+        render json: {errors: @facebook_profile.errors}, status: :unprocessable_entity
+      end
     end
+  rescue ArgumentError => e
+    render json: {errors: {base: [e.message]}}, status: :unprocessable_entity
   end
+
+
+  # Other stuff
+  #def drill_down
+  #
+  #end
 #
 #  #def graph
 #  #

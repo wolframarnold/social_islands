@@ -1,11 +1,6 @@
 SocialIslands::Application.routes.draw do
 
-  #get "scoring/new" => 'scoring#new'
-  #get "scoring/show/:id" => 'scoring#show', :as => :scoring_show
-
-  # let use include their own meta data id, etc.
-  post '/v0.9/profile' => 'api#create_or_update_profile'
-  get '/v0.9/score' => 'api#score'
+  post '/v0.9/trust_check' => 'api#trust_check'
 
   get '/faq' => 'pages#faq'
 

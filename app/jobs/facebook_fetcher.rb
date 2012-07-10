@@ -5,6 +5,7 @@ class FacebookFetcher
   def self.perform(facebook_profile_id, computation, postback_url=nil, postback_customer_id=nil)
     facebook_profile = FacebookProfile.find(facebook_profile_id)
 
+    # TODO: Refetch in all cases
     if facebook_profile.last_fetched_at.nil?
       Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Retrieving Facebook profile and network" }
       facebook_profile.import_profile_and_network!

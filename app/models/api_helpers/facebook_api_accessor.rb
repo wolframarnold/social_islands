@@ -97,12 +97,12 @@ module ApiHelpers::FacebookApiAccessor
 
   module ClassMethods
 
-    def get_uid_name_image(token)
+    def get_facebook_id_name_image(token)
       fields = Koala::Facebook::API.new(token).get_object('me', fields: 'id,name,picture')
       # NOTE: FB also returns a "type" field which is, e.g "user" but probably indicates 'page' or similar for other entities
       fields['image'] = fields['picture']
-      fields['uid'] = fields['id']
-      fields.slice *%w(uid name image)
+      fields['facebook_id'] = fields['id']
+      fields.slice *%w(facebook_id name image)
     end
 
   end
@@ -133,7 +133,7 @@ module ApiHelpers::FacebookApiAccessor
   def generate_friends_records!
     mutual_friends_ids = gather_friends_by_uid_from_raw_data
     friends_raw.each do |friend_raw|
-      fp = self.class.update_or_create_by_uid_and_api_key friend_raw.merge({token: token, api_key: api_key})
+      fp = self.class.update_or_create_by_facebook_id_and_api_key friend_raw.merge({token: token, api_key: api_key})
       fp.map_friend_to_ego_attributes(friend_raw)
       fp.facebook_profile_uids = mutual_friends_ids[fp.uid].to_a + [self.uid]
       fp.save!

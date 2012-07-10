@@ -5,7 +5,7 @@ class FacebookProfile
   include ApiHelpers::FacebookApiAccessor
   include Computations::FacebookProfileComputations
 
-  attr_accessible :uid, :name, :image, :token, :token_expires, :token_expires_at, :postback_url
+  attr_accessible :uid, :name, :image, :token, :token_expires, :token_expires_at, :postback_url, :facebook_id
 
   field :uid,              type: Integer
   field :name,             type: String
@@ -48,27 +48,40 @@ class FacebookProfile
     FacebookGraph.where(facebook_profile_id: self.id).where(:gexf.exists => true).without(:gexf).exists?
   end
 
+  def has_scores?
+    profile_authenticity.present?
+  end
+
   # required params:
-  # token:   OAuth token
   # api_key: trust.cc API key for authorized client
+  # and one of:
+  # token:       OAuth token
+  # facebook_id: UID for Facebook record
+  #
   # optional params:
   # postback_url -- where to post back to when score is computed
-  def self.update_or_create_by_token_and_api_key(params)
+  def self.update_or_create_by_token_or_facebook_id_and_api_key(params)
     params = params.with_indifferent_access
-    raise ArgumentError.new("'token' and 'api_key' parameters are required!") if params[:token].blank? || params[:api_key].blank?
 
-    fp = FacebookProfile.where(params.slice(:token, :api_key)).first
-    if fp.present?
-      fp.update_attributes(params)
-      fp
-    else
-      params.merge! self.get_uid_name_image(params[:token])  # FB API call to get UID, name, image from token
-      self.update_or_create_by_uid_and_api_key(params)
+    if params[:api_key].blank? || (params[:token].blank? && params[:facebook_id].blank?)
+      raise ArgumentError.new("'api_key' and 'token' or 'facebook_id' parameters are required!")
+    elsif params[:token].blank?
+      self.update_or_create_by_facebook_id_and_api_key(params)
+    else  # got token -- takes precedence over facebook_id
+      fp = FacebookProfile.where(params.slice(:token, :api_key)).first
+      if fp.present?
+        fp.update_attributes(params)
+        fp
+      else
+        params.merge! self.get_facebook_id_name_image(params[:token])  # FB API call to get UID, name, image from token
+        self.update_or_create_by_facebook_id_and_api_key(params)
+      end
     end
   end
 
   # required params:
-  # uid:              Facebook UID
+  # facebook_id:      Facebook UID
+  # uid:              Facebook UID (also accepted by this key only in this method!)
   # api_key:          trust.cc API key
   # optional params:
   # token:            Facebook OAuth token, when record is to be created
@@ -77,16 +90,17 @@ class FacebookProfile
   # token_expires:    From FB OAuth response (boolean, optional)
   # token_expires_at: From OmniAuth (DateTime, optional)
   # postback_url:     From client, Where to post back to when score is computed
-  def self.update_or_create_by_uid_and_api_key(params)
+  def self.update_or_create_by_facebook_id_and_api_key(params)
     params = params.with_indifferent_access
-    raise ArgumentError.new(':uid and :api_key parameters are required!') if params[:uid].blank? || params[:api_key].blank?
+    params[:facebook_id] = params[:uid] if params[:facebook_id].blank? && params[:uid].present?
+    raise ArgumentError.new(':facebook_id and :api_key parameters are required!') if params[:facebook_id].blank? || params[:api_key].blank?
 
-    fp = FacebookProfile.where(params.slice(:uid, :api_key)).first
+    fp = FacebookProfile.where(uid: params[:facebook_id], api_key: params[:api_key]).first
     if fp.nil?
       fp = self.new(params.except(:api_key))
       fp.api_key = params[:api_key]  # not mass-assignable for spoofing protection
-      if fp_with_same_uid = FacebookProfile.where(uid: params[:uid]).first
-        fp.user_id = fp_with_same_uid.user_id
+      if fp_with_same_facebook_id = FacebookProfile.where(uid: params[:facebook_id]).first
+        fp.user_id = fp_with_same_facebook_id.user_id
       else
         fp.user = User.new params.slice(:name, :image) # fp.build_user -- throws method_missing error for some reason?
       end
@@ -95,6 +109,11 @@ class FacebookProfile
     end
     fp.save
     fp
+  end
+
+  # The outside API's use :facebook_id as key
+  def facebook_id=(uid)
+    self.uid = uid
   end
 
   #def email
@@ -116,10 +135,6 @@ class FacebookProfile
         errors.add(:postback_url, "does not match 'postback_domain' on file. Postback mechanism disallowed.")
       end
     end
-  end
-
-  def postback_domain_matcher
-
   end
 
 end
