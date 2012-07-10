@@ -5,7 +5,7 @@ class FacebookFetcher
   def self.perform(facebook_profile_id, computation, postback_url=nil, postback_customer_id=nil)
     facebook_profile = FacebookProfile.find(facebook_profile_id)
 
-    # TODO: Refetch in all cases
+    # TODO: Refetch in all cases, but make provisions for not over-writing existing graph/score
     if facebook_profile.last_fetched_at.nil?
       Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Retrieving Facebook profile and network" }
       facebook_profile.import_profile_and_network!
@@ -31,8 +31,8 @@ class FacebookFetcher
         if postback_url.present?
           Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Pinging postback url: #{postback_url}" }
           response = RestClient.post postback_url,
-                          {uid: facebook_profile.uid,
-                           profile_maturity: facebook_profile.profile_maturity,
+                          {facebook_id: facebook_profile.uid,
+                           profile_authenticity: facebook_profile.profile_maturity,
                            trust_score: facebook_profile.trust_score }.to_json,
                            content_type: :json, accept: :json
         end

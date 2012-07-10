@@ -25,7 +25,7 @@ describe FacebookFetcher do
       FacebookFetcher.perform(wolf_facebook_profile.to_param, 'scoring', 'http://example.com/score')
 
       a_request(:post, "example.com/score").
-          with(body:    {uid: wolf_facebook_profile.uid, profile_maturity: 63, trust_score: 88},
+          with(body:    {facebook_id: wolf_facebook_profile.uid, profile_authenticity: 63, trust_score: 88},
                headers: {'Content-Type' => 'application/json'}).should have_been_made.once
 
     end
