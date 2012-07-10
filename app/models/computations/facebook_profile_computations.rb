@@ -1,5 +1,127 @@
 module Computations::FacebookProfileComputations
 
+  extend ActiveSupport::Concern
+
+  module ClassMethods
+
+    def uid2joined_on(uid)
+
+      case uid
+        when 0...100_000
+          Date.civil(2004,1,1)
+        when 100_000...100_000_000
+          Date.civil(2007,1,1)
+        when 100_000_000...1_000_000_000_000
+          Date.civil(2009,6,1)
+        else
+          interpolate_date(uid)
+      end
+    end
+
+    # Ascending order(!!!) date samples taken from actual timelines
+    DATE_UID_SAMPLES = [ [100_000_241_077_339, Date.civil(2009, 9,24)],
+                         [100_000_498_112_056, Date.civil(2009,11,22)],
+                         [100_000_525_348_604, Date.civil(2009,12,10)],
+                         [100_000_585_319_862, Date.civil(2009,12,27)],
+                         [100_000_772_928_057, Date.civil(2010, 2,18)],
+                         [100_000_790_642_929, Date.civil(2010, 2,28)],
+                         [100_001_590_505_220, Date.civil(2010,10, 2)],
+                         [100_003_240_296_778, Date.civil(2011,12,21)],
+                         [100_003_811_911_948, Date.civil(2012, 5, 8)],
+                         [100_003_875_801_329, Date.civil(2012, 5,16)] ]
+    UID_SAMPLES  = DATE_UID_SAMPLES.map(&:first)
+    DATE_SAMPLES = DATE_UID_SAMPLES.map(&:last)
+
+    def interpolate_date(uid)
+      gteq_index = UID_SAMPLES.find_index {|uid_sample| uid <= uid_sample}
+
+      case gteq_index
+        when 0   # uid falls before first available sample, use slope of first interval
+          DATE_SAMPLES[0] - interpolate_date_offset(0,1, UID_SAMPLES[0] - uid)
+        when nil # uid falls after last available sample, use slope of last interval
+          DATE_SAMPLES[-1] + interpolate_date_offset(-1, -2, uid - UID_SAMPLES[-1])
+        else     # uid is within sample range
+          DATE_SAMPLES[gteq_index-1] + interpolate_date_offset(gteq_index-1, gteq_index, uid - UID_SAMPLES[gteq_index-1])
+      end
+    end
+
+    def interpolate_date_offset(lower, upper, uid_delta)
+      ((uid_delta.to_f / (UID_SAMPLES[upper] - UID_SAMPLES[lower])) * (DATE_SAMPLES[upper] - DATE_SAMPLES[lower])).to_i
+    end
+
+    # original code (just method renamed)
+    #def uid2joined_on(uid)
+    #  if(uid<100_000)
+    #    Date.civil(2004,1,1)
+    #  elsif(uid<100_000_000)
+    #    Date.civil(2007,1,1)
+    #  elsif (uid <1_000_000_000_000)
+    #    Date.civil(2009,6,1)
+    #  else
+    #    interpolate_date(uid)
+    #  end
+    #  #  #self.joined_on = f(self.uid)
+    #  #  # notice, there are Rails time helpers like 1.month.ago or 1.day.ago + 1.month.from_now, google it/see docs, etc.
+    #end
+    #
+    #def interpolate_date(lid)
+    #  time_array=[['2009-9-24',  '100000241077339'],
+    #              ['2009-11-22', '100000498112056'],
+    #              ['2009-12-10', '100000525348604'],
+    #              ['2009-12-27', '100000585319862'],
+    #              ['2010-2-18',  '100000772928057'],
+    #              ['2010-2-28',  '100000790642929'],
+    #              ['2010-10-2',  '100001590505220'],
+    #              ['2011-12-21', '100003240296778'],
+    #              ['2012-5-8',   '100003811911948'],
+    #              ['2012-5-16',  '100003875801329']]
+    #
+    #  num_record = time_array.length
+    #  dates=Array.new(num_record)
+    #  lids = Array.new(num_record)
+    #  (0..(num_record-1)).each do |i|
+    #    dates[i] = Date.parse(time_array[i][0])
+    #    lids[i] = time_array[i][1].to_i
+    #  end
+    #
+    #  lidmin = 0
+    #  lidmax = 0
+    #  idmin = num_record -1
+    #  idmax = 0
+    #  lids.reverse_each do |k|
+    #    if k<= lid
+    #      lidmin = k
+    #      break
+    #    end
+    #    idmin-=1
+    #  end
+    #
+    #  lids.each do |k|
+    #    if k>=lid
+    #      lidmax = k
+    #      break
+    #    end
+    #    idmax+=1
+    #  end
+    #
+    #  createDate = 0
+    #  if lidmax == lids[0] # date falls before first date available
+    #    delta = lids[0]-lid
+    #    create_date = dates[0] - ((delta.to_f/(lids[1]-lids[0]).to_f)*(dates[1]-dates[0])).to_i
+    #  elsif lidmin==lids[-1] # date is newer then latest available date point
+    #    delta = lid-lids[-1]
+    #    create_date = dates[-1]+ ((delta.to_f/(lids[-1]-lids[-2]).to_f)*(dates[-1]-dates[-2])).to_i
+    #  elsif lidmin==lidmax  # date falls on a record in our database
+    #    create_date = dates[idmin]
+    #  else    # date is in our range, so we interpolate
+    #    delta = lid-lids[idmin]
+    #    create_date = dates[idmin]+ ((delta.to_f/(lids[idmax]-lids[idmin]).to_f)*(dates[idmax]-dates[idmin])).to_i
+    #  end
+    #  return create_date
+    #end
+
+  end
+
   def compute_photo_engagements
     build_photo_engagements if photo_engagements.nil?
     photo_engagements.compute
@@ -10,75 +132,6 @@ module Computations::FacebookProfileComputations
     status_engagements.compute
   end
 
-  def compute_joined_on
-    if(uid<100000)
-      self.joined_on = Date.parse('2004-01-01')
-    elsif(uid<100000000)
-      self.joined_on = Date.parse('2007-01-01')
-    elsif (uid <1000000000000)
-      self.joined_on = Date.parse('2009-06-01')
-    else
-      self.joined_on = interpolate_date(uid)
-    end
-    #  #self.joined_on = f(self.uid)
-    #  # notice, there are Rails time helpers like 1.month.ago or 1.day.ago + 1.month.from_now, google it/see docs, etc.
-  end
-
-  def interpolate_date(lid)
-    time_array=[['2009-9-24', '100000241077339'],
-                ['2009-11-22', '100000498112056'],
-                ['2009-12-10', '100000525348604'],
-                ['2009-12-27', '100000585319862'],
-                ['2010-2-18', '100000772928057'],
-                ['2010-2-28', '100000790642929'],
-                ['2010-10-2', '100001590505220'],
-                ['2011-12-21', '100003240296778'],
-                ['2012-5-8', '100003811911948'],
-                ['2012-5-16', '100003875801329']]
-
-    num_record = time_array.length
-    dates=Array.new(num_record)
-    lids = Array.new(num_record)
-    (0..(num_record-1)).each do |i|
-      dates[i] = Date.parse(time_array[i][0])
-      lids[i] = time_array[i][1].to_i
-    end
-
-    lidmin = 0
-    lidmax = 0
-    idmin = num_record -1
-    idmax = 0
-    lids.reverse_each do |k|
-      if k<= lid
-        lidmin = k
-        break
-      end
-      idmin-=1
-    end
-
-    lids.each do |k|
-      if k>=lid
-        lidmax = k
-        break
-      end
-      idmax+=1
-    end
-
-    createDate = 0
-    if lidmax == lids[0] # date falls before first date available
-      delta = lids[0]-lid
-      create_date = dates[0] - ((delta.to_f/(lids[1]-lids[0]).to_f)*(dates[1]-dates[0])).to_i
-    elsif lidmin==lids[-1] # date is newer then latest available date point
-      delta = lid-lids[-1]
-      create_date = dates[-1]+ ((delta.to_f/(lids[-1]-lids[-2]).to_f)*(dates[-1]-dates[-2])).to_i
-    elsif lidmin==lidmax  # date falls on a record in our database
-      create_date = dates[idmin]
-    else    # date is in our range, so we interpolate
-      delta = lid-lids[idmin]
-      create_date = dates[idmin]+ ((delta.to_f/(lids[idmax]-lids[idmin]).to_f)*(dates[idmax]-dates[idmin])).to_i
-    end
-    return create_date
-  end
 
   def field_completeness(field_name)
     completeness = self.info[field_name].nil? ? 0 : self.info[field_name].length

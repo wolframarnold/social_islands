@@ -3,6 +3,78 @@ require 'spec_helper'
 
 describe FacebookProfile do
 
+  context 'age of profile' do
+
+    it "it reports 2004-1-1 for UID's < 100_000" do
+      FacebookProfile.uid2joined_on(1_000).should == Date.civil(2004,1,1)
+      FacebookProfile.uid2joined_on(10_000).should == Date.civil(2004,1,1)
+      FacebookProfile.uid2joined_on(99_999).should == Date.civil(2004,1,1)
+    end
+
+    it "it reports 2007-1-1 for UID's < 100_000_000" do
+      FacebookProfile.uid2joined_on(   100_000).should == Date.civil(2007,1,1)
+      FacebookProfile.uid2joined_on( 1_000_000).should == Date.civil(2007,1,1)
+      FacebookProfile.uid2joined_on(10_000_000).should == Date.civil(2007,1,1)
+      FacebookProfile.uid2joined_on(99_999_999).should == Date.civil(2007,1,1)
+    end
+
+    it "it reports 2009-6-1 for UID's < 100_000_000" do
+      FacebookProfile.uid2joined_on(    100_000_000).should == Date.civil(2009,6,1)
+      FacebookProfile.uid2joined_on(  1_000_000_000).should == Date.civil(2009,6,1)
+      FacebookProfile.uid2joined_on( 10_000_000_000).should == Date.civil(2009,6,1)
+      FacebookProfile.uid2joined_on(100_000_000_000).should == Date.civil(2009,6,1)
+      FacebookProfile.uid2joined_on(999_999_999_999).should == Date.civil(2009,6,1)
+    end
+
+    context "UID's > 100_000_000_000" do
+      date_samples = [ [100_000_241_077_339, Date.civil(2009, 9,24)],
+                       [100_000_498_112_056, Date.civil(2009,11,22)],
+                       [100_000_525_348_604, Date.civil(2009,12,10)],
+                       [100_000_585_319_862, Date.civil(2009,12,27)],
+                       [100_000_772_928_057, Date.civil(2010, 2,18)],
+                       [100_000_790_642_929, Date.civil(2010, 2,28)],
+                       [100_001_590_505_220, Date.civil(2010,10, 2)],
+                       [100_003_240_296_778, Date.civil(2011,12,21)],
+                       [100_003_811_911_948, Date.civil(2012, 5, 8)],
+                       [100_003_875_801_329, Date.civil(2012, 5,16)] ]
+
+      date_samples.each do |uid, date|
+        it "maps #{uid} to #{date}" do
+          FacebookProfile.uid2joined_on(uid).should == date
+        end
+      end
+
+      interpolation_samples = [ [  1_000_000_000_000, Date.civil(2009, 7, 1)], # error: Wed, 05 Feb -60207
+                                [ 10_000_000_000_000, Date.civil(2009, 7, 1)], # error: Thu, 20 Feb -54551
+                                [100_000_000_000_000, Date.civil(2009, 7,31)],
+                                [100_000_250_000_000, Date.civil(2009, 9,26)],
+                                [100_000_500_000_000, Date.civil(2009,11,23)],
+                                [100_000_750_000_000, Date.civil(2010, 2,11)],
+                                [100_001_000_000_000, Date.civil(2010, 4,25)],
+                                [100_001_250_000_000, Date.civil(2010, 7, 2)],
+                                [100_001_500_000_000, Date.civil(2010, 9, 7)],
+                                [100_001_750_000_000, Date.civil(2010,11,14)],
+                                [100_002_000_000_000, Date.civil(2011, 1,20)],
+                                [100_002_250_000_000, Date.civil(2011, 3,28)],
+                                [100_002_500_000_000, Date.civil(2011, 6, 4)],
+                                [100_002_750_000_000, Date.civil(2011, 8,10)],
+                                [100_003_000_000_000, Date.civil(2011,10,17)],
+                                [100_003_250_000_000, Date.civil(2011,12,23)],
+                                [100_003_500_000_000, Date.civil(2012, 2,22)],
+                                [100_003_750_000_000, Date.civil(2012, 4,22)],
+                                [100_004_000_000_000, Date.civil(2012, 5,31)] ]
+
+      interpolation_samples.each do |uid, date|
+        it "interpolates #{uid} to #{date}" do
+          FacebookProfile.uid2joined_on(uid).should == date
+        end
+      end
+
+    end
+
+
+  end
+
   context '#collect_friends_location_stats' do
 
     xit 'returns locations map from friends sorted by frequency' do
