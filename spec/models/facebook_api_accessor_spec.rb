@@ -5,8 +5,6 @@ require 'spec_helper'
 describe FacebookProfile do
 
   let!(:wolf_fp)    { create :wolf_facebook_profile }
-  let(:lars_uid)    { 553647753 }
-  let(:weidong_uid) { 563900754 }
 
   before do
     class << wolf_fp; public :get_engagement_data_and_network_graph; end

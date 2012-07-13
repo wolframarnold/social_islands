@@ -41,6 +41,7 @@ Spork.prefork do
     config.infer_base_class_for_anonymous_controllers = false
 
     config.include LoginHelpers, :type => :controller
+    config.include GlobalVariables
 
     DatabaseCleaner.orm = :mongoid
 

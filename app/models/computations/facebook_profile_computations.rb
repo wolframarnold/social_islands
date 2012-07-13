@@ -4,6 +4,10 @@ module Computations::FacebookProfileComputations
 
   module ClassMethods
 
+    #############################
+    # Guess Join Date from UID  #
+    #############################
+
     def uid2joined_on(uid)
 
       case uid
@@ -55,28 +59,31 @@ module Computations::FacebookProfileComputations
 
   end
 
-  #####################
-  # Photo Engagements #
-  #####################
+  ##############################
+  # Photo & Status Engagements #
+  ##############################
 
-  def compute_photo_engagements
-    return if self.photos.blank?
-    initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {})
-    results = self.photos.reduce(initial) do |stats, photo|
-      # TODO: Deal with case when the tagged party doesn't have a UID (i.e. is not on FB)
-      # See tracker story: https://www.pivotaltracker.com/story/show/29603637
-      add_engagements(stats['co_tagged_with'], photo, 'tags')
-      add_engagements(stats['liked_by'], photo, 'likes')
-      add_engagements(stats['commented_by'], photo, 'comments')
-      stats
+  def compute_engagements
+    %w(photos statuses).each do |eng_type|
+      next if send(eng_type).blank?
+
+      initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {})
+      results = send(eng_type).reduce(initial) do |stats, engagement|
+        # TODO: Deal with case when the tagged party doesn't have a UID (i.e. is not on FB)
+        # See tracker story: https://www.pivotaltracker.com/story/show/29603637
+        add_engagements(stats['co_tagged_with'], engagement, 'tags')
+        add_engagements(stats['liked_by'], engagement, 'likes')
+        add_engagements(stats['commented_by'], engagement, 'comments')
+        stats
+      end
+      results['co_tags_uniques']  = results['co_tagged_with'].length
+      results['co_tags_total']    = results['co_tagged_with'].sum {|attr, val| val}
+      results['likes_uniques']    = results['liked_by'].length
+      results['likes_total']      = results['liked_by'].sum {|attr, val| val}
+      results['comments_uniques'] = results['commented_by'].length
+      results['comments_total']   = results['commented_by'].sum {|attr, val| val}
+      self.send("#{eng_type.singularize}_engagements=", results)  # assign to photo_engagements, status_engagements
     end
-    results['co_tags_uniques']  = results['co_tagged_with'].length
-    results['co_tags_total']    = results['co_tagged_with'].sum {|attr, val| val}
-    results['likes_uniques']    = results['liked_by'].length
-    results['likes_total']      = results['liked_by'].sum {|attr, val| val}
-    results['comments_uniques'] = results['commented_by'].length
-    results['comments_total']   = results['commented_by'].sum {|attr, val| val}
-    self.photo_engagements = results
   end
 
   def add_engagements(result, raw_data_hash, engagement_name)
@@ -94,21 +101,6 @@ module Computations::FacebookProfileComputations
   end
   private :add_engagements
 
-
-
-  def compute_status_engagements
-    build_status_engagements if status_engagements.nil?
-    status_engagements.compute
-  end
-
-
-  #def field_completeness(field_name)
-  #  completeness = self.about_me[field_name].nil? ? 0 : self.about_me[field_name].length
-  #  completeness = completeness>0 ? 1 : 0
-  #
-  #  return completeness
-  #end
-
   def compute_profile_authenticity
     self.joined_on = FacebookProfile.uid2joined_on(self.uid)
     page_age = Date.today - self.joined_on
@@ -119,11 +111,12 @@ module Computations::FacebookProfileComputations
     profile_completeness = 0
     profile_completeness_factors = %w(education work political location hometown gender email website birthday bio relationship_status about quotes religion)
     if self.about_me.present?
+
       profile_completeness = profile_completeness_factors.count do |attr|
         self.about_me[attr].present?
       end
 
-      profile_completeness += 1 if self.about_me['verified']
+      profile_completeness += 1 if self.about_me['verified']  # this will be boolean true or false, not a string!
       # old calculation only took into account: has_education+has_location+has_sex+has_email+has_website+has_birthday+has_bio+has_verified
       # by accident or intentionally?
     end

@@ -78,8 +78,6 @@ describe FacebookProfile do
   context 'trust scoring' do
 
     let!(:wolf_fp) { create(:wolf_facebook_profile) }
-    let(:lars_uid)    { 553647753 }
-    let(:weidong_uid) { 563900754 }
 
     before :all do
       VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong', allow_playback_repeats: true) do
@@ -99,88 +97,123 @@ describe FacebookProfile do
 
   end
 
-  context '#compute_photo_engagements' do
+  context "engagements" do
     let!(:wolf_fp) { create(:wolf_facebook_profile) }
 
     before :all do
-      wolf_fp.compute_photo_engagements
+      VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong', allow_playback_repeats: true) do
+        wolf_fp.import_profile_and_network!([lars_uid,weidong_uid])
+      end
+      wolf_fp.compute_engagements
     end
 
-    it 'computes unique co-tagged count' do
-      wolf_fp.photo_engagements['co_tags_uniques'].should == 4  # two photos tagged with 2 friends each
+    context 'photo_engagements' do
+      it 'computes unique co-tagged count' do
+        wolf_fp.photo_engagements['co_tags_uniques'].should == 19
+      end
+
+      it 'computes unique likes count' do
+        wolf_fp.photo_engagements['likes_uniques'].should == 12
+      end
+
+      it 'computes unique commented count' do
+        wolf_fp.photo_engagements['comments_uniques'].should == 5
+      end
+
+      it 'computes total co-tags count' do
+        wolf_fp.photo_engagements['co_tags_total'].should == 41
+      end
+
+      it 'computes total likes count' do
+        wolf_fp.photo_engagements['likes_total'].should == 13
+      end
+
+      it 'computes total comments count' do
+        wolf_fp.photo_engagements['comments_total'].should == 5
+      end
+
+      it 'saves hash of actors for tags, excluding self.uid' do
+        wolf_fp.photo_engagements['co_tagged_with'].keys.should =~ %w(100000438595847 100001239205614 1031110353 1656423339 516572943 528078050 541258410 593848707 608745888 625698267 626054704 651861838 656512960 660028928 669325271 676875788 695766745 745749751 782729534)
+      end
+
+      it 'saves hash of actors for likes, excluding self.uid' do
+        wolf_fp.photo_engagements['liked_by'].keys.should =~ %w(100000058337686 100001685490896 1043526773 519131475 543570782 587635458 663164967 695766745 710960310 713700928 734007489 872735293)
+      end
+
+      it 'saves hash of actors for comments, excluding self.uid' do
+        wolf_fp.photo_engagements['commented_by'].keys.should =~ %w(528078050 543570782 570617660 630150873 669325271)
+      end
     end
 
-    it 'computes unique liked count' do
-      wolf_fp.photo_engagements['likes_uniques'].should == 24 + 9  # for the two photos, respectively
-    end
+    context 'status_engagements' do
+      it 'computes unique co-tagged count' do
+        wolf_fp.status_engagements['co_tags_uniques'].should == 0
+      end
 
-    it 'computes unique commented count' do
-      wolf_fp.photo_engagements['comments_uniques'].should == 7 + 1  # for the two photos, respectively, excluding self
-    end
+      it 'computes unique likes count' do
+        wolf_fp.status_engagements['likes_uniques'].should == 17
+      end
 
-    it 'computes total co-tags count' do
-      wolf_fp.photo_engagements['co_tags_total'].should == 4  # two photos tagged with 2 friends each
-    end
+      it 'computes unique commented count' do
+        wolf_fp.status_engagements['comments_uniques'].should == 15
+      end
 
-    it 'computes total likes count' do
-      wolf_fp.photo_engagements['likes_total'].should == 24 + 9  # for the two photos, respectively
-    end
+      it 'computes total co-tags count' do
+        wolf_fp.status_engagements['co_tags_total'].should == 0
+      end
 
-    it 'computes total comments count' do
-      wolf_fp.photo_engagements['comments_total'].should == 7 + 1 # one more, for 2nd comment
-    end
+      it 'computes total likes count' do
+        wolf_fp.status_engagements['likes_total'].should == 19
+      end
 
-    it 'saves hash of actors for tags, excluding self.uid' do
-      wolf_fp.photo_engagements['co_tagged_with'].keys.should =~ %w(589356473 558293791 568794740 617287785)
-    end
+      it 'computes total comments count' do
+        wolf_fp.status_engagements['comments_total'].should == 16
+      end
 
-    it 'saves hash of actors for likes, excluding self.uid' do
-      wolf_fp.photo_engagements['liked_by'].keys.should =~ %w(13005165
-                                                              100002047432823
-                                                              1356153138
-                                                              527391410
-                                                              655317879
-                                                              1374922097
-                                                              100001224767136
-                                                              100000241077339
-                                                              1616917040
-                                                              620296780
-                                                              1200597914
-                                                              755494517
-                                                              697597360
-                                                              1060735738
-                                                              605639397
-                                                              1006354328
-                                                              1023085608
-                                                              1349795215
-                                                              678314575
-                                                              683976322
-                                                              541653582
-                                                              100002217497819
-                                                              545153726
-                                                              100003699763655
-                                                              610867332
-                                                              598322650
-                                                              540535876
-                                                              100000026271587
-                                                              667152122
-                                                              544993696
-                                                              1625671516
-                                                              629330868
-                                                              1269520910)
-    end
+      it 'saves hash of actors for tags, excluding self.uid' do
+        wolf_fp.status_engagements['co_tagged_with'].keys.should be_empty
+      end
 
-    it 'saves hash of actors for comments, excluding self.uid' do
-      wolf_fp.photo_engagements['commented_by'].keys.should =~ %w(40981764411
-                                                                  100002217497819
-                                                                  504517003
-                                                                  500384038
-                                                                  1006354328
-                                                                  100001224767136
-                                                                  100002047432823
-                                                                  540535876)
+      it 'saves hash of actors for likes, excluding self.uid' do
+        wolf_fp.status_engagements['liked_by'].keys.should =~ %w(524888626
+                                                                 560982997
+                                                                 832020470
+                                                                 100002097933898
+                                                                 2514847
+                                                                 1173721181
+                                                                 1518664569
+                                                                 750445151
+                                                                 208102217
+                                                                 1245602573
+                                                                 650931866
+                                                                 1295192455
+                                                                 1525875763
+                                                                 10127062
+                                                                 695005287
+                                                                 656512960
+                                                                 615925793)
+      end
+
+      it 'saves hash of actors for comments, excluding self.uid' do
+        wolf_fp.status_engagements['commented_by'].keys.should =~ %w( 832020470
+                                                                      503484735
+                                                                      710238115
+                                                                      100000058647979
+                                                                      641972802
+                                                                      521041796
+                                                                      1213494587
+                                                                      1219906970
+                                                                      504949372
+                                                                      541258410
+                                                                      583780906
+                                                                      650931866
+                                                                      652163311
+                                                                      765919154
+                                                                      782729534 )
+      end
     end
   end
+
 
 
   context '#collect_friends_location_stats' do
