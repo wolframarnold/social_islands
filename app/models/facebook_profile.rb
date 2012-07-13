@@ -33,9 +33,10 @@ class FacebookProfile
 
   # Computed entities, intermediate scores, etc. -- all (re-)computable from raw data
   # Used by module: Computations::FacebookProfileComputations
-  field :computed_stats,     type: Hash
-  field :photo_engagements,  type: Hash
-  field :status_engagements, type: Hash
+  field :computed_stats,       type: Hash
+  field :photo_engagements,    type: Hash
+  field :status_engagements,   type: Hash
+  field :profile_completeness, type: Float
 
   # Raw data fields from Facebook
   # Used by module: ApiHelpers::FacebookApiAccessor

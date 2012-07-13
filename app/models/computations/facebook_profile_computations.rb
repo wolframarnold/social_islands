@@ -101,132 +101,130 @@ module Computations::FacebookProfileComputations
   end
   private :add_engagements
 
+  ##############################
+  #    Profile Completeness    #
+  ##############################
+
+  COMPLETENESS_FACTORS = %w(education work political location hometown gender email website birthday bio relationship_status about quotes religion verified)
+
+  def compute_profile_completeness
+    completeness = 0
+    if self.about_me.present?
+      completeness = COMPLETENESS_FACTORS.count do |attr|
+        # special casing 'verified' because it is a boolean true or false, not a string!
+        attr == 'verified' ? self.about_me['verified'] : self.about_me[attr].present?
+      end
+    end
+
+    self.profile_completeness = completeness
+  end
+
+  ##############################
+  #    Profile Authenticity    #
+  ##############################
+
   def compute_profile_authenticity
     self.joined_on = FacebookProfile.uid2joined_on(self.uid)
     page_age = Date.today - self.joined_on
     friend_count = self.facebook_profile_uids.count
 
-    self.profile_authenticity = Math.tanh(page_age/300.0) * Math.tanh(friend_count/300.0) * 80
-
-    profile_completeness = 0
-    profile_completeness_factors = %w(education work political location hometown gender email website birthday bio relationship_status about quotes religion)
-    if self.about_me.present?
-
-      profile_completeness = profile_completeness_factors.count do |attr|
-        self.about_me[attr].present?
-      end
-
-      profile_completeness += 1 if self.about_me['verified']  # this will be boolean true or false, not a string!
-      # old calculation only took into account: has_education+has_location+has_sex+has_email+has_website+has_birthday+has_bio+has_verified
-      # by accident or intentionally?
-    end
-
-    self.profile_authenticity = (self.profile_authenticity + profile_completeness * 20.0 / (profile_completeness_factors.length + 1)).round
+    self.profile_authenticity = ( Math.tanh(page_age/300.0) * Math.tanh(friend_count/300.0) * 80 +
+                                  compute_profile_completeness * 20.0 / COMPLETENESS_FACTORS.length ).round
   end
+
+  #################
+  #  Trust Score  #
+  #################
 
   def compute_trust_score
-    # access photo engagements scores: self.photo_engagements.co_tags_uniques, etc. see methods in PhotoEngagements
-    # self.trust_score = ....
-    compute_photo_engagements
-    compute_status_engagements
+    compute_engagements
 
-    total_likes = self.photo_engagements.likes_uniques + self.status_engagements.likes_uniques
-    total_comments = self.photo_engagements.comments_uniques+self.status_engagements.comments_uniques
-    total_co_tags = self.photo_engagements.co_tags_uniques
+    total_likes    = self.photo_engagements['likes_uniques']    + self.status_engagements['likes_uniques']
+    total_comments = self.photo_engagements['comments_uniques'] + self.status_engagements['comments_uniques']
+    total_co_tags  = self.photo_engagements['co_tags_uniques']  + self.status_engagements['co_tags_uniques']
 
-    score_likes = Math.tanh( total_likes/40.0 ) * (28.3 +5.0*rand())
-    score_comments = Math.tanh(total_comments/20.0)*(28.3 +5.0*rand())
-    score_co_tags = Math.tanh(total_co_tags/20.0)*(28.3 +5.0*rand())
+    # TODO: Find out that the community average normalization factors are here, here we use 40,20,20
+    raw_score_likes    = Math.tanh( total_likes    / 40.0)
+    raw_score_comments = Math.tanh( total_comments / 20.0)
+    raw_score_co_tags  = Math.tanh( total_co_tags  / 20.0)
 
+    # Weights:
+    # We weight photos highest, then comments, then likes, in descending order of effort required to generate
+    # We also introduce a random factor into the weight percentages to prevent gaming
+    # Base: 40% photo tags, 35% comments, 25% likes
 
-    self.trust_score = (score_likes+score_comments+score_co_tags).to_i
-    puts "Uniques: "
-    puts "like: "+ total_likes.to_s + " score: "+score_likes.to_i.to_s
-    puts "comments: "+total_comments.to_s+" score: "+score_comments.to_i.to_s
-    puts "cotags: " + total_co_tags.to_s + " score: "+score_co_tags.to_i.to_s
-    puts "trust_score: "+ trust_score.to_s
+    weight_photos   = 40.0 - 2.5 + 5.0 * rand
+    weight_comments = 35.0 - 2.5 + 5.0 * rand
+    weight_likes    = 100.0 - weight_photos - weight_comments
 
+    #p "weight_photos = #{weight_photos.inspect}"
+    #p "weight_comments = #{weight_comments.inspect}"
+    #p "weight_likes = #{weight_likes.inspect}"
 
-    self.user_stat = Hash.new()
-    self.user_stat["num_friend"]=friend_count
-    self.user_stat["num_edge"]=edge_count
-    self.user_stat["profile_completeness"]= (profile_completeness * 100/8).round(0)
-    self.user_stat["num_likes"]=(defined?self.likes).nil? ? 0 : self.likes.count
-    self.user_stat["num_location"]=(defined?self.locations).nil? ? 0 : self.locations.count
-    self.user_stat["num_photo"]=(defined?self.photos).nil? ? 0 : self.photos.count
-    self.user_stat["num_posts"]=(defined?self.posts).nil? ? 0 : self.posts.count
-    self.user_stat["num_status"]=(defined?self.statuses).nil? ? 0 : self.statuses.count
-    self.user_stat["num_tag"]=(defined?self.tagged).nil? ? 0 : self.tagged.count
-
-    self.user_stat["total_liked"]=total_likes
-    self.user_stat["total_commented"]=total_comments
-    self.user_stat["total_photo_co_tag"] = total_co_tags
-
-    self.save
+    self.trust_score = (raw_score_co_tags * weight_photos + raw_score_comments * weight_comments + raw_score_likes * weight_likes).round
   end
 
-
-  def collect_friends_location_stats
-    friends = FacebookProfile.unscoped.friends_only.find(self.id).friends
-
-    num_friends=friends.count
-
-    location_hash = Hash.new()
-
-    friends.each do |friend|
-      location = ""
-      if not(friend["current_location"].nil?)
-        fb_location = friend["current_location"]
-        country = fb_location["country"] || ""
-        if country == "United States"
-          name = fb_location["name"] || ""
-          if name.blank?
-            city = fb_location["city"] || ""
-            state = fb_location["state"] || ""
-            location = city+", " + state + ", " + country
-          else
-            location = name + ", " + country
-          end
-        else # foreign country
-          name = fb_location["name"] || ""
-          if name.length==0
-            city = fb_location["city"] || ""
-            state = fb_location["state"] || ""
-            location = city+", " + state + ", " + country
-          else
-            location = name
-          end
-        end
-        #puts fb_location;
-        #puts location;
-      end
-
-      if location.present?
-        if location_hash[location].nil?
-          location_hash[location]=1
-        else
-          location_hash[location] = location_hash[location]+1
-        end
-      end
-    end
-
-    location_hash.sort_by {|name, count| count}.reverse
-  end
-
-  def geolocation_coordiates_for_friends_locations(location_hash)
-    coordinate_hash = Hash.new()
-    num_location = location_hash.length
-
-    num_loc = num_location > 5 ? 4 : numlocation
-    (0..num_loc).each do |i|
-      location = location_hash[i][0]
-      coordinate_hash[location] = Geocoder.coordinates(location)
-      if i>0
-        cord0 = coordinate_hash[location_hash[0][0]]
-        cord1 = coordinate_hash[location_hash[i][0]]
-        puts Geocoder::Calculations.distance_between(cord0, cord1)
-      end
-    end
-  end
+  #def collect_friends_location_stats
+  #  friends = FacebookProfile.unscoped.friends_only.find(self.id).friends
+  #
+  #  num_friends=friends.count
+  #
+  #  location_hash = Hash.new()
+  #
+  #  friends.each do |friend|
+  #    location = ""
+  #    if not(friend["current_location"].nil?)
+  #      fb_location = friend["current_location"]
+  #      country = fb_location["country"] || ""
+  #      if country == "United States"
+  #        name = fb_location["name"] || ""
+  #        if name.blank?
+  #          city = fb_location["city"] || ""
+  #          state = fb_location["state"] || ""
+  #          location = city+", " + state + ", " + country
+  #        else
+  #          location = name + ", " + country
+  #        end
+  #      else # foreign country
+  #        name = fb_location["name"] || ""
+  #        if name.length==0
+  #          city = fb_location["city"] || ""
+  #          state = fb_location["state"] || ""
+  #          location = city+", " + state + ", " + country
+  #        else
+  #          location = name
+  #        end
+  #      end
+  #      #puts fb_location;
+  #      #puts location;
+  #    end
+  #
+  #    if location.present?
+  #      if location_hash[location].nil?
+  #        location_hash[location]=1
+  #      else
+  #        location_hash[location] = location_hash[location]+1
+  #      end
+  #    end
+  #  end
+  #
+  #  location_hash.sort_by {|name, count| count}.reverse
+  #end
+  #
+  #def geolocation_coordiates_for_friends_locations(location_hash)
+  #  coordinate_hash = Hash.new()
+  #  num_location = location_hash.length
+  #
+  #  num_loc = num_location > 5 ? 4 : numlocation
+  #  (0..num_loc).each do |i|
+  #    location = location_hash[i][0]
+  #    coordinate_hash[location] = Geocoder.coordinates(location)
+  #    if i>0
+  #      cord0 = coordinate_hash[location_hash[0][0]]
+  #      cord1 = coordinate_hash[location_hash[i][0]]
+  #      puts Geocoder::Calculations.distance_between(cord0, cord1)
+  #    end
+  #  end
+  #end
 
 end

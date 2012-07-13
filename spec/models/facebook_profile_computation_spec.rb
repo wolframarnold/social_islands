@@ -90,9 +90,9 @@ describe FacebookProfile do
       wolf_fp.compute_profile_authenticity.should == 85
     end
 
-    xit '#compute_trust_score' do
+    it '#compute_trust_score' do
       wolf_fp.profile_authenticity = 85
-      wolf_fp.compute_trust_score.should == 85
+      wolf_fp.compute_trust_score.should be_within(1).of(72)  # may vary slightly due to randomization
     end
 
   end
