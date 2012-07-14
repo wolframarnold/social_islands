@@ -164,6 +164,12 @@ module Computations::FacebookProfileComputations
     self.trust_score = (raw_score_co_tags * weight_photos + raw_score_comments * weight_comments + raw_score_likes * weight_likes).round
   end
 
+  def compute_all_scores!
+    compute_profile_authenticity
+    compute_trust_score
+    save!
+  end
+
   #def collect_friends_location_stats
   #  friends = FacebookProfile.unscoped.friends_only.find(self.id).friends
   #

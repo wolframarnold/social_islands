@@ -27,7 +27,7 @@ class FacebookFetcher
       when 'scoring'
         # Using local ruby core here, not enqueueing other job
         Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Computing scores" }
-        facebook_profile.compute_trust_score
+        facebook_profile.compute_all_scores!
         if postback_url.present?
           Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Pinging postback url: #{postback_url}" }
           RestClient.post postback_url,
