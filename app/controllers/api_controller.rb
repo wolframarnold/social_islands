@@ -1,6 +1,7 @@
 class ApiController < ApplicationController
 
   before_filter :check_authorization
+  skip_before_filter :verify_authenticity_token
 
   # TODO: Use single API endpoint /profile
   # - use it to update token, postback url

@@ -17,6 +17,8 @@ describe ApiController do
     let(:postback_url) { post_params[:postback_url]}
     let(:fp_id)       { fp.uid }
 
+    before { Resque.stub!(:enqueue) }
+
     context 'POST /trust_check' do
       render_views
       # DOC: if both token and UID given, token prevails

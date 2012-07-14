@@ -1,6 +1,11 @@
 SocialIslands::Application.routes.draw do
 
-  post '/v0.9/trust_check' => 'api#trust_check'
+  match '/v0.9/trust_check' => 'api#trust_check', via: [:post, :put]
+
+  get  '/v0.9/trust_check' => lambda { |env|
+    msg = {errors: {base: "You must use POST requests to use this interface"}}.to_json
+    [405, {'Content-Length'=>msg.length.to_s,'Content-Type'=>'application/json', 'Allow'=>'POST, PUT'}, [msg]]
+  }
 
   get '/faq' => 'pages#faq'
 
