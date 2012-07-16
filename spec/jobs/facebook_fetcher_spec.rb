@@ -19,7 +19,7 @@ describe FacebookFetcher do
   context 'scoring job' do
     it 'send post-back with scores to postback_url' do
       FacebookProfile.any_instance.should_receive(:import_profile_and_network!)
-      FacebookProfile.any_instance.should_receive(:compute_trust_score)
+      FacebookProfile.any_instance.should_receive(:compute_all_scores!)
       stub_http_request(:post, "example.com/score")
 
       FacebookFetcher.perform(wolf_facebook_profile.to_param, 'scoring', 'http://example.com/score')

@@ -11,7 +11,7 @@ describe FacebookProfilesController do
 
   context '#show' do
     before do
-      Resque.should_receive(:enqueue).with(FacebookFetcher, wolf_fp.to_param, 'viz')
+      Resque.should_receive(:enqueue).with(FacebookFetcher, wolf_fp.to_param, 'viz', push_to_web_graph_ready_url)
     end
     it 'pushes job on queue and sets @has_graph' do
       get :show

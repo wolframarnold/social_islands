@@ -8,6 +8,7 @@ class ApiClient
   field :postback_domain, type: String
 
   index :api_key, unique: true
+  index :name
 
   attr_accessible :name, :postback_domain
 

@@ -8,13 +8,13 @@ class RenameCollectionsOfOldSchema < Mongoid::Migration
 
   def self.up
     COLLECTIONS_TO_RENAME.each do |coll|
-      Mongoid.database.rename_collection coll, "#{coll}-pre-2012-07-15"
+      Mongoid.database.rename_collection coll, "#{coll}_pre_2012_07_15"
     end
   end
 
   def self.down
     COLLECTIONS_TO_RENAME.each do |coll|
-      Mongoid.database.rename_collection "#{coll}-pre-2012-07-15", coll
+      Mongoid.database.rename_collection "#{coll}_pre_2012_07_15", coll
     end
   end
 end
