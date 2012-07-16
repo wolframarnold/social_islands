@@ -41,6 +41,10 @@ class FacebookFetcher
 
   rescue Koala::Facebook::APIError => exception
     facebook_profile.update_attribute(:facebook_api_error,exception.message)
+    Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}", 'Facebook API Exception') {
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace.join("\n")
+    }
     RestClient.post postback_url,
       { errors: {base: ["Facebook API Error--#{exception.message}"]} }.to_json,
       content_type: :json, accept: :json
