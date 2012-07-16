@@ -14,6 +14,18 @@ To get the engagement stats computed for a specific user, you can use this rake 
 where the `FACEBOOK_PROFILE_ID` is the MongoDB ID for the given user. Instead of `FACEBOOK_PROFILE_ID` you can also
 specify `FACEBOOK_UID=xxx` which is the Facebook UID.
 
+How many users?
+===============
+
+Each incoming API request will create a `FacebookProfile` record for the user and one for each of their friends. So
+how can I find out how many "direct" users we have?  With the following query (on the Mongo console):
+
+    db.facebook_profiles.distinct('last_fetched_by')        // all records
+    db.facebook_profiles.distinct('last_fetched_by').length // number of records
+
+The field `last_fetched_by` records who caused the fetch to happen which, for a friend's record is the user who logged in.
+
+
 Resque
 ======
 
@@ -56,6 +68,13 @@ This is a Heroku add-on service implementing "Server-Side Events", an HTML5 tech
 the sever to the client. It's a lighter-weight technology than Websockets, but it doesn't support bi-directional
 communication. To run the app locally with this in place, you need to set the ESHQ environment veriables,
 `ESHQ_KEY`, `ESHQ_SECRET` and `ESHQ_URL` which can be found from `heroku config`.
+
+3Scale
+======
+
+3Scale manages API access, subscriber sign-up and authentication. This is effective only in the production environment.
+The app requires an environment variable, `THREE_SCALE_PROVIDER_KEY`, to be set for this on Heroku.
+
 
 Debugging
 =========

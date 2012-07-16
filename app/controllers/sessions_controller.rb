@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
     else
       flash[:notice] = "Successfully logged in"
 
-      fp = FacebookProfile.update_or_create_by_facebook_id_and_api_key profile_attributes_from_omni(omni)
+      fp = FacebookProfile.update_or_create_by_facebook_id_and_app_id profile_attributes_from_omni(omni)
       session[:facebook_profile_id] = fp.to_param
       redirect_to send("#{omni['provider']}_profile_path")
     end
@@ -30,7 +30,7 @@ class SessionsController < ApplicationController
 
   def profile_attributes_from_omni(omni)
     { uid: omni['uid'],
-      api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY,
+      app_id: SOCIAL_ISLANDS_TRUST_CC_APP_ID,
       token: omni['credentials']['token'],
       image: omni['info']['image'],
       name: omni['info']['name'],

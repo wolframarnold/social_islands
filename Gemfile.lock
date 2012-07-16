@@ -12,6 +12,8 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    3scale_client (2.2.10)
+      nokogiri
     actionmailer (3.2.6)
       actionpack (= 3.2.6)
       mail (~> 2.4.4)
@@ -126,6 +128,7 @@ GEM
     multipart-post (1.1.5)
     netrc (0.7.4)
     newrelic_rpm (3.4.0.1)
+    nokogiri (1.5.5)
     oauth2 (0.6.1)
       faraday (~> 0.7)
       httpauth (~> 0.1)
@@ -240,6 +243,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  3scale_client (~> 2.2.10)
   bootstrap-sass (~> 2.0.4.0)
   bootstrap-will_paginate (~> 0.0.7)
   bootswatch-rails (~> 0.0.12)

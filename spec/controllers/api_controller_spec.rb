@@ -8,11 +8,11 @@ describe ApiController do
 
   # ENHANCEMENTS: store 3rd party customer ID
 
-  context 'known API Key' do
+  context 'known APP ID' do
     let!(:fp)    { create(:wolf_facebook_profile) }
     let!(:wolf_fp)    { fp }
-    let!(:api_client) { ApiClient.where(api_key: fp.api_key).first }
-    let(:post_params_valid) { { token: fp.token, api_key: api_client.api_key, postback_url: "http://#{api_client.postback_domain}/trustcc" } }
+    let!(:api_client) { ApiClient.where(app_id: fp.app_id).first }
+    let(:post_params_valid) { { token: fp.token, app_id: api_client.app_id, postback_url: "http://#{api_client.postback_domain}/trustcc" } }
     let(:post_params)  { post_params_valid }  # overridable to emulate different scenarios
     let(:postback_url) { post_params[:postback_url]}
     let(:fp_id)       { fp.uid }
@@ -106,14 +106,14 @@ describe ApiController do
       ###              Scenarios              ###
       ###########################################
 
-      context 'params: api_key only -- invalid' do
+      context 'params: app_id only -- invalid' do
         it 'sends 422 Unprocessable Entity' do
-          post :trust_check, post_params.slice(:api_key)
+          post :trust_check, post_params.slice(:app_id)
           response.status.should == 422
-          JSON.parse(response.body).should == {'errors' => {'base' => ["'api_key' and 'token' or 'facebook_id' parameters are required!"]}}
+          JSON.parse(response.body).should == {'errors' => {'base' => ["'app_id' and 'token' or 'facebook_id' parameters are required!"]}}
         end
       end
-      context 'params: facebook_token and api_key -- new record' do
+      context 'params: facebook_token and app_id -- new record' do
         let(:post_params) { post_params_valid.merge(token: fp_wei.token) }
         let(:fp_wei)      { build(:wei_facebook_profile) }
         let(:fp_id)      { fp_wei.uid }
@@ -122,13 +122,13 @@ describe ApiController do
         it_behaves_like 'can update postback_url'
         it_behaves_like 'record is created'
       end
-      context 'params: facebook_token and api_key -- matching existing record' do
+      context 'params: facebook_token and app_id -- matching existing record' do
         it_behaves_like 'score not ready'
         it_behaves_like 'score ready'
         it_behaves_like 'can update postback_url'
         it_behaves_like 'no record is created'
       end
-      context 'params: facebook_token and api_key -- existing record, token changed, UID matches' do
+      context 'params: facebook_token and app_id -- existing record, token changed, UID matches' do
         let(:post_params) { post_params_valid.merge(token: 'abcef_new_token') }
         before            { FacebookProfile.should_receive(:get_facebook_id_name_image).with('abcef_new_token').and_return('name'=>fp.name, 'image'=>fp.image, 'uid'=>fp.uid) }
         it 'updates token' do
@@ -140,32 +140,32 @@ describe ApiController do
         it_behaves_like 'score ready'
         it_behaves_like 'can update postback_url'
       end
-      context 'params: facebook_id and api_key no token -- matching record' do
+      context 'params: facebook_id and app_id no token -- matching record' do
         let(:post_params) { post_params_valid.except(:token).merge(facebook_id: fp.uid) }
         it_behaves_like 'score not ready'
         it_behaves_like 'score ready'
         it_behaves_like 'can update postback_url'
       end
-      context 'params: facebook_id and api_key no token -- non-matching record' do
-        let(:post_params) { {api_key: fp.api_key, facebook_id: fp_id+1} }
+      context 'params: facebook_id and app_id no token -- non-matching record' do
+        let(:post_params) { {app_id: fp.app_id, facebook_id: fp_id+1} }
         it_behaves_like 'not found'
       end
 
     end
 
     context 'POST /trust_feedback' do
-      context 'params: facebook_id and api_key'
+      context 'params: facebook_id and app_id'
     end
   end
 
-  context 'unknown API key' do
+  context 'unknown APP ID' do
     it 'missing: sends with 403 Forbidden' do
       post :trust_check
       response.should be_forbidden
     end
 
     it 'unknown: sends with 403 Forbidden' do
-      post :trust_check, facebook_id: '123456', api_key: 'abcdefg'
+      post :trust_check, facebook_id: '123456', app_id: 'abcdefg'
       response.should be_forbidden
     end
   end

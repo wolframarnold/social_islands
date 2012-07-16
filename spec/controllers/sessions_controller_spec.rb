@@ -27,7 +27,7 @@ describe SessionsController do
       fp = controller.current_facebook_profile
       fp.should be_kind_of(FacebookProfile)
       fp.uid.should == OmniAuth.mock_auth_for(:facebook)[:uid].to_i
-      fp.api_key.should == 'social_islands'
+      fp.app_id.should == SOCIAL_ISLANDS_TRUST_CC_APP_ID
       fp.name.should == OmniAuth.mock_auth_for(:facebook)[:info][:name]
       fp.image.should == OmniAuth.mock_auth_for(:facebook)[:info][:image]
       fp.token.should == OmniAuth.mock_auth_for(:facebook)[:credentials][:token]
@@ -36,7 +36,7 @@ describe SessionsController do
     end
 
     it 'does not create a FacebookProfile if one exists' do
-      create(:wolf_facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY)
+      create(:wolf_facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], app_id: SOCIAL_ISLANDS_TRUST_CC_APP_ID)
 
       expect {
         get :create, :provider => 'facebook'
@@ -44,7 +44,7 @@ describe SessionsController do
     end
 
     it 'sets facebook_profile_id in session' do
-      fp = create(:wolf_facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY)
+      fp = create(:wolf_facebook_profile, uid: OmniAuth.mock_auth_for(:facebook)[:uid], app_id: SOCIAL_ISLANDS_TRUST_CC_APP_ID)
 
       get :create, :provider => 'facebook'
       session[:facebook_profile_id].should == fp.to_param

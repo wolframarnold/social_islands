@@ -120,14 +120,14 @@ describe FacebookProfile do
       friends[1].facebook_profile_uids.should =~ [wolf_fp.uid, lars_uid] + weidong_wolf_mutual_friend_uids
     end
 
-    it "for a friend record denormalizes name, image, token, api_key" do
+    it "for a friend record denormalizes name, image, token, app_id" do
       wolf_fp.generate_friends_records!
       wei = FacebookProfile.where(uid: weidong_uid).first
 
       wei.name.should == 'Weidong Yang'
       wei.image.should == 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/370434_563900754_1952612728_s.jpg'
       wei.token.should == wolf_fp.token
-      wei.api_key.should == wolf_fp.api_key
+      wei.app_id.should == wolf_fp.app_id
     end
 
     it 'sets can_post on self' do

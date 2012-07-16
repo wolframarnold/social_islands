@@ -39,6 +39,8 @@ gem 'geocoder', '~> 1.1.2'
 gem 'gmaps4rails', '~> 1.5.2'
 gem 'mongoid_rails_migrations', git: 'https://github.com/adacosta/mongoid_rails_migrations.git', ref: '3994d38f26de305271e5c73cb459b3f68aad38cc'
 
+gem '3scale_client', '~> 2.2.10'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

@@ -5,7 +5,7 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-api_client = ApiClient.where(name: 'Social Islands', api_key: SOCIAL_ISLANDS_TRUST_CC_API_KEY).first
+api_client = ApiClient.where(name: 'Social Islands', app_id: SOCIAL_ISLANDS_TRUST_CC_APP_ID).first
 if api_client.nil?
   case Rails.env
     when 'development'
@@ -18,6 +18,6 @@ if api_client.nil?
       raise "Unknown environment -- don't know what postback_domain to use in seeds.rb"
   end
   api_client = ApiClient.new(name: 'Social Islands', postback_domain: postback_domain)
-  api_client.api_key = SOCIAL_ISLANDS_TRUST_CC_API_KEY
+  api_client.app_id = SOCIAL_ISLANDS_TRUST_CC_APP_ID
   api_client.save!
 end

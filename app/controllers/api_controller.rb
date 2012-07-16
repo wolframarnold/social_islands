@@ -11,7 +11,7 @@ class ApiController < ApplicationController
   # Can pass in UID if no token -- API will tell you if we ran it once before already
 
   def trust_check
-    @facebook_profile = FacebookProfile.update_or_create_by_token_or_facebook_id_and_api_key(params)
+    @facebook_profile = FacebookProfile.update_or_create_by_token_or_facebook_id_and_app_id(params)
     if @facebook_profile.valid? and !@facebook_profile.changed? # it was saved
       if @facebook_profile.has_scores?
         render 'score_ready'
@@ -46,8 +46,8 @@ class ApiController < ApplicationController
   private
 
   def check_authorization
-    if params[:api_key].blank? || !ApiClient.where(api_key: params[:api_key]).exists?
-      render json: {errors: {'api_key' => 'is missing or has no access privileges for this record'}},
+    if params[:app_id].blank? || !ApiClient.where(app_id: params[:app_id]).exists?
+      render json: {errors: {'app_id' => 'is missing or has no access privileges for this record'}},
              status: :forbidden
     end
   end
