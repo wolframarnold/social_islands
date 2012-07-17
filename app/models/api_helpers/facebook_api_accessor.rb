@@ -118,7 +118,7 @@ module ApiHelpers::FacebookApiAccessor
       self.facebook_profile_uids << fp.uid
       self.edge_count += fp.facebook_profile_uids.length
     end
-    Rails.logger.tagged('facebook_api_accessor', "FacebookProfile#_id=#{id}") { Rails.logger.info "Created #{friends_raw.length} records for friends" }
+    Rails.logger.info "Created #{friends_raw.length} records for friends"
     save!
   end
 
@@ -258,8 +258,8 @@ module ApiHelpers::FacebookApiAccessor
 
   def execute_fb_batch_query
     # Batch execution returns an array of combined results, in the order they were queued
-    Rails.logger.tagged("FacebookProfile#_id=#{self.to_param}") { Rails.logger.info "FB Batch call for attrs: [#{@batched_attributes.join(', ')}]" }
-    @batch_client.execute.each_with_index do |result, idx|
+    Rails.logger.info "FB Batch call for attrs: [#{@batched_attributes.join(', ')}]"
+    @batch_client.execute(timeout: 30).each_with_index do |result, idx|
       attr = @batched_attributes[idx]
       if attr[:chunked]
         self.send("#{attr[:attr]}=", []) if self.send(attr[:attr]).nil?
