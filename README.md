@@ -21,6 +21,7 @@ Each incoming API request will create a `FacebookProfile` record for the user an
 how can I find out how many "direct" users we have?  With the following query (on the Mongo console):
 
     db.facebook_profiles.distinct('last_fetched_by')        // all records
+    db.facebook_profiles.find({direct_fetch: true})
     db.facebook_profiles.distinct('last_fetched_by').length // number of records
 
 The field `last_fetched_by` records who caused the fetch to happen which, for a friend's record is the user who logged in.
