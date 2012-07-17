@@ -152,7 +152,7 @@ describe ApiController do
         it_behaves_like 'score ready'
         it_behaves_like 'can update postback_url'
       end
-      context 'params: facebook_id and app_id no token -- non-matching record' do
+      context 'params: facebook_id and app_id, no token -- non-matching record' do
         let(:post_params) { {app_id: fp.app_id, app_key: 'secret_app_key', facebook_id: fp_id+1} }
         it_behaves_like 'not found'
       end

@@ -5,20 +5,17 @@ class FacebookProfile
   include ApiHelpers::FacebookApiAccessor
   include Computations::FacebookProfileComputations
 
-  attr_protected :app_id, :profile_authenticity, :trust_score, :computed_stats,
-                 :photo_engagements, :status_engagements, :profile_completeness
-
   # High-level/common use profile fields
   field :uid,              type: Integer
   field :name,             type: String
   field :image,            type: String
   field :token,            type: String
-  field :app_id,          type: String
+  field :app_id,           type: String
   field :token_expires,    type: Boolean
   field :token_expires_at, type: DateTime
 
   # Last FB contact
-  field :direct_fetch,     type: Boolean, default: false  # direct download, vs. indirect (through friends)
+  field :fetched_directly, type: Boolean, default: false  # direct download, vs. indirect (through friends)
   field :last_fetched_at,  type: DateTime
   field :last_fetched_by,  type: Integer  # FB UID of user who caused the record to be populated
                                           # can be user him/herself (direct login) or another user (data retrieved as friend record)
@@ -62,7 +59,7 @@ class FacebookProfile
   belongs_to :user, autosave: true, index: true
 
   validates :user_id, :app_id, presence: true
-  validates :token, presence: true, if: :direct_fetch?
+  validates :token, presence: true, if: :fetching_directly
 
   validate :postback_url_matched_domain
 
@@ -74,6 +71,10 @@ class FacebookProfile
 
   # All the records for a given profile that match the UID
   scope :profile_variants, lambda { |fp| where(uid: fp.uid) }
+  attr_protected :app_id, :profile_authenticity, :trust_score, :computed_stats,
+                 :photo_engagements, :status_engagements, :profile_completeness
+
+  attr_accessor :fetching_directly  # process flag -- indicated whether the record is being fetched directly or not, but not whether it succeeded
 
 
   def facebook_graph_lightweight
@@ -89,7 +90,7 @@ class FacebookProfile
   end
 
   def self.updatable_attributes
-    %w(facebook_id uid token name image token_expires token_expires_at postback_url direct_fetch)
+    %w(facebook_id uid token name image token_expires token_expires_at postback_url fetching_directly)
   end
 
   # required params:
@@ -101,14 +102,14 @@ class FacebookProfile
   # optional params:
   # postback_url -- where to post back to when score is computed
   def self.update_or_create_by_token_or_facebook_id_and_app_id(params)
-    params = params.with_indifferent_access.merge(direct_fetch: true)
+    params = params.with_indifferent_access
 
     if params[:app_id].blank? || (params[:token].blank? && params[:facebook_id].blank?)
       raise ArgumentError.new("'app_id' and 'token' or 'facebook_id' parameters are required!")
     elsif params[:token].blank?
       self.update_or_create_by_facebook_id_and_app_id(params)
     else  # got token -- takes precedence over facebook_id
-      fp = FacebookProfile.where(params.slice(:token, :app_id, :direct_fetch)).first
+      fp = FacebookProfile.where(params.slice(:token, :app_id)).first
       if fp.present?
         fp.update_attributes(params.slice(*updatable_attributes))
         fp
@@ -159,7 +160,7 @@ class FacebookProfile
   # We should fetch if (a) we've not fetched ever (no last_fetched_at timestamp)
   # or the record was fetched through a friend previously and not directly
   def should_fetch?
-    last_fetched_at.nil? or !direct_fetch? or facebook_api_error.present?
+    last_fetched_at.nil? or !fetched_directly? or facebook_api_error.present?
   end
 
   private

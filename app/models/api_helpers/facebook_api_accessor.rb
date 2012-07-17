@@ -86,8 +86,6 @@ module ApiHelpers::FacebookApiAccessor
     self.facebook_api_error = nil  # clear errors before making fb calls
     get_about_me_and_friends(only_uids)
     get_engagement_data_and_network_graph
-    self.last_fetched_at = Time.now.utc
-    self.last_fetched_by = self.uid
     generate_friends_records!  # will save
   end
 
@@ -120,6 +118,9 @@ module ApiHelpers::FacebookApiAccessor
       self.edge_count += fp.facebook_profile_uids.length
     end
     Rails.logger.info "Created #{friends_raw.length} records for friends"
+    self.last_fetched_at = Time.now.utc
+    self.last_fetched_by = self.uid
+    self.fetched_directly = true
     save!
   end
 

@@ -7,7 +7,7 @@ class ApiController < ApplicationController
   # Can pass in UID if no token -- API will tell you if we ran it once before already
 
   def trust_check
-    @facebook_profile = FacebookProfile.update_or_create_by_token_or_facebook_id_and_app_id(params)
+    @facebook_profile = FacebookProfile.update_or_create_by_token_or_facebook_id_and_app_id(params.merge(fetching_directly: true))
     if @facebook_profile.valid? and !@facebook_profile.changed? # it was saved
       if @facebook_profile.has_scores?
         render 'score_ready'

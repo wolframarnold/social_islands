@@ -52,7 +52,7 @@ describe FacebookFetcher do
 
     context 'FB profile was fetched before, but only through a friend' do
       before do
-        wolf_facebook_profile.update_attributes(last_fetched_by: 123456, direct_fetch: false)
+        wolf_facebook_profile.update_attributes(last_fetched_by: 123456, fetched_directly: false)
         FacebookProfile.any_instance.should_receive(:compute_all_scores!)
       end
 
