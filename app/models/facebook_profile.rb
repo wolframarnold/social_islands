@@ -35,6 +35,8 @@ class FacebookProfile
   field :computed_stats,       type: Hash
   field :photo_engagements,    type: Hash
   field :status_engagements,   type: Hash
+  field :location_engagements,  type: Hash
+  field :tagged_engagements,   type: Hash
   field :profile_completeness, type: Float
 
   # Raw data fields from Facebook

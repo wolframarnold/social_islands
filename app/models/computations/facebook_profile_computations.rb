@@ -64,16 +64,18 @@ module Computations::FacebookProfileComputations
   ##############################
 
   def compute_engagements
-    %w(photos statuses).each do |eng_type|
+    #%w(photos statuses locations tagged).each do |eng_type|
+    %w(photos statuses locations tagged).each do |eng_type|
       next if send(eng_type).blank?
 
-      initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {})
+      initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {}, from: {})
       results = send(eng_type).reduce(initial) do |stats, engagement|
         # TODO: Deal with case when the tagged party doesn't have a UID (i.e. is not on FB)
         # See tracker story: https://www.pivotaltracker.com/story/show/29603637
         add_engagements(stats['co_tagged_with'], engagement, 'tags')
         add_engagements(stats['liked_by'], engagement, 'likes')
         add_engagements(stats['commented_by'], engagement, 'comments')
+        add_from_engagements(stats['from'], engagement)
         stats
       end
       results['co_tags_uniques']  = results['co_tagged_with'].length
@@ -86,8 +88,18 @@ module Computations::FacebookProfileComputations
     end
   end
 
+  def add_from_engagements(result, raw_data_hash)
+    return if raw_data_hash['from'].nil?
+    from_uid=raw_data_hash['from']['id'].to_s
+    return if from_uid == self.uid.to_s
+    result[from_uid] ||= 0
+    result[from_uid] += 1
+  end
+
+  #works for likes, comments, tags, need a seperate function for from
   def add_engagements(result, raw_data_hash, engagement_name)
     return if raw_data_hash[engagement_name].nil?
+    return if raw_data_hash[engagement_name]['data'].nil?  #if there is a 0 entry, data fields does not exist, instead, a count=0
     raw_data_hash[engagement_name]['data'].each do |eng|
       # Comments has an additional sub-hash "from"
       friend_uid = engagement_name == 'comments' ? eng['from']['id'].to_s : eng['id'].to_s
