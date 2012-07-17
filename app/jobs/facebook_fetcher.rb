@@ -31,7 +31,9 @@ class FacebookFetcher
         if postback_url.present?
           Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Pinging postback url: #{postback_url}" }
           RestClient.post postback_url,
-            { facebook_id: facebook_profile.uid,
+            { name: facebook_profile.name,
+              image: facebook_profile.image,
+              facebook_id: facebook_profile.uid,
               profile_authenticity: facebook_profile.profile_authenticity,
               trust_score: facebook_profile.trust_score }.to_json,
             content_type: :json, accept: :json
