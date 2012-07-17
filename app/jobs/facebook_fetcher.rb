@@ -45,10 +45,11 @@ class FacebookFetcher
       Rails.logger.error exception.message
       Rails.logger.error exception.backtrace.join("\n")
     }
-    RestClient.post postback_url,
-      { errors: {base: ["Facebook API Error--#{exception.message}"]} }.to_json,
-      content_type: :json, accept: :json
-
+    if computation != 'viz' && postback_url.present?  # The postback mechanism doesn't work for social islands
+      RestClient.post postback_url,
+        { errors: {base: ["Facebook API Error--#{exception.message}"]} }.to_json,
+        content_type: :json, accept: :json
+    end
   rescue => e
     Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}", 'Exception') {
       Rails.logger.error e.message
