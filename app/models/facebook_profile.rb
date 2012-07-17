@@ -66,9 +66,9 @@ class FacebookProfile
 
   validate :postback_url_matched_domain
 
-  index [:uid, :app_id], unique: true
-  index [:token, :app_id], unique: true
-  index [:name, :app_id]
+  index [[:uid, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]], unique: true
+  index [[:token, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]], unique: true
+  index [[:name, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]]
 
   has_one :facebook_graph, dependent: :destroy  # use the method facebook_graph_lightweight if you don't want the gexf file
 
