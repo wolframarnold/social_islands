@@ -27,6 +27,14 @@ class ApiController < ApplicationController
     end
   rescue ArgumentError => e
     render json: {errors: {base: [e.message]}}, status: :unprocessable_entity
+  rescue Koala::Facebook::APIError => exception
+    @facebook_profile.update_attribute(:facebook_api_error,exception.message) if @facebook_profile
+    Rails.logger.tagged('api_controller', 'Facebook API Exception') {
+      Rails.logger.error "Params: #{params.inspect}"
+      Rails.logger.error exception.message
+      Rails.logger.error exception.backtrace.join("\n")
+    }
+    render json: {errors: {token: [exception.message]}}, status: :unprocessable_entity
   end
 
 
