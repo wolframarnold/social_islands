@@ -57,6 +57,7 @@ class ApiController < ApplicationController
       end
       response['WWW-Authenticate'] = %(api_key api_id tuple realm="api.trust.cc")
       render json: {errors: errors}, status: :unauthorized
+    elsif Rails.env.development?
     elsif !(auth_resp = ThreeScale.client.authorize(params.slice(:app_id,:app_key))).success?
       response['WWW-Authenticate'] = %(api_key api_id tuple realm="api.trust.cc")
       render json: {errors: {'base' => [%Q(Authorization failed! Code: #{auth_resp.error_code} "#{auth_resp.error_message}")]}},

@@ -118,6 +118,7 @@ module ApiHelpers::FacebookApiAccessor
       self.facebook_profile_uids << fp.uid
       self.edge_count += fp.facebook_profile_uids.length
     end
+    Rails.logger.tagged('facebook_api_accessor', "FacebookProfile#_id=#{id}") { Rails.logger.info "Created #{friends_raw.length} records for friends" }
     save!
   end
 
