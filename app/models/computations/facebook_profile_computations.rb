@@ -89,7 +89,7 @@ module Computations::FacebookProfileComputations
   end
 
   def add_from_engagements(result, raw_data_hash)
-    return if raw_data_hash['from'].nil?
+    return if raw_data_hash['from'].nil? || raw_data_hash['from']['id'].nil?
     from_uid=raw_data_hash['from']['id'].to_s
     return if from_uid == self.uid.to_s
     result[from_uid] ||= 0
