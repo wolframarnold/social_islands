@@ -63,7 +63,7 @@ describe ApiController do
           response.should be_ok
         end
         it 'sends scores and facebook_id' do
-          JSON.parse(response.body).should == {facebook_id: fp.uid, profile_authenticity: profile_authenticity, trust_score: trust_score}.with_indifferent_access
+          JSON.parse(response.body).should == {facebook_id: fp.uid, profile_authenticity: profile_authenticity, trust_score: trust_score, name: 'Wolfram Arnold', image: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/371822_595045215_1563438209_q.jpg'}.with_indifferent_access
         end
       end
       shared_examples 'record is created' do

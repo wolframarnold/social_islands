@@ -53,6 +53,7 @@ FactoryGirl.define do
     user factory: :wolf_user, image: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/371822_595045215_1563438209_q.jpg'
     token FactoryGirl.fb_credentials(:wolf)['token']
     app_id '66b53220'
+    direct_fetch true
 
     after(:create) do |wolf_fp|
       create(:api_client, app_id: wolf_fp.app_id)

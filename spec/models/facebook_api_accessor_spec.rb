@@ -18,7 +18,7 @@ describe FacebookProfile do
 
     before do
       wolf_fp.should_receive(:execute_fb_batch_query).twice
-      wolf_fp.about_me = {'id' => wolf_fp.to_param, 'name' => wolf_fp.name}
+      wolf_fp.about_me = {'id' => wolf_fp.uid, 'name' => wolf_fp.name}
     end
 
     it 'batches all requests' do
@@ -83,7 +83,7 @@ describe FacebookProfile do
       }.to change(FacebookProfile,:count).by(2)
     end
 
-    it "writes about me data on friends from FB into fields_via_friend" do
+    it 'writes about me data on friends from FB into fields_via_friend' do
       wolf_fp.generate_friends_records!
       wei = FacebookProfile.where(uid: weidong_uid).first
 
@@ -120,14 +120,19 @@ describe FacebookProfile do
       friends[1].facebook_profile_uids.should =~ [wolf_fp.uid, lars_uid] + weidong_wolf_mutual_friend_uids
     end
 
-    it "for a friend record denormalizes name, image, token, app_id" do
+    it "for a friend record denormalizes name, image, app_id" do
       wolf_fp.generate_friends_records!
       wei = FacebookProfile.where(uid: weidong_uid).first
 
       wei.name.should == 'Weidong Yang'
       wei.image.should == 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/370434_563900754_1952612728_s.jpg'
-      wei.token.should == wolf_fp.token
       wei.app_id.should == wolf_fp.app_id
+    end
+
+    it 'does NOT set token on friend records' do
+      wolf_fp.generate_friends_records!
+      wei = FacebookProfile.where(uid: weidong_uid).first
+      wei.token.should be_nil
     end
 
     it 'sets can_post on self' do

@@ -18,6 +18,7 @@ class FacebookProfile
   field :token_expires_at, type: DateTime
 
   # Last FB contact
+  field :direct_fetch,     type: Boolean, default: false  # direct download, vs. indirect (through friends)
   field :last_fetched_at,  type: DateTime
   field :last_fetched_by,  type: Integer  # FB UID of user who caused the record to be populated
                                           # can be user him/herself (direct login) or another user (data retrieved as friend record)
@@ -58,7 +59,8 @@ class FacebookProfile
 
   belongs_to :user, autosave: true, index: true
 
-  validates :user_id, :app_id, :token, presence: true
+  validates :user_id, :app_id, presence: true
+  validates :token, presence: true, if: :direct_fetch?
 
   validate :postback_url_matched_domain
 
@@ -85,7 +87,7 @@ class FacebookProfile
   end
 
   def self.updatable_attributes
-    %w(facebook_id uid token name image token_expires token_expires_at postback_url)
+    %w(facebook_id uid token name image token_expires token_expires_at postback_url direct_fetch)
   end
 
   # required params:
@@ -97,14 +99,14 @@ class FacebookProfile
   # optional params:
   # postback_url -- where to post back to when score is computed
   def self.update_or_create_by_token_or_facebook_id_and_app_id(params)
-    params = params.with_indifferent_access
+    params = params.with_indifferent_access.merge(direct_fetch: true)
 
     if params[:app_id].blank? || (params[:token].blank? && params[:facebook_id].blank?)
       raise ArgumentError.new("'app_id' and 'token' or 'facebook_id' parameters are required!")
     elsif params[:token].blank?
       self.update_or_create_by_facebook_id_and_app_id(params)
     else  # got token -- takes precedence over facebook_id
-      fp = FacebookProfile.where(params.slice(:token, :app_id)).first
+      fp = FacebookProfile.where(params.slice(:token, :app_id, :direct_fetch)).first
       if fp.present?
         fp.update_attributes(params.slice(*updatable_attributes))
         fp
@@ -155,7 +157,7 @@ class FacebookProfile
   # We should fetch if (a) we've not fetched ever (no last_fetched_at timestamp)
   # or the record was fetched through a friend previously and not directly
   def should_fetch?
-    last_fetched_at.nil? or last_fetched_by != uid
+    last_fetched_at.nil? or !direct_fetch?
   end
 
   private
@@ -179,6 +181,5 @@ class FacebookProfile
   def postback_url_mis_matches(domain)
     postback_url !~ %r(https?://#{domain})
   end
-
 end
 
