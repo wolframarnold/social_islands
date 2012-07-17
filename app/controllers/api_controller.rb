@@ -12,6 +12,8 @@ class ApiController < ApplicationController
       if @facebook_profile.has_scores?
         render 'score_ready'
       else
+        # To run synchronously, just comment out the Resque line and uncomment the following one instead
+        #FacebookFetcher.perform @facebook_profile.to_param, 'scoring', @facebook_profile.postback_url
         Resque.enqueue(FacebookFetcher, @facebook_profile.to_param, 'scoring', @facebook_profile.postback_url)
         render 'score_not_ready', status: :accepted
       end
