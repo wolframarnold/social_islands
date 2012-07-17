@@ -159,7 +159,7 @@ class FacebookProfile
   # We should fetch if (a) we've not fetched ever (no last_fetched_at timestamp)
   # or the record was fetched through a friend previously and not directly
   def should_fetch?
-    last_fetched_at.nil? or !direct_fetch?
+    last_fetched_at.nil? or !direct_fetch? or facebook_api_error.present?
   end
 
   private

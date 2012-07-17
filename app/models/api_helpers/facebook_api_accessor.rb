@@ -83,6 +83,7 @@ module ApiHelpers::FacebookApiAccessor
   # Instance Methods
 
   def import_profile_and_network!(only_uids=nil)
+    self.facebook_api_error = nil  # clear errors before making fb calls
     get_about_me_and_friends(only_uids)
     get_engagement_data_and_network_graph
     self.last_fetched_at = Time.now.utc

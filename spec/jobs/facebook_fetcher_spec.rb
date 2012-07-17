@@ -62,6 +62,18 @@ describe FacebookFetcher do
       end
     end
 
+    context 'FB profile was direct-fetched before but had errors' do
+      before do
+        wolf_facebook_profile.update_attributes(facebook_api_error: "An unknown error occurred. Sorry.")
+        FacebookProfile.any_instance.should_receive(:compute_all_scores!)
+      end
+
+      it 'fetches all data' do
+        wolf_facebook_profile.should_receive(:import_profile_and_network!)
+        FacebookFetcher.perform(wolf_facebook_profile.to_param, 'scoring')
+      end
+    end
+
     context "graph doesn't exist" do
       before { FacebookProfile.any_instance.should_not_receive(:import_profile_and_network!) }
 
