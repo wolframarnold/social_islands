@@ -6,7 +6,7 @@ class FacebookFetcher
     facebook_profile = FacebookProfile.find(facebook_profile_id)
 
     # TODO: Refetch in all cases, but make provisions for not over-writing existing graph/score
-    if facebook_profile.last_fetched_at.nil?
+    if facebook_profile.should_fetch?
       Rails.logger.tagged('fb_fetcher', "FacebookProfile#_id=#{facebook_profile_id}") { Rails.logger.info "Retrieving Facebook profile and network" }
       facebook_profile.import_profile_and_network!
     end

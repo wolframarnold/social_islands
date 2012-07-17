@@ -47,11 +47,24 @@ describe FacebookFetcher do
 
   context "repeat profile" do
     before do
-      wolf_facebook_profile.update_attribute(:last_fetched_at, Time.now)
-      FacebookProfile.any_instance.should_not_receive(:import_profile_and_network!)
+      wolf_facebook_profile.update_attributes(last_fetched_at: Time.now, last_fetched_by: wolf_facebook_profile.uid)
+    end
+
+    context 'FB profile was fetched before, but only through a friend' do
+      before do
+        wolf_facebook_profile.update_attribute(:last_fetched_by, 123456)
+        FacebookProfile.any_instance.should_receive(:compute_all_scores!)
+      end
+
+      it 'fetches all data' do
+        wolf_facebook_profile.should_receive(:import_profile_and_network!)
+        FacebookFetcher.perform(wolf_facebook_profile.to_param, 'scoring')
+      end
     end
 
     context "graph doesn't exist" do
+      before { FacebookProfile.any_instance.should_not_receive(:import_profile_and_network!) }
+
       it "doesn't make FB API calls again but puts viz job on queue" do
         Resque.should_receive(:push).with(
             'viz',
@@ -63,6 +76,7 @@ describe FacebookFetcher do
     end
 
     context "graph exists" do
+      before { FacebookProfile.any_instance.should_not_receive(:import_profile_and_network!) }
       let!(:facebook_graph) { create(:facebook_graph, facebook_profile: wolf_facebook_profile) }
 
       it "doesn't make FB API calls nor pushes job on queue" do

@@ -5,7 +5,8 @@ class FacebookProfile
   include ApiHelpers::FacebookApiAccessor
   include Computations::FacebookProfileComputations
 
-  attr_accessible :uid, :name, :image, :token, :token_expires, :token_expires_at, :postback_url, :facebook_id
+  attr_protected :app_id, :profile_authenticity, :trust_score, :computed_stats,
+                 :photo_engagements, :status_engagements, :profile_completeness
 
   # High-level/common use profile fields
   field :uid,              type: Integer
@@ -16,15 +17,10 @@ class FacebookProfile
   field :token_expires,    type: Boolean
   field :token_expires_at, type: DateTime
 
-  index :uid, unique: true
-  index :name
-
   # Last FB contact
   field :last_fetched_at,  type: DateTime
   field :last_fetched_by,  type: Integer  # FB UID of user who caused the record to be populated
                                           # can be user him/herself (direct login) or another user (data retrieved as friend record)
-
-  index :last_fetched_by
 
   # For notifying client on fetch & computation completion
   field :postback_url,     type: String
@@ -66,8 +62,8 @@ class FacebookProfile
 
   validate :postback_url_matched_domain
 
-  index [[:uid, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]], unique: true
-  index [[:token, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]], unique: true
+  index [[:uid, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]]
+  index [[:token, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]]
   index [[:name, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]]
 
   has_one :facebook_graph, dependent: :destroy  # use the method facebook_graph_lightweight if you don't want the gexf file
@@ -88,6 +84,10 @@ class FacebookProfile
     profile_authenticity.present?
   end
 
+  def self.updatable_attributes
+    %w(facebook_id uid token name image token_expires token_expires_at postback_url)
+  end
+
   # required params:
   # app_id:      trust.cc APP ID for authorized client
   # and one of:
@@ -106,7 +106,7 @@ class FacebookProfile
     else  # got token -- takes precedence over facebook_id
       fp = FacebookProfile.where(params.slice(:token, :app_id)).first
       if fp.present?
-        fp.update_attributes(params)
+        fp.update_attributes(params.slice(*updatable_attributes))
         fp
       else
         params.merge! self.get_facebook_id_name_image(params[:token])  # FB API call to get UID, name, image from token
@@ -133,7 +133,7 @@ class FacebookProfile
 
     fp = FacebookProfile.where(uid: params[:facebook_id], app_id: params[:app_id]).first
     if fp.nil?
-      fp = self.new(params.except(:app_id))
+      fp = self.new(params.slice(*updatable_attributes))
       fp.app_id = params[:app_id]  # not mass-assignable for spoofing protection
       if fp_with_same_facebook_id = FacebookProfile.where(uid: params[:facebook_id]).first
         fp.user_id = fp_with_same_facebook_id.user_id
@@ -141,7 +141,7 @@ class FacebookProfile
         fp.user = User.new params.slice(:name, :image) # fp.build_user -- throws method_missing error for some reason?
       end
     else
-      fp.attributes = params
+      fp.attributes = params.slice(*updatable_attributes)
     end
     fp.save
     fp
@@ -150,6 +150,12 @@ class FacebookProfile
   # The outside API's use :facebook_id as key
   def facebook_id=(uid)
     self.uid = uid
+  end
+
+  # We should fetch if (a) we've not fetched ever (no last_fetched_at timestamp)
+  # or the record was fetched through a friend previously and not directly
+  def should_fetch?
+    last_fetched_at.nil? or last_fetched_by != uid
   end
 
   private
