@@ -33,6 +33,7 @@ class ApiClient
   end
 
   def fetch_api_manager_application_record
+    return if Rails.env.development?  # Don't go to 3Scale in dev mode
     conn=Faraday.new(THREE_SCALE_APPLICATION_FIND_URL) do |builder|
       builder.request :url_encoded
       builder.adapter :net_http

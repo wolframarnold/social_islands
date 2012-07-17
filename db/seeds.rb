@@ -21,3 +21,12 @@ if api_client.nil?
   api_client.app_id = SOCIAL_ISLANDS_TRUST_CC_APP_ID
   api_client.save!
 end
+
+if Rails.env.development?
+  api_client = ApiClient.where(name: 'localhost app', app_id: 'localhost_app_id').first
+  if api_client.nil?
+    api_client = ApiClient.new(name: 'localhost app', postback_domain: 'localhost')
+    api_client.app_id = 'localhost_app_id'
+    api_client.save!
+  end
+end
