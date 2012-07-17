@@ -152,25 +152,26 @@ class FacebookProfile
     self.uid = uid
   end
 
-  #def email
-  #  self.info['email']
-  #end
-  #
-  #def current_location_name
-  #  self.info['location']['name']
-  #end
-
   private
 
   def postback_url_matched_domain
     if postback_url_changed?
-      domain = ApiClient.where(app_id: app_id).first.try(:postback_domain)
+      api_client = ApiClient.where(app_id: app_id).first
+      domain = api_client.postback_domain
+      if domain.blank? || postback_url_mis_matches(domain)
+        api_client.update_from_api_manager
+        domain = api_client.postback_domain
+      end
       if domain.blank?
         errors.add(:postback_url, "requires a 'postback_domain' on file. Cannot use postback mechanism without it. Configure it on API dashboard.")
-      elsif postback_url !~ %r(https?://#{domain})
+      elsif postback_url_mis_matches(domain)
         errors.add(:postback_url, "does not match 'postback_domain' on file. Postback mechanism disallowed.")
       end
     end
+  end
+
+  def postback_url_mis_matches(domain)
+    postback_url !~ %r(https?://#{domain})
   end
 
 end

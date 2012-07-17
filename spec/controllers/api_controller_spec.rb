@@ -93,6 +93,7 @@ describe ApiController do
       end
       shared_examples 'can update postback_url' do
         it 'sends 422 Unprocessable Entity if postback_url does not match domain' do
+          ApiClient.any_instance.stub(:update_from_api_manager)
           post_params[:postback_url] = 'http://joesmith.example.com/trustcc'
           post :trust_check, post_params
           response.status.should == 422

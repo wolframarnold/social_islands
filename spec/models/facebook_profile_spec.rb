@@ -2,14 +2,6 @@ require 'spec_helper'
 
 describe FacebookProfile do
 
-  context 'photo_engagements' do
-
-    xit { should respond_to(:photo_engagements)}
-
-    xit { should respond_to(:compute_photo_engagements)}
-
-  end
-
   context '.update_or_create_by_token_or_facebook_id_and_app_id' do
 
     shared_examples 'FB Profile for token and APP ID does not exist' do
@@ -150,20 +142,35 @@ describe FacebookProfile do
       end
     end
 
-    context 'postback_url domain validation' do
+    context '#postback_url_matched_domain' do
       let!(:wolf_fp)    { create(:wolf_facebook_profile) }
       let!(:api_client) { ApiClient.where(app_id: wolf_fp.app_id).first }
 
-      it 'rejects missing postback domain' do
-        api_client.update_attribute(:postback_domain,nil)
-        wolf_fp.postback_url = 'https://api.example.com/trustcc-postback'
-        wolf_fp.should_not be_valid
-        wolf_fp.errors[:postback_url].should == ["requires a 'postback_domain' on file. Cannot use postback mechanism without it. Configure it on API dashboard."]
+      before do
+        ApiClient.any_instance.should_receive(:update_from_api_manager)
       end
-      it 'rejects non-matching postback domain' do
-        wolf_fp.postback_url = 'https://joe_smith.example.com/trustcc-postback'
-        wolf_fp.should_not be_valid
-        wolf_fp.errors[:postback_url].should == ["does not match 'postback_domain' on file. Postback mechanism disallowed."]
+
+      context 'missing postback domain' do
+        before do
+          wolf_fp.postback_url = 'https://api.example.com/trustcc-postback'
+          api_client.update_attribute(:postback_domain,nil)
+        end
+
+        it 'rejects missing postback domain' do
+          wolf_fp.should_not be_valid
+          wolf_fp.errors[:postback_url].should == ["requires a 'postback_domain' on file. Cannot use postback mechanism without it. Configure it on API dashboard."]
+        end
+      end
+
+      context 'non-matching postback domain' do
+        before do
+          wolf_fp.postback_url = 'https://joe_smith.example.com/trustcc-postback'
+        end
+
+        it 'rejects non-matching postback domain' do
+          wolf_fp.should_not be_valid
+          wolf_fp.errors[:postback_url].should == ["does not match 'postback_domain' on file. Postback mechanism disallowed."]
+        end
       end
     end
 
