@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://trustcc-admin.3scale.net/admin/api/applications/find.xml?app_id=66b53220&provider_key=3scale_provider_key_dummy
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: !binary |-
+        T0s=
+    headers:
+      !binary "Q2FjaGUtQ29udHJvbA==":
+      - !binary |-
+        cHJpdmF0ZSwgbWF4LWFnZT0wLCBtdXN0LXJldmFsaWRhdGU=
+      !binary "Q29udGVudC1FbmNvZGluZw==":
+      - !binary |-
+        Z3ppcA==
+      !binary "Q29udGVudC1UeXBl":
+      - !binary |-
+        YXBwbGljYXRpb24veG1sOyBjaGFyc2V0PXV0Zi04
+      !binary "RGF0ZQ==":
+      - !binary |-
+        TW9uLCAxNiBKdWwgMjAxMiAyMjozODowMSBHTVQ=
+      !binary "RXRhZw==":
+      - !binary |-
+        ImQ5YzYzNmNlNmNmYjMwODc2YTE1YTY4ZmUyZTM5YjM3Ig==
+      !binary "U2VydmVy":
+      - !binary |-
+        QXBhY2hlLzIuMi4xNCAoVWJ1bnR1KQ==
+      !binary "U2V0LUNvb2tpZQ==":
+      - !binary |-
+        SlNFU1NJT05JRD0wOyBwYXRoPS8=
+      !binary "U3RhdHVz":
+      - !binary |-
+        MjAw
+      !binary "VmFyeQ==":
+      - !binary |-
+        QWNjZXB0LUVuY29kaW5nLFVzZXItQWdlbnQ=
+      !binary "Q29udGVudC1MZW5ndGg=":
+      - !binary |-
+        NTQ3
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAA5VTwW7cIBC95yuQ74kBL/Z6xRK1h0i9RW166cXCME5QvLYL
+        eLX79x28TeIkvfQG894Mb94M8vZ06MkRfHDjsM/YDc0IDGa0bnjcZz8f7q63
+        2a26knqaemd0RJa6IkQ6q9iG1iWteME3gsscIwkwHnQE2+ioOGX8mlbXrHxg
+        5Y7zHWO/ZL4iJP482X/wOduJeldQ5K8IiR8i3tQEQ1Io88t1KRTAN9qYcR5i
+        g2L4ZiNEVdeMM4byPsIpBYs0S9zD79l5sKrTfQCZfwYSfeVBqlCWrSg4pzL/
+        ACTuM5xDOlyOqgNB262wbUWLDjRrLS8slFRYRDooZJ5YKTG/ZMqp1wOx0Om5
+        j/ss+hmyF+N5IapCiI2oRc1ejR/0AdS9d0c0hHyFqGW+hBIWzxOotcpUXeZL
+        eGXq3PYuPIFd24ouHJ2B1BejtCwqVm0Y3+K7K+R/zZR5EvAm+/vcnrvRzAE7
+        PkI/TuAJyl11YCEY76Zl/+5GTyKEiAtAih9G97BOMwZCIHEk6FmIN8aQL/ff
+        ZL4usMg9Ra+bzkFvXwY1jSG22jw3djxoN6h+xNpPGMRFpDjmj/gyrvd1Fifn
+        oHAb9SOQA0TvzD57cjFkBOW50e6zgxvmiOOUl0CDOX69/QS/SrHdLU+uGS98
+        NPQzW9Sv7IRLM3sPuOpH3c+gsNT7gDzo099jgeDbLf0UlK4uO5Bayd/9/T/p
+        KPWJMQQAAA==
+    http_version: 
+  recorded_at: Mon, 16 Jul 2012 22:38:02 GMT
+recorded_with: VCR 2.2.2

@@ -8,16 +8,21 @@ describe ApiController do
 
   # ENHANCEMENTS: store 3rd party customer ID
 
-  context 'known APP ID' do
-    let!(:fp)    { create(:wolf_facebook_profile) }
+  context 'accepted credentials and known APP ID' do
+    let!(:fp)         { create(:wolf_facebook_profile) }
     let!(:wolf_fp)    { fp }
     let!(:api_client) { ApiClient.where(app_id: fp.app_id).first }
-    let(:post_params_valid) { { token: fp.token, app_id: api_client.app_id, postback_url: "http://#{api_client.postback_domain}/trustcc" } }
+    let(:post_params_valid) { { token: fp.token, app_id: api_client.app_id, app_key: 'secret_app_key', postback_url: "http://#{api_client.postback_domain}/trustcc" } }
     let(:post_params)  { post_params_valid }  # overridable to emulate different scenarios
     let(:postback_url) { post_params[:postback_url]}
-    let(:fp_id)       { fp.uid }
+    let(:fp_id)        { fp.uid }
 
-    before { Resque.stub!(:enqueue) }
+    before do
+      @success_response = ThreeScale::Response.new
+      @success_response.success!
+      ThreeScale.client.should_receive(:authorize).with('app_id'=>wolf_fp.app_id, 'app_key'=>'secret_app_key').and_return(@success_response)
+      Resque.stub!(:enqueue)
+    end
 
     context 'POST /trust_check' do
       render_views
@@ -108,7 +113,7 @@ describe ApiController do
 
       context 'params: app_id only -- invalid' do
         it 'sends 422 Unprocessable Entity' do
-          post :trust_check, post_params.slice(:app_id)
+          post :trust_check, post_params.slice(:app_id,:app_key)
           response.status.should == 422
           JSON.parse(response.body).should == {'errors' => {'base' => ["'app_id' and 'token' or 'facebook_id' parameters are required!"]}}
         end
@@ -147,27 +152,53 @@ describe ApiController do
         it_behaves_like 'can update postback_url'
       end
       context 'params: facebook_id and app_id no token -- non-matching record' do
-        let(:post_params) { {app_id: fp.app_id, facebook_id: fp_id+1} }
+        let(:post_params) { {app_id: fp.app_id, app_key: 'secret_app_key', facebook_id: fp_id+1} }
         it_behaves_like 'not found'
       end
 
     end
 
-    context 'POST /trust_feedback' do
-      context 'params: facebook_id and app_id'
+    context 'unknown app_id' do
+      before do
+        api_client.destroy
+      end
+      it 'creates an ApiClient record' do
+        VCR.use_cassette('3scale/rubyfocus_developer_app') do
+          expect {
+            post :trust_check, post_params.except(:token)
+          }.to change(ApiClient, :count).by(1)
+        end
+      end
     end
+
   end
 
-  context 'unknown APP ID' do
-    it 'missing: sends with 403 Forbidden' do
-      post :trust_check
-      response.should be_forbidden
+  context 'failing credentials' do
+
+    context 'app_id and/or app_key missing' do
+      it 'missing: sends with 401 Unauthorized' do
+        post :trust_check
+        response.response_code.should == 401
+        response.headers.should include('WWW-Authenticate'=>'api_key api_id tuple realm="api.trust.cc"')
+        JSON.parse(response.body).should == {'errors'=>{'app_key'=>['must be provided'],'app_id'=>['must be provided']}}
+      end
     end
 
-    it 'unknown: sends with 403 Forbidden' do
-      post :trust_check, facebook_id: '123456', app_id: 'abcdefg'
-      response.should be_forbidden
+    context 'app_id, app_key present but 3Scale authorization failed' do
+      before do
+        error_response = ThreeScale::Response.new
+        error_response.error!('Something went wrong!', 999)
+        ThreeScale.client.should_receive(:authorize).with('app_id'=>'my_app_id', 'app_key'=>'my_app_key').and_return(error_response)
+      end
+
+      it 'missing: sends with 401 Unauthorized' do
+        post :trust_check, app_id: 'my_app_id', app_key: 'my_app_key'
+        response.response_code.should == 401
+        response.headers.should include('WWW-Authenticate'=>'api_key api_id tuple realm="api.trust.cc"')
+        JSON.parse(response.body).should == {'errors'=>{'base'=>['Authorization failed! Code: 999 "Something went wrong!"']}}
+      end
     end
+
   end
 
 end

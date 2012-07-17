@@ -3,10 +3,6 @@ class ApiController < ApplicationController
   before_filter :check_authorization
   skip_before_filter :verify_authenticity_token
 
-  # TODO: Use single API endpoint /profile
-  # - use it to update token, postback url
-  # - it'll return score if known right away, or else makes a postback call
-
   # DOCS: Always pass in a token, if available
   # Can pass in UID if no token -- API will tell you if we ran it once before already
 
@@ -46,9 +42,21 @@ class ApiController < ApplicationController
   private
 
   def check_authorization
-    if params[:app_id].blank? || !ApiClient.where(app_id: params[:app_id]).exists?
-      render json: {errors: {'app_id' => 'is missing or has no access privileges for this record'}},
-             status: :forbidden
+    if params[:app_id].blank? or params[:app_key].blank?
+      errors = %w(app_id app_key).reduce({}) do |hash,attr|
+        hash[attr] = ['must be provided'] if params[attr].blank?
+        hash
+      end
+      response['WWW-Authenticate'] = %(api_key api_id tuple realm="api.trust.cc")
+      render json: {errors: errors}, status: :unauthorized
+    elsif !(auth_resp = ThreeScale.client.authorize(params.slice(:app_id,:app_key))).success?
+      response['WWW-Authenticate'] = %(api_key api_id tuple realm="api.trust.cc")
+      render json: {errors: {'base' => [%Q(Authorization failed! Code: #{auth_resp.error_code} "#{auth_resp.error_message}")]}},
+             status: :unauthorized
+    else
+      # We're authorized
+      # See if we have a known APIClient record
+      ApiClient.setup_if_missing! params[:app_id]
     end
   end
 

@@ -9,5 +9,5 @@ if Rails.env.production?
 elsif Rails.env.test?
   # In test environment, this should never be called, but we want to use mocks to
   # verify that the correct auth calls get made.
-  ThreeScale.client = ThreeScale::Client.new(provider_key: 'dummy_key')
+  ThreeScale.client = ThreeScale::Client.new(provider_key: ENV['THREE_SCALE_PROVIDER_KEY'] || '3scale_provider_key_dummy')
 end

@@ -39,7 +39,7 @@ FactoryGirl.define do
     image 'https://faceboom.com/weidong.png'
     user factory: :wolf_user, image: 'https://faceboom.com/weidong.png'
     token FactoryGirl.fb_credentials(:wei)['token']
-    app_id 'abcdef3567'
+    app_id '66b53220'
     about_me FactoryGirl.info_fixture("wei")
     after(:create) do |wei_fp|
       create(:api_client, app_id: wei_fp.app_id)
@@ -52,7 +52,7 @@ FactoryGirl.define do
     image 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/371822_595045215_1563438209_q.jpg'
     user factory: :wolf_user, image: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/371822_595045215_1563438209_q.jpg'
     token FactoryGirl.fb_credentials(:wolf)['token']
-    app_id 'zxcv0987'
+    app_id '66b53220'
 
     after(:create) do |wolf_fp|
       create(:api_client, app_id: wolf_fp.app_id)
@@ -66,7 +66,7 @@ FactoryGirl.define do
 
   factory :api_client do
     name 'New Commerce, Inc.'
-    app_id 'mnbvcxz0987654'
+    app_id '66b53220'
     postback_domain 'api.example.com'
   end
 
