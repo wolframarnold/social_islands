@@ -84,6 +84,8 @@ module Computations::FacebookProfileComputations
       results['likes_total']      = results['liked_by'].sum {|attr, val| val}
       results['comments_uniques'] = results['commented_by'].length
       results['comments_total']   = results['commented_by'].sum {|attr, val| val}
+      results['from_uniques'] = results['from'].length
+      results['from_total']   = results['from'].sum {|attr, val| val}
       self.send("#{eng_type.singularize}_engagements=", results)  # assign to photo_engagements, status_engagements
     end
   end
@@ -112,6 +114,61 @@ module Computations::FacebookProfileComputations
     end
   end
   private :add_engagements
+
+  ##############################
+  #    Top friends             #
+  ##############################
+  def hash_merge(h1, w_h1, h2, w_h2)
+    new_hash=Hash.new(0)
+    h1.each {|key, val| new_hash[key]+=val*w_h1}
+    h2.each {|key, val| new_hash[key]+=val*w_h2}
+    return new_hash
+  end
+
+  def compute_top_friends
+    w_photo_like = 1
+    w_photo_comment = 1
+    w_photo_cotag = 1
+    w_photo_from = 3
+
+    w_status_like = 2
+    w_status_comment = 4
+
+    w_location_cotag = 2
+    w_location_from = 4
+
+    w_tagged_like = 1
+    w_tagged_comment = 2
+    w_tagged_from = 4
+
+    compute_engagements
+
+    co_tag=hash_merge(photo_engagements['co_tagged_with'], w_photo_cotag, location_engagements['co_tagged_with'], w_location_cotag)
+
+    from=hash_merge(photo_engagements['from'], w_photo_from, location_engagements['from'], w_location_from)
+    from=hash_merge(from, 1, tagged_engagements['from'], w_tagged_from)
+
+    liked_by=hash_merge(photo_engagements['liked_by'], w_photo_like, status_engagements['liked_by'], w_status_like)
+    liked_by=hash_merge(liked_by, 1, tagged_engagements['liked_by'], w_tagged_like)
+
+    commented_by=hash_merge(photo_engagements['commented_by'], w_photo_comment, status_engagements['commented_by'], w_status_comment)
+    commented_by=hash_merge(commented_by, 1, tagged_engagements['commented_by'], w_tagged_comment)
+
+    in_bound=hash_merge(co_tag, 1, from, 1)
+    in_bound=hash_merge(in_bound, 1, liked_by, 1)
+    in_bound=hash_merge(in_bound, 1, commented_by, 1)
+    in_bound.delete("")
+    in_bound=in_bound.sort_by{|key, val| -val}
+
+    #in_bound[0..19].each do |key, val|
+    #  name=FacebookProfile.where(uid:key).blank? ? " " : FacebookProfile.where(uid:key).first['name']
+    #  puts name+" "+ val.to_s + " " + key
+    #end
+
+    in_bound[0..19]   # [ [UID1, Score1], [UID2, Score2] ]
+  end
+
+
 
   ##############################
   #    Profile Completeness    #
