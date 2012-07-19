@@ -32,7 +32,7 @@ class FacebookProfile
   field :computed_stats,       type: Hash
   field :photo_engagements,    type: Hash
   field :status_engagements,   type: Hash
-  field :location_engagements,  type: Hash
+  field :location_engagements, type: Hash
   field :tagged_engagements,   type: Hash
   field :profile_completeness, type: Float
 
@@ -45,16 +45,15 @@ class FacebookProfile
   field :statuses,          type: Array
   field :likes,             type: Array
   field :checkins,          type: Array
-  field :permissions,       type: Hash
+  field :feed,              type: Array
+  field :permissions,       type: Array
   field :joined_on,         type: Date
   field :about_me,          type: Hash
   field :edge_count,        type: Integer
-  field :can_post,          type: Array, default: []  # UID's where self has permission to make wall posts
 
   field :facebook_profile_uids, type: Array, default: []  # for friends
 
   field :facebook_api_error, type: String
-  field :fields_via_friend,  type: Hash  # profile fields obtains via a friend's permissions
 
   belongs_to :user, autosave: true, index: true
 

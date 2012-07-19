@@ -9,6 +9,13 @@ GIT
       rails (>= 3.0.0)
       railties (>= 3.0.0)
 
+PATH
+  remote: ../koala
+  specs:
+    koala (1.5.0)
+      faraday (~> 0.8)
+      multi_json (~> 1.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -108,9 +115,6 @@ GEM
       thor (~> 0.14)
     json (1.7.3)
     kgio (2.7.4)
-    koala (1.5.0)
-      faraday (~> 0.7)
-      multi_json (~> 1.3)
     launchy (2.1.0)
       addressable (~> 2.2.6)
     mail (2.4.4)
@@ -260,7 +264,7 @@ DEPENDENCIES
   highline (~> 1.6.12)
   jbuilder (~> 0.4.0)
   jquery-rails (~> 2.0.2)
-  koala (~> 1.5.0)
+  koala!
   mongoid (~> 2.4.11)
   mongoid_rails_migrations!
   newrelic_rpm (~> 3.4.0.1)
