@@ -69,7 +69,7 @@ module ApiHelpers::FacebookApiAccessor
     end
 
     execute_as_batch_query do
-      get_friends_details  # see comments at method definition -- this causes too many queries for now
+      # get_friends_details  # see comments at method definition -- this causes too many queries for now
       get_engagement_data_and_network_graph
     end
 
@@ -108,9 +108,9 @@ module ApiHelpers::FacebookApiAccessor
   # (Partial) mapping of the FB-returned attributes of a friend
   # into the record of a direct user (ego) -- this is to normalize access
   def friend_raw_to_attributes(friend_raw)
-    self.image = friend_raw['picture']
-    friend_raw.except('uid', 'picture', 'mutual_friend_count').each do |key, val|
-      self.send("#{key}=", val)
+    self.image = friend_raw['pic'].present? ? friend_raw['pic'] : friend_raw['picture']
+    friend_raw.except('uid', 'pic', 'picture', 'mutual_friend_count').each do |key, val|
+      self.send("#{key}=", val) if val.present?
     end
   end
 
@@ -193,9 +193,9 @@ module ApiHelpers::FacebookApiAccessor
   # Returns array of hashes of all the friends
   def queue_friends(friend_uids, &block)
     if friend_uids.nil?
-      fql = 'SELECT uid,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me())'
+      fql = 'SELECT uid,name,pic,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me())'
     else
-      fql = "SELECT uid,mutual_friend_count FROM user WHERE uid IN (#{friend_uids.join(',')})"
+      fql = "SELECT uid,name,pic,mutual_friend_count FROM user WHERE uid IN (#{friend_uids.join(',')})"
     end
     # batch_client.fql_query fql, &block
     # Koala issue workaround: https://github.com/arsduo/koala/issues/237
@@ -242,25 +242,22 @@ module ApiHelpers::FacebookApiAccessor
     yield              # queue up API calls to batch
 
     # Facebook doesn't accept more than 50 requests per batch
-    # Since we may have up to 40 requests for 2k friends (one per friend, plus a few more),
-    # we need to spawn the requests on threads, in order to avoid sitting around for them...
+    # If we get all friend details (in get_friends_details), then
+    # we may have up to 400 requests for 2k friends (~ 10 per friend, plus a few more).
+    # This doesn't scale, and so we're not doing it at the moment.
+    # We still have a mechanism to batch >50 requests.
+    # These could also be spawned on multiple threads
+    # or (better) the use a parallel HTTP adapter like Typhoeus
 
-    threads = @batches.each_with_index.map do |batch_client, i|
-
-      Thread.new(batch_client,i) do |thread_local_batch_client, ti|
-
-        Rails.logger.tagged("Thread ##{ti}") do
-          Rails.logger.info "Executing FB Batch with #{thread_local_batch_client.batch_calls.length} calls ---->"
-          thread_local_batch_client.batch_calls.each do |bc|
-            Rails.logger.info "FB Call Params: " + bc.to_batch_params(koala_client.access_token).inspect
-          end
+    @batches.each_with_index do |batch_client, i|
+      Rails.logger.tagged "Batch ##{i}" do
+        batch_client.batch_calls.each do |bc|
+          Rails.logger.info "FB Call Params: " + bc.to_batch_params(koala_client.access_token).inspect
         end
-
-        thread_local_batch_client.execute(timeout: 30)  # This will call all the blocks on the queries
       end
-    end
 
-    threads.each { |thr| thr.join }
+      batch_client.execute(timeout: 30)  # This will call all the blocks on the queries
+    end
 
   end
 

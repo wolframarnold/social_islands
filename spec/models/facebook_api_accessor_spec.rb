@@ -9,37 +9,10 @@ describe FacebookProfile do
   before :all do
     class << wolf_fp; public :get_about_me_and_friends, :get_friends_details, :get_engagement_data_and_network_graph, :execute_as_batch_query; end
     VCR.insert_cassette 'facebook/wolf_about_me_and_lars_and_weidong', record: :new_episodes#, allow_playback_repeats: true)
-    #wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid])
-    #wolf_fp.execute_batch_query
-    #wolf_fp.get_friends_details
-    #wolf_fp.get_engagement_data_and_network_graph
-    #wolf_fp.execute_batch_query
   end
 
   after :all do
     VCR.eject_cassette
-  end
-
-  context '#import_profile_and_network!' do
-
-    #before do
-    #  wolf_fp.should_receive(:execute_batch_query).twice
-    #  wolf_fp.about_me = {'id' => wolf_fp.uid, 'name' => wolf_fp.name}
-    #end
-    #
-    #it 'batches all requests' do
-    #  wolf_fp.import_profile_and_network!
-    #  batched_attrs = wolf_fp.instance_variable_get(:@batched_attributes)
-    #  batched_attrs.should include(attr: :mutual_friends_raw, chunked: true)
-    #  batched_attrs.should include(attr: :photos, chunked: false)
-    #  batched_attrs.should include(attr: :image, chunked: false)
-    #  batched_attrs.should include(attr: :posts, chunked: false)
-    #  batched_attrs.should include(attr: :tagged, chunked: false)
-    #  batched_attrs.should include(attr: :locations, chunked: false)
-    #  batched_attrs.should include(attr: :statuses, chunked: false)
-    #  batched_attrs.should include(attr: :about_me, chunked: false)
-    #end
-
   end
 
   context 'FB Queries' do
@@ -57,35 +30,35 @@ describe FacebookProfile do
 
       it 'should get friends raw data' do
         wolf_fp.friends_raw.should be_kind_of(Array)
-        wolf_fp.friends_raw.should == [{'uid' => lars_uid,    'mutual_friend_count' => 5 },
-                                       {'uid' => weidong_uid, 'mutual_friend_count' => 15}]
+        wolf_fp.friends_raw.should == [{'uid' => lars_uid,    'mutual_friend_count' => 5 , 'name' => 'Lars Kamp', 'pic' => 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash2/27430_553647753_3455_s.jpg'},
+                                       {'uid' => weidong_uid, 'mutual_friend_count' => 15, 'name' => 'Weidong Yang', 'pic' => 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/370434_563900754_1952612728_s.jpg'}]
       end
     end
 
-    context '#get_friends_details' do
-      before :all do
-        wolf_fp.execute_as_batch_query { wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid]) }
-        wolf_fp.execute_as_batch_query { wolf_fp.get_friends_details }
-      end
-
-      it 'adds about me data, photos, posts, tagged, locations, statuses, likes, feed to friend hash' do
-        wolf_fp.friends_raw.should have(2).entries
-
-        wolf_fp.friends_raw.each do |friend_raw|
-          friend_raw.keys.should =~ %w(uid mutual_friend_count about_me photos posts tagged locations statuses likes feed)
-          friend_raw['about_me'].should be_kind_of(Hash)
-          friend_raw.except('uid','mutual_friend_count','about_me').each_value do |val|
-            val.should be_kind_of(Array)
-          end
-        end
-      end
-    end
+    #context '#get_friends_details' do
+    #  before :all do
+    #    wolf_fp.execute_as_batch_query { wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid]) }
+    #    wolf_fp.execute_as_batch_query { wolf_fp.get_friends_details }
+    #  end
+    #
+    #  it 'adds about me data, photos, posts, tagged, locations, statuses, likes, feed to friend hash' do
+    #    wolf_fp.friends_raw.should have(2).entries
+    #
+    #    wolf_fp.friends_raw.each do |friend_raw|
+    #      friend_raw.keys.should =~ %w(uid mutual_friend_count about_me photos posts tagged locations statuses likes feed)
+    #      friend_raw['about_me'].should be_kind_of(Hash)
+    #      friend_raw.except('uid','mutual_friend_count','about_me').each_value do |val|
+    #        val.should be_kind_of(Array)
+    #      end
+    #    end
+    #  end
+    #end
 
     context '#get_engagement_data_and_network_graph' do
       before :all do
         wolf_fp.execute_as_batch_query { wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid]) }
         wolf_fp.execute_as_batch_query {
-          wolf_fp.get_friends_details
+          #wolf_fp.get_friends_details  # see notes at definition
           wolf_fp.get_engagement_data_and_network_graph
         }
       end
@@ -122,7 +95,7 @@ describe FacebookProfile do
     before :all do
       wolf_fp.execute_as_batch_query { wolf_fp.get_about_me_and_friends([lars_uid, weidong_uid]) }
       wolf_fp.execute_as_batch_query {
-        wolf_fp.get_friends_details
+        #wolf_fp.get_friends_details  # see notes at definition
         wolf_fp.get_engagement_data_and_network_graph
       }
     end
@@ -153,59 +126,64 @@ describe FacebookProfile do
       }.to change(FacebookProfile,:count).by(2)
     end
 
-    it 'adds photos posts tagged locations statuses likes feed to friends' do
+    it 'sets name, image of friends' do
       wolf_fp.create_friends_records_and_save_stats!
       wei_fp = FacebookProfile.where(uid: weidong_uid).first
-      %w(photos posts tagged locations statuses likes feed).each do |attr|
-        wei_fp.send(attr).should be_kind_of(Array)
-        if attr != 'tagged'  # got no data for tagged--kind of rare
-          wei_fp.send(attr).should_not be_empty
-        end
-      end
+
+      wei_fp.name.should  == 'Weidong Yang'
+      wei_fp.uid.should   == weidong_uid
+      wei_fp.image.should == 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/370434_563900754_1952612728_s.jpg'
     end
-  #
-  #  it 'sets last_fetched_at; last_fetched_by to user through whom we got the data' do
-  #    Time.stub!(:now).and_return(jan1_2012 = Time.utc(2012,1,1))
-  #    wolf_fp.generate_friends_records!
-  #    wei = FacebookProfile.where(uid: weidong_uid).first
-  #    wei.last_fetched_at.should == jan1_2012
-  #    wei.last_fetched_by.should == wolf_fp.uid
-  #  end
-  #
-  #  it "includes friends array (as facebook_profile_uids) in direct user's record" do
-  #    wolf_fp.generate_friends_records!
-  #    wolf_fp.facebook_profile_uids.should =~ [lars_uid, weidong_uid]
-  #  end
-  #
-  #  it "friends arrays are many-to-many relationships with indirect users' (friends') records" do
-  #    wolf_fp.generate_friends_records!
-  #    friends = wolf_fp.facebook_profiles.order_by([:uid, :asc]).all # Lars has lower uid
-  #    # Wolf & Lars mutual friends
-  #    scott_thorpe_uid = 503484735
-  #    moritz_von_der_linden_uid = 642633629
-  #    meghan_hughes_uid = 697626226
-  #    jutta_kamp_uid = 1466344023
-  #    friends[0].facebook_profile_uids.should =~ [wolf_fp.uid, weidong_uid, scott_thorpe_uid, moritz_von_der_linden_uid, meghan_hughes_uid, jutta_kamp_uid]
-  #    # Wolf & Weidong mutual friends
-  #    weidong_wolf_mutual_friend_uids = [223888, 1200385, 532933782, 538362618, 567455648, 633819791, 641972802, 656512960, 746870400, 781849541, 1050211056, 1519692151, 100000549325522]
-  #    friends[1].facebook_profile_uids.should =~ [wolf_fp.uid, lars_uid] + weidong_wolf_mutual_friend_uids
-  #  end
-  #
-  #  it "for a friend record denormalizes name, image, app_id" do
-  #    wolf_fp.generate_friends_records!
-  #    wei = FacebookProfile.where(uid: weidong_uid).first
-  #
-  #    wei.name.should == 'Weidong Yang'
-  #    wei.image.should == 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/370434_563900754_1952612728_s.jpg'
-  #    wei.app_id.should == wolf_fp.app_id
-  #  end
-  #
-  #  it 'does NOT set token on friend records' do
-  #    wolf_fp.generate_friends_records!
-  #    wei = FacebookProfile.where(uid: weidong_uid).first
-  #    wei.token.should be_nil
-  #  end
-  #
+
+    # see notes at definition of get_friends_details
+    #it 'adds photos posts tagged locations statuses likes feed to friends' do
+    #  wolf_fp.create_friends_records_and_save_stats!
+    #  wei_fp = FacebookProfile.where(uid: weidong_uid).first
+    #  %w(photos posts tagged locations statuses likes feed).each do |attr|
+    #    wei_fp.send(attr).should be_kind_of(Array)
+    #    if attr != 'tagged'  # got no data for tagged--kind of rare
+    #      wei_fp.send(attr).should_not be_empty
+    #    end
+    #  end
+    #end
+
+    it 'sets last_fetched_at; last_fetched_by to user through whom we got the data' do
+      wolf_fp.create_friends_records_and_save_stats!
+      wei = FacebookProfile.where(uid: weidong_uid).first
+
+      wei.last_fetched_at.should == @now
+      wei.last_fetched_by.should == wolf_fp.uid
+      wei.fetched_directly.should be_false
+    end
+
+    it "includes friends array (as facebook_profile_uids) in direct user's record" do
+      wolf_fp.facebook_profile_uids = []
+      wolf_fp.create_friends_records_and_save_stats!
+      wolf_fp.facebook_profile_uids.should =~ [lars_uid, weidong_uid]
+    end
+
+    it "friends arrays are many-to-many relationships with indirect users' (friends') records" do
+      wolf_fp.facebook_profile_uids = []
+      wolf_fp.create_friends_records_and_save_stats!
+
+      friends = wolf_fp.facebook_profiles.order_by([:uid, :asc]).all # Lars has lower uid
+      # Wolf & Lars mutual friends
+      scott_thorpe_uid = 503484735
+      moritz_von_der_linden_uid = 642633629
+      meghan_hughes_uid = 697626226
+      jutta_kamp_uid = 1466344023
+      friends[0].facebook_profile_uids.should =~ [wolf_fp.uid, weidong_uid, scott_thorpe_uid, moritz_von_der_linden_uid, meghan_hughes_uid, jutta_kamp_uid]
+      # Wolf & Weidong mutual friends
+      weidong_wolf_mutual_friend_uids = [223888, 1200385, 532933782, 538362618, 567455648, 633819791, 641972802, 656512960, 746870400, 781849541, 1050211056, 1519692151, 100000549325522]
+      friends[1].facebook_profile_uids.should =~ [wolf_fp.uid, lars_uid] + weidong_wolf_mutual_friend_uids
+    end
+
+    it 'does NOT set token on friend records' do
+      wolf_fp.create_friends_records_and_save_stats!
+      wei = FacebookProfile.where(uid: weidong_uid).first
+      wei.token.should be_nil
+    end
+
     context '#gather_friends_by_uid_from_raw_data' do
       before do
         class << wolf_fp; public :gather_friends_by_uid_from_raw_data; end
