@@ -64,19 +64,22 @@ module Computations::FacebookProfileComputations
   ##############################
 
   def compute_engagements
-    #%w(photos statuses locations tagged).each do |eng_type|
     %w(photos statuses locations tagged).each do |eng_type|
-      next if send(eng_type).blank?
-
       initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {}, from: {})
-      results = send(eng_type).reduce(initial) do |stats, engagement|
-        # TODO: Deal with case when the tagged party doesn't have a UID (i.e. is not on FB)
-        # See tracker story: https://www.pivotaltracker.com/story/show/29603637
-        add_engagements(stats['co_tagged_with'], engagement, 'tags')
-        add_engagements(stats['liked_by'], engagement, 'likes')
-        add_engagements(stats['commented_by'], engagement, 'comments')
-        add_from_engagements(stats['from'], engagement)
-        stats
+
+      if send(eng_type).blank?
+        # initialize with 0, so that later computations don't fail
+        results = initial
+      else
+        results = send(eng_type).reduce(initial) do |stats, engagement|
+          # TODO: Deal with case when the tagged party doesn't have a UID (i.e. is not on FB)
+          # See tracker story: https://www.pivotaltracker.com/story/show/29603637
+          add_engagements(stats['co_tagged_with'], engagement, 'tags')
+          add_engagements(stats['liked_by'], engagement, 'likes')
+          add_engagements(stats['commented_by'], engagement, 'comments')
+          add_from_engagements(stats['from'], engagement)
+          stats
+        end
       end
       results['co_tags_uniques']  = results['co_tagged_with'].length
       results['co_tags_total']    = results['co_tagged_with'].sum {|attr, val| val}
@@ -90,6 +93,7 @@ module Computations::FacebookProfileComputations
     end
   end
 
+  # adds uid => count hash entries
   def add_from_engagements(result, raw_data_hash)
     return if raw_data_hash['from'].nil? || raw_data_hash['from']['id'].nil?
     from_uid=raw_data_hash['from']['id'].to_s

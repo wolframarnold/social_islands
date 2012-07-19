@@ -31,9 +31,9 @@ http_interactions:
       X-Fb-Rev:
       - '593918'
       X-Fb-Debug:
-      - QbnomR2MF8+SQnerS3BMwa0h4gZscHFPzDmfwalNbRw=
+      - gBL1F4B6k0FTpLoTNM45GwrfDLZBm0nxIEnFpn06MiU=
       Date:
-      - Thu, 19 Jul 2012 07:39:21 GMT
+      - Thu, 19 Jul 2012 08:46:28 GMT
       Connection:
       - keep-alive
       Content-Length:
@@ -70,7 +70,7 @@ http_interactions:
         Kamp\",\"pic\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-ash2\\\/27430_553647753_3455_s.jpg\",\"mutual_friend_count\":5},{\"uid\":563900754,\"name\":\"Weidong
         Yang\",\"pic\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-snc4\\\/370434_563900754_1952612728_s.jpg\",\"mutual_friend_count\":15}]}"}]'
     http_version: 
-  recorded_at: Thu, 19 Jul 2012 07:39:21 GMT
+  recorded_at: Thu, 19 Jul 2012 08:46:28 GMT
 - request:
     method: post
     uri: https://graph.facebook.com/
@@ -102,9 +102,9 @@ http_interactions:
       X-Fb-Rev:
       - '593918'
       X-Fb-Debug:
-      - tIdIbh38sMO9a4lZvXEH+LZltDyQjeoW9NmBHtE8EK0=
+      - RN5BPTDiqxAnTKt9eJHTnprlW0nrbsn+gA24bFXLEUs=
       Date:
-      - Thu, 19 Jul 2012 07:39:21 GMT
+      - Thu, 19 Jul 2012 08:46:29 GMT
       Connection:
       - keep-alive
       Content-Length:
@@ -141,7 +141,7 @@ http_interactions:
         Kamp\",\"pic\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-ash2\\\/27430_553647753_3455_s.jpg\",\"mutual_friend_count\":5},{\"uid\":563900754,\"name\":\"Weidong
         Yang\",\"pic\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-snc4\\\/370434_563900754_1952612728_s.jpg\",\"mutual_friend_count\":15}]}"}]'
     http_version: 
-  recorded_at: Thu, 19 Jul 2012 07:39:21 GMT
+  recorded_at: Thu, 19 Jul 2012 08:46:29 GMT
 - request:
     method: post
     uri: https://graph.facebook.com/
@@ -173,9 +173,9 @@ http_interactions:
       X-Fb-Rev:
       - '593918'
       X-Fb-Debug:
-      - ik4xyjVO0+yq0Tcv6b9AP6mrdfUBmNsxv4OU6XDC0Ls=
+      - 7qEtqkSEwO0PMBkEHQhEQuVDResQLakHebftL3Y7cK8=
       Date:
-      - Thu, 19 Jul 2012 07:39:23 GMT
+      - Thu, 19 Jul 2012 08:46:31 GMT
       Connection:
       - keep-alive
       Content-Length:
@@ -338,7 +338,7 @@ http_interactions:
         Rohrbach\",\"id\":\"587635458\"},\"name\":\"IMG_0839\",\"picture\":\"https:\\\/\\\/fbcdn-photos-a.akamaihd.net\\\/hphotos-ak-ash3\\\/67481_10150268166095459_2441499_s.jpg\",\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/67481_10150268166095459_2441499_n.jpg\",\"height\":453,\"width\":604,\"images\":[{\"height\":1536,\"width\":2048,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/s2048x2048\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":453,\"width\":604,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":453,\"width\":604,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":360,\"width\":480,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/s480x480\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":240,\"width\":320,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/s320x320\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":135,\"width\":180,\"source\":\"https:\\\/\\\/fbcdn-photos-a.akamaihd.net\\\/hphotos-ak-ash3\\\/67481_10150268166095459_2441499_a.jpg\"},{\"height\":97,\"width\":130,\"source\":\"https:\\\/\\\/fbcdn-photos-a.akamaihd.net\\\/hphotos-ak-ash3\\\/67481_10150268166095459_2441499_s.jpg\"},{\"height\":97,\"width\":130,\"source\":\"https:\\\/\\\/fbcdn-photos-a.akamaihd.net\\\/hphotos-ak-ash3\\\/s75x225\\\/67481_10150268166095459_2441499_s.jpg\"}],\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?fbid=10150268166095459&set=p.10150268166095459&type=1\",\"icon\":\"https:\\\/\\\/s-static.ak.facebook.com\\\/rsrc.php\\\/v2\\\/yz\\\/r\\\/StEh3RhPvjk.gif\",\"created_time\":\"2010-10-12T18:47:11+0000\",\"position\":18,\"updated_time\":\"2010-10-12T18:47:12+0000\",\"tags\":{\"data\":[{\"id\":\"595045215\",\"name\":\"Wolfram
         Arnold\",\"x\":63.7417,\"y\":36.2031,\"created_time\":\"2010-10-12T19:37:44+0000\"}]}}],\"paging\":{\"previous\":\"http:\\\/\\\/graph.facebook.com\\\/595045215\\\/photos?value=1&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&since=1342332368&__previous=1\",\"next\":\"http:\\\/\\\/graph.facebook.com\\\/595045215\\\/photos?value=1&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&until=1286909230\"}}"},{"code":200,"headers":[{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"Cache-Control","value":"private,
         no-cache, no-store, must-revalidate"},{"name":"Connection","value":"close"},{"name":"Content-Type","value":"text\/javascript;
-        charset=UTF-8"},{"name":"ETag","value":"\"531197018ee6e7aefff7ebd359c28414d3fac7d7\""},{"name":"Expires","value":"Sat,
+        charset=UTF-8"},{"name":"ETag","value":"\"f0455f8ccf3fd8ad0b7b8a84f31e940acac89c59\""},{"name":"Expires","value":"Sat,
         01 Jan 2000 00:00:00 GMT"},{"name":"Pragma","value":"no-cache"}],"body":"{\"data\":[{\"id\":\"595045215_10150913459510216\",\"from\":{\"name\":\"Wolfram
         Arnold\",\"id\":\"595045215\"},\"story\":\"\\\"Another fun run! David Sifry...\\\"
         on David Sifry''s photo.\",\"story_tags\":{\"37\":[{\"id\":832020470,\"name\":\"David
@@ -397,7 +397,7 @@ http_interactions:
         now friends.\",\"story_tags\":{\"0\":[{\"id\":595045215,\"name\":\"Wolfram
         Arnold\",\"offset\":0,\"length\":14,\"type\":\"user\"}],\"19\":[{\"id\":1466344023,\"name\":\"Jutta
         Kamp\",\"offset\":19,\"length\":10,\"type\":\"user\"}]},\"type\":\"status\",\"created_time\":\"2012-06-23T06:34:33+0000\",\"updated_time\":\"2012-06-23T06:34:33+0000\",\"comments\":{\"count\":0}},{\"id\":\"595045215_10150853247330216\",\"from\":{\"name\":\"Wolfram
-        Arnold\",\"id\":\"595045215\"},\"picture\":\"https:\\\/\\\/fbcdn-vthumb-a.akamaihd.net\\\/hvthumb-ak-prn1\\\/574166_10150853248225216_10150853247330216_30568_1246_b.jpg\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?v=10150853247330216\",\"source\":\"https:\\\/\\\/fbcdn-video-a.akamaihd.net\\\/cfs-ak-snc6\\\/v\\\/594928\\\/240\\\/10150853247330216_9055.mp4?oh=dcdfc7723f562567cdf0351a5a7e500e&oe=500A5C00&__gda__=1342856192_ebf6c6d3c53d5232162a0e325063222e\",\"name\":\"Warm
+        Arnold\",\"id\":\"595045215\"},\"picture\":\"https:\\\/\\\/fbcdn-vthumb-a.akamaihd.net\\\/hvthumb-ak-prn1\\\/574166_10150853248225216_10150853247330216_30568_1246_b.jpg\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?v=10150853247330216\",\"source\":\"https:\\\/\\\/fbcdn-video-a.akamaihd.net\\\/cfs-ak-snc6\\\/v\\\/594928\\\/240\\\/10150853247330216_9055.mp4?oh=c54ac14c7c3e4b8de04a9a8ea17cbd87&oe=500A6C00&__gda__=1342860288_dbb119352cfcaaa6acbcfeb0622183f1\",\"name\":\"Warm
         soulful welcome at Chicago O''Hare.\",\"properties\":[{\"name\":\"Length\",\"text\":\"0:42\"}],\"icon\":\"https:\\\/\\\/s-static.ak.facebook.com\\\/rsrc.php\\\/v2\\\/yD\\\/r\\\/DggDhA4z4tO.gif\",\"actions\":[{\"name\":\"Comment\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/595045215\\\/posts\\\/10150853247330216\"},{\"name\":\"Like\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/595045215\\\/posts\\\/10150853247330216\"}],\"privacy\":{\"description\":\"Friends\",\"value\":\"ALL_FRIENDS\"},\"type\":\"video\",\"object_id\":\"10150853247330216\",\"application\":{\"name\":\"Facebook
         for Android\",\"namespace\":\"fbandroid\",\"id\":\"350685531728\"},\"created_time\":\"2012-06-15T20:33:34+0000\",\"updated_time\":\"2012-06-15T20:33:34+0000\",\"comments\":{\"count\":0}},{\"id\":\"595045215_10150823612495216\",\"from\":{\"name\":\"Wolfram
         Arnold\",\"id\":\"595045215\"},\"to\":{\"data\":[{\"name\":\"Carrie Birgbauer\",\"id\":\"593947344\"},{\"name\":\"David
@@ -689,7 +689,7 @@ http_interactions:
         Isaacs\",\"id\":\"796588606\"},\"message\":\"Love it. We were thinking about
         the Park Chalet with Frannie today but didn''t make it. \",\"can_remove\":false,\"created_time\":\"2010-11-14T03:02:06+0000\",\"like_count\":0,\"user_likes\":false}],\"paging\":{\"next\":\"http:\\\/\\\/graph.facebook.com\\\/453042612351\\\/comments?access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&offset=25&__after_id=453042612351_13959458\"}}}],\"paging\":{\"previous\":\"http:\\\/\\\/graph.facebook.com\\\/595045215\\\/checkins?value=1&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&since=1331963881&__paging_token=10150591833605216&__previous=1\",\"next\":\"http:\\\/\\\/graph.facebook.com\\\/595045215\\\/checkins?value=1&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&until=1289698523&__paging_token=453042612351\"}}"},{"code":200,"headers":[{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"Cache-Control","value":"private,
         no-cache, no-store, must-revalidate"},{"name":"Connection","value":"close"},{"name":"Content-Type","value":"text\/javascript;
-        charset=UTF-8"},{"name":"ETag","value":"\"1149f4d5cd7d7cae444ce2102f9cd08e4d14ae53\""},{"name":"Expires","value":"Sat,
+        charset=UTF-8"},{"name":"ETag","value":"\"505dbe0b3d9b0dd823f083ee613c581650a3219b\""},{"name":"Expires","value":"Sat,
         01 Jan 2000 00:00:00 GMT"},{"name":"Pragma","value":"no-cache"}],"body":"{\"data\":[{\"id\":\"595045215_10150919469095216\",\"from\":{\"name\":\"Wolfram
         Arnold\",\"id\":\"595045215\"},\"story\":\"Wolfram Arnold added a job at Stealth
         Startup to his timeline.\",\"story_tags\":{\"0\":[{\"id\":595045215,\"name\":\"Wolfram
@@ -754,7 +754,7 @@ http_interactions:
         Arnold\",\"id\":\"595045215\"},\"story\":\"Wolfram Arnold went to Phoenix''s
         First Birthday at Dreamland Playground At Berkeley Aquatic Park.\",\"story_tags\":{\"0\":[{\"id\":595045215,\"name\":\"Wolfram
         Arnold\",\"offset\":0,\"length\":14,\"type\":\"user\"}]},\"icon\":\"https:\\\/\\\/s-static.ak.facebook.com\\\/rsrc.php\\\/v2\\\/yW\\\/r\\\/r28KD-9uEMh.gif\",\"actions\":[{\"name\":\"View\",\"link\":\"\\\/events\\\/445514552139818\\\/\"}],\"type\":\"status\",\"created_time\":\"2012-06-19T04:23:11+0000\",\"updated_time\":\"2012-06-19T04:23:11+0000\",\"comments\":{\"count\":0}},{\"id\":\"595045215_10150853247330216\",\"from\":{\"name\":\"Wolfram
-        Arnold\",\"id\":\"595045215\"},\"picture\":\"https:\\\/\\\/fbcdn-vthumb-a.akamaihd.net\\\/hvthumb-ak-prn1\\\/574166_10150853248225216_10150853247330216_30568_1246_b.jpg\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?v=10150853247330216\",\"source\":\"https:\\\/\\\/fbcdn-video-a.akamaihd.net\\\/cfs-ak-snc6\\\/v\\\/594928\\\/240\\\/10150853247330216_9055.mp4?oh=dcdfc7723f562567cdf0351a5a7e500e&oe=500A5C00&__gda__=1342856192_ebf6c6d3c53d5232162a0e325063222e\",\"name\":\"Warm
+        Arnold\",\"id\":\"595045215\"},\"picture\":\"https:\\\/\\\/fbcdn-vthumb-a.akamaihd.net\\\/hvthumb-ak-prn1\\\/574166_10150853248225216_10150853247330216_30568_1246_b.jpg\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?v=10150853247330216\",\"source\":\"https:\\\/\\\/fbcdn-video-a.akamaihd.net\\\/cfs-ak-snc6\\\/v\\\/594928\\\/240\\\/10150853247330216_9055.mp4?oh=c54ac14c7c3e4b8de04a9a8ea17cbd87&oe=500A6C00&__gda__=1342860288_dbb119352cfcaaa6acbcfeb0622183f1\",\"name\":\"Warm
         soulful welcome at Chicago O''Hare.\",\"properties\":[{\"name\":\"Length\",\"text\":\"0:42\"}],\"icon\":\"https:\\\/\\\/s-static.ak.facebook.com\\\/rsrc.php\\\/v2\\\/yD\\\/r\\\/DggDhA4z4tO.gif\",\"actions\":[{\"name\":\"Comment\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/595045215\\\/posts\\\/10150853247330216\"},{\"name\":\"Like\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/595045215\\\/posts\\\/10150853247330216\"}],\"privacy\":{\"description\":\"Friends\",\"value\":\"ALL_FRIENDS\"},\"type\":\"video\",\"object_id\":\"10150853247330216\",\"application\":{\"name\":\"Facebook
         for Android\",\"namespace\":\"fbandroid\",\"id\":\"350685531728\"},\"created_time\":\"2012-06-15T20:33:34+0000\",\"updated_time\":\"2012-06-15T20:33:34+0000\",\"comments\":{\"count\":0}},{\"id\":\"595045215_10150823612495216\",\"from\":{\"name\":\"Wolfram
         Arnold\",\"id\":\"595045215\"},\"to\":{\"data\":[{\"name\":\"Carrie Birgbauer\",\"id\":\"593947344\"},{\"name\":\"David
@@ -788,7 +788,7 @@ http_interactions:
         charset=UTF-8"},{"name":"ETag","value":"\"38e519cc4149d8274260d7d04520faf992fa21ea\""},{"name":"Expires","value":"Sat,
         01 Jan 2000 00:00:00 GMT"},{"name":"Pragma","value":"no-cache"}],"body":"{\"data\":[{\"uid1\":\"553647753\",\"uid2\":\"503484735\"},{\"uid1\":\"553647753\",\"uid2\":\"1466344023\"},{\"uid1\":\"553647753\",\"uid2\":\"697626226\"},{\"uid1\":\"553647753\",\"uid2\":\"563900754\"},{\"uid1\":\"553647753\",\"uid2\":\"642633629\"},{\"uid1\":\"563900754\",\"uid2\":\"746870400\"},{\"uid1\":\"563900754\",\"uid2\":\"656512960\"},{\"uid1\":\"563900754\",\"uid2\":\"781849541\"},{\"uid1\":\"563900754\",\"uid2\":\"100000549325522\"},{\"uid1\":\"563900754\",\"uid2\":\"641972802\"},{\"uid1\":\"563900754\",\"uid2\":\"1519692151\"},{\"uid1\":\"563900754\",\"uid2\":\"1050211056\"},{\"uid1\":\"563900754\",\"uid2\":\"553647753\"},{\"uid1\":\"563900754\",\"uid2\":\"1200385\"},{\"uid1\":\"563900754\",\"uid2\":\"223888\"},{\"uid1\":\"563900754\",\"uid2\":\"532933782\"},{\"uid1\":\"563900754\",\"uid2\":\"538362618\"},{\"uid1\":\"563900754\",\"uid2\":\"567455648\"},{\"uid1\":\"563900754\",\"uid2\":\"633819791\"}]}"}]'
     http_version: 
-  recorded_at: Thu, 19 Jul 2012 07:39:25 GMT
+  recorded_at: Thu, 19 Jul 2012 08:46:33 GMT
 - request:
     method: post
     uri: https://graph.facebook.com/
@@ -820,9 +820,9 @@ http_interactions:
       X-Fb-Rev:
       - '593918'
       X-Fb-Debug:
-      - ZlVxfTvulEWsk9rAjHNqBd8e8I2W4FXCOpK07KoFMso=
+      - 5sbEyFWXfkT9jDyctLGY300E7HnzqoZ6beM72/NVNMY=
       Date:
-      - Thu, 19 Jul 2012 07:39:27 GMT
+      - Thu, 19 Jul 2012 08:46:34 GMT
       Connection:
       - keep-alive
       Content-Length:
@@ -859,7 +859,7 @@ http_interactions:
         Kamp\",\"pic\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-ash2\\\/27430_553647753_3455_s.jpg\",\"mutual_friend_count\":5},{\"uid\":563900754,\"name\":\"Weidong
         Yang\",\"pic\":\"https:\\\/\\\/fbcdn-profile-a.akamaihd.net\\\/hprofile-ak-snc4\\\/370434_563900754_1952612728_s.jpg\",\"mutual_friend_count\":15}]}"}]'
     http_version: 
-  recorded_at: Thu, 19 Jul 2012 07:39:27 GMT
+  recorded_at: Thu, 19 Jul 2012 08:46:34 GMT
 - request:
     method: post
     uri: https://graph.facebook.com/
@@ -891,9 +891,9 @@ http_interactions:
       X-Fb-Rev:
       - '593918'
       X-Fb-Debug:
-      - aPqI+UsRoF1JrgepsRIgF8Si8ZPiQije8uz+L9k6PAU=
+      - JjgueaHKTsA+9/WuCbrEL81qhTIt1Fkx+3yzaEFCO4I=
       Date:
-      - Thu, 19 Jul 2012 07:39:29 GMT
+      - Thu, 19 Jul 2012 08:46:36 GMT
       Connection:
       - keep-alive
       Content-Length:
@@ -1056,7 +1056,7 @@ http_interactions:
         Rohrbach\",\"id\":\"587635458\"},\"name\":\"IMG_0839\",\"picture\":\"https:\\\/\\\/fbcdn-photos-a.akamaihd.net\\\/hphotos-ak-ash3\\\/67481_10150268166095459_2441499_s.jpg\",\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/67481_10150268166095459_2441499_n.jpg\",\"height\":453,\"width\":604,\"images\":[{\"height\":1536,\"width\":2048,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/s2048x2048\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":453,\"width\":604,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":453,\"width\":604,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":360,\"width\":480,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/s480x480\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":240,\"width\":320,\"source\":\"https:\\\/\\\/sphotos-b.xx.fbcdn.net\\\/hphotos-ash3\\\/s320x320\\\/67481_10150268166095459_2441499_n.jpg\"},{\"height\":135,\"width\":180,\"source\":\"https:\\\/\\\/fbcdn-photos-a.akamaihd.net\\\/hphotos-ak-ash3\\\/67481_10150268166095459_2441499_a.jpg\"},{\"height\":97,\"width\":130,\"source\":\"https:\\\/\\\/fbcdn-photos-a.akamaihd.net\\\/hphotos-ak-ash3\\\/67481_10150268166095459_2441499_s.jpg\"},{\"height\":97,\"width\":130,\"source\":\"https:\\\/\\\/fbcdn-photos-a.akamaihd.net\\\/hphotos-ak-ash3\\\/s75x225\\\/67481_10150268166095459_2441499_s.jpg\"}],\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?fbid=10150268166095459&set=p.10150268166095459&type=1\",\"icon\":\"https:\\\/\\\/s-static.ak.facebook.com\\\/rsrc.php\\\/v2\\\/yz\\\/r\\\/StEh3RhPvjk.gif\",\"created_time\":\"2010-10-12T18:47:11+0000\",\"position\":18,\"updated_time\":\"2010-10-12T18:47:12+0000\",\"tags\":{\"data\":[{\"id\":\"595045215\",\"name\":\"Wolfram
         Arnold\",\"x\":63.7417,\"y\":36.2031,\"created_time\":\"2010-10-12T19:37:44+0000\"}]}}],\"paging\":{\"previous\":\"http:\\\/\\\/graph.facebook.com\\\/595045215\\\/photos?value=1&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&since=1342332368&__previous=1\",\"next\":\"http:\\\/\\\/graph.facebook.com\\\/595045215\\\/photos?value=1&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&until=1286909230\"}}"},{"code":200,"headers":[{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"Cache-Control","value":"private,
         no-cache, no-store, must-revalidate"},{"name":"Connection","value":"close"},{"name":"Content-Type","value":"text\/javascript;
-        charset=UTF-8"},{"name":"ETag","value":"\"531197018ee6e7aefff7ebd359c28414d3fac7d7\""},{"name":"Expires","value":"Sat,
+        charset=UTF-8"},{"name":"ETag","value":"\"f0455f8ccf3fd8ad0b7b8a84f31e940acac89c59\""},{"name":"Expires","value":"Sat,
         01 Jan 2000 00:00:00 GMT"},{"name":"Pragma","value":"no-cache"}],"body":"{\"data\":[{\"id\":\"595045215_10150913459510216\",\"from\":{\"name\":\"Wolfram
         Arnold\",\"id\":\"595045215\"},\"story\":\"\\\"Another fun run! David Sifry...\\\"
         on David Sifry''s photo.\",\"story_tags\":{\"37\":[{\"id\":832020470,\"name\":\"David
@@ -1115,7 +1115,7 @@ http_interactions:
         now friends.\",\"story_tags\":{\"0\":[{\"id\":595045215,\"name\":\"Wolfram
         Arnold\",\"offset\":0,\"length\":14,\"type\":\"user\"}],\"19\":[{\"id\":1466344023,\"name\":\"Jutta
         Kamp\",\"offset\":19,\"length\":10,\"type\":\"user\"}]},\"type\":\"status\",\"created_time\":\"2012-06-23T06:34:33+0000\",\"updated_time\":\"2012-06-23T06:34:33+0000\",\"comments\":{\"count\":0}},{\"id\":\"595045215_10150853247330216\",\"from\":{\"name\":\"Wolfram
-        Arnold\",\"id\":\"595045215\"},\"picture\":\"https:\\\/\\\/fbcdn-vthumb-a.akamaihd.net\\\/hvthumb-ak-prn1\\\/574166_10150853248225216_10150853247330216_30568_1246_b.jpg\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?v=10150853247330216\",\"source\":\"https:\\\/\\\/fbcdn-video-a.akamaihd.net\\\/cfs-ak-snc6\\\/v\\\/594928\\\/240\\\/10150853247330216_9055.mp4?oh=dcdfc7723f562567cdf0351a5a7e500e&oe=500A5C00&__gda__=1342856192_ebf6c6d3c53d5232162a0e325063222e\",\"name\":\"Warm
+        Arnold\",\"id\":\"595045215\"},\"picture\":\"https:\\\/\\\/fbcdn-vthumb-a.akamaihd.net\\\/hvthumb-ak-prn1\\\/574166_10150853248225216_10150853247330216_30568_1246_b.jpg\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?v=10150853247330216\",\"source\":\"https:\\\/\\\/fbcdn-video-a.akamaihd.net\\\/cfs-ak-snc6\\\/v\\\/594928\\\/240\\\/10150853247330216_9055.mp4?oh=c54ac14c7c3e4b8de04a9a8ea17cbd87&oe=500A6C00&__gda__=1342860288_dbb119352cfcaaa6acbcfeb0622183f1\",\"name\":\"Warm
         soulful welcome at Chicago O''Hare.\",\"properties\":[{\"name\":\"Length\",\"text\":\"0:42\"}],\"icon\":\"https:\\\/\\\/s-static.ak.facebook.com\\\/rsrc.php\\\/v2\\\/yD\\\/r\\\/DggDhA4z4tO.gif\",\"actions\":[{\"name\":\"Comment\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/595045215\\\/posts\\\/10150853247330216\"},{\"name\":\"Like\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/595045215\\\/posts\\\/10150853247330216\"}],\"privacy\":{\"description\":\"Friends\",\"value\":\"ALL_FRIENDS\"},\"type\":\"video\",\"object_id\":\"10150853247330216\",\"application\":{\"name\":\"Facebook
         for Android\",\"namespace\":\"fbandroid\",\"id\":\"350685531728\"},\"created_time\":\"2012-06-15T20:33:34+0000\",\"updated_time\":\"2012-06-15T20:33:34+0000\",\"comments\":{\"count\":0}},{\"id\":\"595045215_10150823612495216\",\"from\":{\"name\":\"Wolfram
         Arnold\",\"id\":\"595045215\"},\"to\":{\"data\":[{\"name\":\"Carrie Birgbauer\",\"id\":\"593947344\"},{\"name\":\"David
@@ -1407,7 +1407,7 @@ http_interactions:
         Isaacs\",\"id\":\"796588606\"},\"message\":\"Love it. We were thinking about
         the Park Chalet with Frannie today but didn''t make it. \",\"can_remove\":false,\"created_time\":\"2010-11-14T03:02:06+0000\",\"like_count\":0,\"user_likes\":false}],\"paging\":{\"next\":\"http:\\\/\\\/graph.facebook.com\\\/453042612351\\\/comments?access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&offset=25&__after_id=453042612351_13959458\"}}}],\"paging\":{\"previous\":\"http:\\\/\\\/graph.facebook.com\\\/595045215\\\/checkins?value=1&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&since=1331963881&__paging_token=10150591833605216&__previous=1\",\"next\":\"http:\\\/\\\/graph.facebook.com\\\/595045215\\\/checkins?value=1&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD&limit=25&until=1289698523&__paging_token=453042612351\"}}"},{"code":200,"headers":[{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"Cache-Control","value":"private,
         no-cache, no-store, must-revalidate"},{"name":"Connection","value":"close"},{"name":"Content-Type","value":"text\/javascript;
-        charset=UTF-8"},{"name":"ETag","value":"\"1149f4d5cd7d7cae444ce2102f9cd08e4d14ae53\""},{"name":"Expires","value":"Sat,
+        charset=UTF-8"},{"name":"ETag","value":"\"505dbe0b3d9b0dd823f083ee613c581650a3219b\""},{"name":"Expires","value":"Sat,
         01 Jan 2000 00:00:00 GMT"},{"name":"Pragma","value":"no-cache"}],"body":"{\"data\":[{\"id\":\"595045215_10150919469095216\",\"from\":{\"name\":\"Wolfram
         Arnold\",\"id\":\"595045215\"},\"story\":\"Wolfram Arnold added a job at Stealth
         Startup to his timeline.\",\"story_tags\":{\"0\":[{\"id\":595045215,\"name\":\"Wolfram
@@ -1472,7 +1472,7 @@ http_interactions:
         Arnold\",\"id\":\"595045215\"},\"story\":\"Wolfram Arnold went to Phoenix''s
         First Birthday at Dreamland Playground At Berkeley Aquatic Park.\",\"story_tags\":{\"0\":[{\"id\":595045215,\"name\":\"Wolfram
         Arnold\",\"offset\":0,\"length\":14,\"type\":\"user\"}]},\"icon\":\"https:\\\/\\\/s-static.ak.facebook.com\\\/rsrc.php\\\/v2\\\/yW\\\/r\\\/r28KD-9uEMh.gif\",\"actions\":[{\"name\":\"View\",\"link\":\"\\\/events\\\/445514552139818\\\/\"}],\"type\":\"status\",\"created_time\":\"2012-06-19T04:23:11+0000\",\"updated_time\":\"2012-06-19T04:23:11+0000\",\"comments\":{\"count\":0}},{\"id\":\"595045215_10150853247330216\",\"from\":{\"name\":\"Wolfram
-        Arnold\",\"id\":\"595045215\"},\"picture\":\"https:\\\/\\\/fbcdn-vthumb-a.akamaihd.net\\\/hvthumb-ak-prn1\\\/574166_10150853248225216_10150853247330216_30568_1246_b.jpg\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?v=10150853247330216\",\"source\":\"https:\\\/\\\/fbcdn-video-a.akamaihd.net\\\/cfs-ak-snc6\\\/v\\\/594928\\\/240\\\/10150853247330216_9055.mp4?oh=dcdfc7723f562567cdf0351a5a7e500e&oe=500A5C00&__gda__=1342856192_ebf6c6d3c53d5232162a0e325063222e\",\"name\":\"Warm
+        Arnold\",\"id\":\"595045215\"},\"picture\":\"https:\\\/\\\/fbcdn-vthumb-a.akamaihd.net\\\/hvthumb-ak-prn1\\\/574166_10150853248225216_10150853247330216_30568_1246_b.jpg\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/photo.php?v=10150853247330216\",\"source\":\"https:\\\/\\\/fbcdn-video-a.akamaihd.net\\\/cfs-ak-snc6\\\/v\\\/594928\\\/240\\\/10150853247330216_9055.mp4?oh=c54ac14c7c3e4b8de04a9a8ea17cbd87&oe=500A6C00&__gda__=1342860288_dbb119352cfcaaa6acbcfeb0622183f1\",\"name\":\"Warm
         soulful welcome at Chicago O''Hare.\",\"properties\":[{\"name\":\"Length\",\"text\":\"0:42\"}],\"icon\":\"https:\\\/\\\/s-static.ak.facebook.com\\\/rsrc.php\\\/v2\\\/yD\\\/r\\\/DggDhA4z4tO.gif\",\"actions\":[{\"name\":\"Comment\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/595045215\\\/posts\\\/10150853247330216\"},{\"name\":\"Like\",\"link\":\"http:\\\/\\\/www.facebook.com\\\/595045215\\\/posts\\\/10150853247330216\"}],\"privacy\":{\"description\":\"Friends\",\"value\":\"ALL_FRIENDS\"},\"type\":\"video\",\"object_id\":\"10150853247330216\",\"application\":{\"name\":\"Facebook
         for Android\",\"namespace\":\"fbandroid\",\"id\":\"350685531728\"},\"created_time\":\"2012-06-15T20:33:34+0000\",\"updated_time\":\"2012-06-15T20:33:34+0000\",\"comments\":{\"count\":0}},{\"id\":\"595045215_10150823612495216\",\"from\":{\"name\":\"Wolfram
         Arnold\",\"id\":\"595045215\"},\"to\":{\"data\":[{\"name\":\"Carrie Birgbauer\",\"id\":\"593947344\"},{\"name\":\"David
@@ -1506,5 +1506,5 @@ http_interactions:
         charset=UTF-8"},{"name":"ETag","value":"\"38e519cc4149d8274260d7d04520faf992fa21ea\""},{"name":"Expires","value":"Sat,
         01 Jan 2000 00:00:00 GMT"},{"name":"Pragma","value":"no-cache"}],"body":"{\"data\":[{\"uid1\":\"553647753\",\"uid2\":\"503484735\"},{\"uid1\":\"553647753\",\"uid2\":\"1466344023\"},{\"uid1\":\"553647753\",\"uid2\":\"697626226\"},{\"uid1\":\"553647753\",\"uid2\":\"563900754\"},{\"uid1\":\"553647753\",\"uid2\":\"642633629\"},{\"uid1\":\"563900754\",\"uid2\":\"746870400\"},{\"uid1\":\"563900754\",\"uid2\":\"656512960\"},{\"uid1\":\"563900754\",\"uid2\":\"781849541\"},{\"uid1\":\"563900754\",\"uid2\":\"100000549325522\"},{\"uid1\":\"563900754\",\"uid2\":\"641972802\"},{\"uid1\":\"563900754\",\"uid2\":\"1519692151\"},{\"uid1\":\"563900754\",\"uid2\":\"1050211056\"},{\"uid1\":\"563900754\",\"uid2\":\"553647753\"},{\"uid1\":\"563900754\",\"uid2\":\"1200385\"},{\"uid1\":\"563900754\",\"uid2\":\"223888\"},{\"uid1\":\"563900754\",\"uid2\":\"532933782\"},{\"uid1\":\"563900754\",\"uid2\":\"538362618\"},{\"uid1\":\"563900754\",\"uid2\":\"567455648\"},{\"uid1\":\"563900754\",\"uid2\":\"633819791\"}]}"}]'
     http_version: 
-  recorded_at: Thu, 19 Jul 2012 07:39:32 GMT
+  recorded_at: Thu, 19 Jul 2012 08:46:38 GMT
 recorded_with: VCR 2.2.2

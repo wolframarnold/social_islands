@@ -249,6 +249,7 @@ module ApiHelpers::FacebookApiAccessor
     # These could also be spawned on multiple threads
     # or (better) the use a parallel HTTP adapter like Typhoeus
 
+    Rails.logger.info "FB Batch Query in progress ... "
     @batches.each_with_index do |batch_client, i|
       Rails.logger.tagged "Batch ##{i}" do
         batch_client.batch_calls.each do |bc|

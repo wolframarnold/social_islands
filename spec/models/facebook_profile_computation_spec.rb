@@ -80,19 +80,19 @@ describe FacebookProfile do
     let!(:wolf_fp) { create(:wolf_facebook_profile) }
 
     before :all do
-      VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong', allow_playback_repeats: true) do
+      VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong') do
         wolf_fp.import_profile_and_network!([lars_uid,weidong_uid])
       end
     end
 
     it '#compute_profile_authenticity' do
       wolf_fp.stub_chain(:facebook_profile_uids,:count).and_return(386)
-      wolf_fp.compute_profile_authenticity.should == 85
+      wolf_fp.compute_profile_authenticity.should == 81
     end
 
     it '#compute_trust_score' do
       wolf_fp.profile_authenticity = 85
-      wolf_fp.compute_trust_score.should be_within(1).of(72)  # may vary slightly due to randomization
+      wolf_fp.compute_trust_score.should be_within(1).of(81)  # may vary slightly due to randomization
     end
 
   end
@@ -100,7 +100,7 @@ describe FacebookProfile do
   context "engagements" do
     let!(:wolf_fp) { create(:wolf_facebook_profile) }
 
-    before :all do
+    before do
       VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong', allow_playback_repeats: true) do
         wolf_fp.import_profile_and_network!([lars_uid,weidong_uid])
       end
@@ -109,39 +109,39 @@ describe FacebookProfile do
 
     context 'photo_engagements' do
       it 'computes unique co-tagged count' do
-        wolf_fp.photo_engagements['co_tags_uniques'].should == 19
+        wolf_fp.photo_engagements['co_tags_uniques'].should == 20
       end
 
       it 'computes unique likes count' do
-        wolf_fp.photo_engagements['likes_uniques'].should == 12
+        wolf_fp.photo_engagements['likes_uniques'].should == 27
       end
 
       it 'computes unique commented count' do
-        wolf_fp.photo_engagements['comments_uniques'].should == 5
+        wolf_fp.photo_engagements['comments_uniques'].should == 11
       end
 
       it 'computes total co-tags count' do
-        wolf_fp.photo_engagements['co_tags_total'].should == 41
+        wolf_fp.photo_engagements['co_tags_total'].should == 42
       end
 
       it 'computes total likes count' do
-        wolf_fp.photo_engagements['likes_total'].should == 13
+        wolf_fp.photo_engagements['likes_total'].should == 28
       end
 
       it 'computes total comments count' do
-        wolf_fp.photo_engagements['comments_total'].should == 5
+        wolf_fp.photo_engagements['comments_total'].should == 14
       end
 
       it 'saves hash of actors for tags, excluding self.uid' do
-        wolf_fp.photo_engagements['co_tagged_with'].keys.should =~ %w(100000438595847 100001239205614 1031110353 1656423339 516572943 528078050 541258410 593848707 608745888 625698267 626054704 651861838 656512960 660028928 669325271 676875788 695766745 745749751 782729534)
+        wolf_fp.photo_engagements['co_tagged_with'].keys.should =~ %w(100000438595847 100001239205614 1031110353 1656423339 516572943 528078050 541258410 593848707 608745888 625698267 626054704 651861838 656512960 660028928 669325271 676875788 695766745 745749751 782729534 832020470)
       end
 
       it 'saves hash of actors for likes, excluding self.uid' do
-        wolf_fp.photo_engagements['liked_by'].keys.should =~ %w(100000058337686 100001685490896 1043526773 519131475 543570782 587635458 663164967 695766745 710960310 713700928 734007489 872735293)
+        wolf_fp.photo_engagements['liked_by'].keys.should =~ %w(100000058337686 100001685490896 100002097933898 1016226931 1043526773 1104350748 1261410335 1485641307 1751638513 516575342 519131475 519393271 524081676 543570782 551816538 582031085 587635458 663164967 688967874 695766745 710960310 713700928 722671792 734007489 779982939 832020470 872735293)
       end
 
       it 'saves hash of actors for comments, excluding self.uid' do
-        wolf_fp.photo_engagements['commented_by'].keys.should =~ %w(528078050 543570782 570617660 630150873 669325271)
+        wolf_fp.photo_engagements['commented_by'].keys.should =~ %w(510503354 519393271 528078050 543570782 551816538 570617660 578272712 630150873 669325271 779982939 832020470)
       end
     end
 
@@ -214,7 +214,26 @@ describe FacebookProfile do
     end
   end
 
+  context 'status_engagements missing' do
+    let!(:wolf_fp) { create(:wolf_facebook_profile) }
 
+    before do
+      wolf_fp.statuses.should be_nil
+      wolf_fp.compute_engagements
+    end
+
+    it 'returns 0' do
+      wolf_fp.status_engagements['co_tags_uniques'].should == 0
+      wolf_fp.status_engagements['likes_uniques'].should == 0
+      wolf_fp.status_engagements['comments_uniques'].should == 0
+      wolf_fp.status_engagements['co_tags_total'].should == 0
+      wolf_fp.status_engagements['likes_total'].should == 0
+      wolf_fp.status_engagements['comments_total'].should == 0
+      wolf_fp.status_engagements['co_tagged_with'].should be_empty
+      wolf_fp.status_engagements['liked_by'].should be_empty
+      wolf_fp.status_engagements['commented_by'].should be_empty
+    end
+  end
 
   context '#collect_friends_location_stats' do
 

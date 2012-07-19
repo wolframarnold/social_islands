@@ -8,7 +8,7 @@ describe FacebookProfile do
 
   before :all do
     class << wolf_fp; public :get_about_me_and_friends, :get_friends_details, :get_engagement_data_and_network_graph, :execute_as_batch_query; end
-    VCR.insert_cassette 'facebook/wolf_about_me_and_lars_and_weidong', record: :new_episodes#, allow_playback_repeats: true)
+    VCR.insert_cassette 'facebook/wolf_about_me_and_lars_and_weidong'
   end
 
   after :all do
