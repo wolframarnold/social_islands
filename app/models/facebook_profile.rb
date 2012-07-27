@@ -65,11 +65,15 @@ class FacebookProfile
   index [[:uid, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]]
   index [[:token, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]]
   index [[:name, Mongo::ASCENDING], [:app_id, Mongo::ASCENDING]]
+  index [[:app_id, Mongo::ASCENDING], [:fetched_directly, Mongo::ASCENDING]]
 
   has_one :facebook_graph, dependent: :destroy  # use the method facebook_graph_lightweight if you don't want the gexf file
 
   # All the records for a given profile that match the UID
   scope :profile_variants, lambda { |fp| where(uid: fp.uid) }
+
+  scope :dashboard_index, lambda {|app_id| where(app_id: app_id, fetched_directly: true) }
+
   attr_protected :app_id, :profile_authenticity, :trust_score, :computed_stats,
                  :photo_engagements, :status_engagements, :profile_completeness
 

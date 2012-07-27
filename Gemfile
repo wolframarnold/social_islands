@@ -30,7 +30,7 @@ gem 'omniauth-facebook', '~> 1.3.0'
 #gem 'koala', '~> 1.5.0'
 gem 'koala', git: 'git://github.com/wolframarnold/koala.git', branch: 'issue237_batch_block_gets_processed_result', ref: '80b3545e44174bb4f24235c15f9c22727fe7f562'
 gem 'resque', '~> 1.20.0'
-gem 'thin', '~> 1.3.1'
+gem 'thin', '~> 1.4.1'
 gem 'newrelic_rpm', '~> 3.4.0.1'
 gem 'eshq', '~> 0.0.4'
 gem 'simple_form', '~> 2.0.2'
@@ -60,7 +60,7 @@ gem 'rest-client', '~> 1.6.7'
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
 group :test, :development do
-  gem 'rspec-rails', '~> 2.10.1'
+  gem 'rspec-rails', '~> 2.11.0'
   gem 'heroku'
   gem 'highline', '~> 1.6.12'
 end

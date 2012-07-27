@@ -1,44 +1,45 @@
-- fp = @user.facebook_profile
-
-.row-fluid.pseudo-table-header{score_background_color_attrs(fp)}
+.row-fluid.pseudo-table-header{class: score_color_class(@facebook_profile)}
   .span2
-    %h2= fp.name
+    %h2= @facebook_profile.name
   .span2
-    = image_tag fp.image
+    = image_tag @facebook_profile.image
 
 .pseudo-table-striped
   .row-fluid.pseudo-table-row
     .span2 Facebook UID
-    .span2= link_to fp.uid, "http://facebook.com/#{fp.uid}"
+    .span2= link_to @facebook_profile.uid, "http://facebook.com/#{@facebook_profile.uid}"
   .row-fluid.pseudo-table-row
     .span2
       %span Profile Authenticity
       %i.hints.icon-question-sign{popover_attrs(:profile_authenticity)}
-    = render 'color_bar', score: fp.profile_maturity
+    = render 'color_bar', score: @facebook_profile.profile_authenticity
   .row-fluid.pseudo-table-row
     .span2
       %span Trust Score
       %i.hints.icon-question-sign{popover_attrs(:trust_score)}
-    = render 'color_bar', score: fp.trust_score
+    = render 'color_bar', score: @facebook_profile.trust_score
 
 %hr
 
 .pseudo-table-striped
   .row-fluid.pseudo-table-row
-    .span2 Joined on
-    .span2= fp.joined_on || '&mdash;'.html_safe
+    .span2 Joined around
+    .span2= @facebook_profile.joined_on || '&mdash;'.html_safe
   .row-fluid.pseudo-table-row
     .span2 Last Refreshed
-    .span2= distance_of_time_in_words_to_now(fp.updated_at) + ' ago'
+    .span2= distance_of_time_in_words_to_now(@facebook_profile.last_fetched_at) + ' ago'
   .row-fluid.pseudo-table-row
     .span2 Profile Completeness
-    .span2= fp.user_stat['profile_completeness'].blank? ? '&mdash;'.html_safe : fp.user_stat['profile_completeness'].to_s+'%'
+    .span2 123
+    -#.span2= facebook_profile.user_stat['profile_completeness'].blank? ? '&mdash;'.html_safe : facebook_profile.user_stat['profile_completeness'].to_s+'%'
   .row-fluid.pseudo-table-row
     .span2 Current Location
-    .span2= fp.current_location_name
+    .span2 SF
+    -#.span2= facebook_profile.current_location_name
   .row-fluid.pseudo-table-row
     .span2 Friend Count
-    .span2= fp.user_stat['num_friend']
+    .span2 123
+    -#.span2= facebook_profile.user_stat['num_friend']
 
 %hr
 
@@ -61,9 +62,10 @@
   .row-fluid.pseudo-table-row
     .span2 Location
     .span2
-      = gmaps(markers: { data: friend_location},
-        circles: {data: default_circle, option:{fillColor:"#FF0000"}},
-        map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
+      Map here
+      -#= gmaps(markers: { data: friend_location},
+      -#  circles: {data: default_circle, option:{fillColor:"#FF0000"}},
+      -#  map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
 
 :javascript
   $('.hints').popover();

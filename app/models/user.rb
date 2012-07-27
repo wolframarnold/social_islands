@@ -8,7 +8,7 @@ class User
   index :name
   index [[:created_at, Mongo::DESCENDING]]
 
-  attr_accessible :image, :name, :profile_authenticity, :trus_score
+  attr_accessible :image, :name
 
   has_many :facebook_profiles, dependent: :nullify#, autosave: true
 
