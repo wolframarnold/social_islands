@@ -1,0 +1,13 @@
+d3:
+  git: https://github.com/mbostock/d3.git
+  ref: fb86373a3d6fd8e88624209a180313bf3a1aafa7
+
+crossfilter:
+  git: https://github.com/square/crossfilter.git
+  ref: 47d26fc80372d94dfa3795ef9257f9b5b0defc6a
+  license: https://github.com/square/crossfilter/blob/master/LICENSE
+  license_type: apache
+
+dc.js:
+  git: https://github.com/NickQiZhu/dc.js.git
+  ref: f6d815865494db65a5688a26bfe75cc7e37fe1f2
