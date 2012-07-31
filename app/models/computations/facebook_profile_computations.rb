@@ -65,7 +65,7 @@ module Computations::FacebookProfileComputations
 
   def compute_engagements
     %w(photos statuses locations tagged).each do |eng_type|
-      initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {}, from: {})
+      initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {}, tagged_by: {})
 
       if send(eng_type).blank?
         # initialize with 0, so that later computations don't fail
@@ -77,24 +77,24 @@ module Computations::FacebookProfileComputations
           add_engagements(stats['co_tagged_with'], engagement, 'tags')
           add_engagements(stats['liked_by'], engagement, 'likes')
           add_engagements(stats['commented_by'], engagement, 'comments')
-          add_from_engagements(stats['from'], engagement)
+          add_tagged_by_engagements(stats['tagged_by'], engagement)
           stats
         end
       end
-      results['co_tags_uniques']  = results['co_tagged_with'].length
-      results['co_tags_total']    = results['co_tagged_with'].sum {|attr, val| val}
-      results['likes_uniques']    = results['liked_by'].length
-      results['likes_total']      = results['liked_by'].sum {|attr, val| val}
-      results['comments_uniques'] = results['commented_by'].length
-      results['comments_total']   = results['commented_by'].sum {|attr, val| val}
-      results['from_uniques'] = results['from'].length
-      results['from_total']   = results['from'].sum {|attr, val| val}
+      results['co_tags_uniques']   = results['co_tagged_with'].length
+      results['co_tags_total']     = results['co_tagged_with'].sum {|attr, val| val}
+      results['likes_uniques']     = results['liked_by'].length
+      results['likes_total']       = results['liked_by'].sum {|attr, val| val}
+      results['comments_uniques']  = results['commented_by'].length
+      results['comments_total']    = results['commented_by'].sum {|attr, val| val}
+      results['tagged_by_uniques'] = results['tagged_by'].length
+      results['tagged_by_total']   = results['tagged_by'].sum {|attr, val| val}
       self.send("#{eng_type.singularize}_engagements=", results)  # assign to photo_engagements, status_engagements
     end
   end
 
   # adds uid => count hash entries
-  def add_from_engagements(result, raw_data_hash)
+  def add_tagged_by_engagements(result, raw_data_hash)
     return if raw_data_hash['from'].nil? || raw_data_hash['from']['id'].nil?
     from_uid=raw_data_hash['from']['id'].to_s
     return if from_uid == self.uid.to_s
@@ -129,28 +129,32 @@ module Computations::FacebookProfileComputations
     return new_hash
   end
 
+
+  # returns [ [ UID, inbound_score, mutual_friend_count ], [...], ... ]
   def compute_top_friends
+    # TODO -- don't recompute every time, track a timestamp to decide whether computation is "fresh"
+    compute_engagements
+
     w_photo_like = 1
     w_photo_comment = 1
     w_photo_cotag = 1
-    w_photo_from = 3
+    w_photo_tagged_by = 1
 
     w_status_like = 2
     w_status_comment = 4
 
     w_location_cotag = 2
-    w_location_from = 4
+    w_location_tagged_by = 3
 
     w_tagged_like = 1
     w_tagged_comment = 2
-    w_tagged_from = 4
+    w_tagged_tagged_by = 4
 
-    compute_engagements
 
     co_tag=hash_merge(photo_engagements['co_tagged_with'], w_photo_cotag, location_engagements['co_tagged_with'], w_location_cotag)
 
-    from=hash_merge(photo_engagements['from'], w_photo_from, location_engagements['from'], w_location_from)
-    from=hash_merge(from, 1, tagged_engagements['from'], w_tagged_from)
+    tagged_by=hash_merge(photo_engagements['tagged_by'], w_photo_tagged_by, location_engagements['tagged_by'], w_location_tagged_by)
+    tagged_by=hash_merge(tagged_by, 1, tagged_engagements['tagged_by'], w_tagged_tagged_by)
 
     liked_by=hash_merge(photo_engagements['liked_by'], w_photo_like, status_engagements['liked_by'], w_status_like)
     liked_by=hash_merge(liked_by, 1, tagged_engagements['liked_by'], w_tagged_like)
@@ -158,21 +162,29 @@ module Computations::FacebookProfileComputations
     commented_by=hash_merge(photo_engagements['commented_by'], w_photo_comment, status_engagements['commented_by'], w_status_comment)
     commented_by=hash_merge(commented_by, 1, tagged_engagements['commented_by'], w_tagged_comment)
 
-    in_bound=hash_merge(co_tag, 1, from, 1)
+    in_bound=hash_merge(co_tag, 1, tagged_by, 1)
     in_bound=hash_merge(in_bound, 1, liked_by, 1)
     in_bound=hash_merge(in_bound, 1, commented_by, 1)
     in_bound.delete("")
     in_bound=in_bound.sort_by{|key, val| -val}
 
-    #in_bound[0..19].each do |key, val|
-    #  name=FacebookProfile.where(uid:key).blank? ? " " : FacebookProfile.where(uid:key).first['name']
-    #  puts name+" "+ val.to_s + " " + key
+    # diagnositcs
+    #names = FacebookProfile.where(uid: in_bound.map{|uid,score| uid}).all
+    #in_bound[0..39].each_with_index do |uid_score, index|
+    #  #name=FacebookProfile.where(uid:key).blank? ? " " : FacebookProfile.where(uid:key).first['name']
+    #  puts "#{names[index]} UID: #{uid_score[0]} Score: #{uid_score[1]}"
     #end
 
-    in_bound[0..19]   # [ [UID1, Score1], [UID2, Score2] ]
+    in_bound  # [ [UID1, Score1], [UID2, Score2] ]
   end
 
 
+  def compute_mutual_friends_counts
+    FacebookProfile.where(uid: facebook_profile_uids).reduce({}) do |hash, fp|
+      hash[fp.uid] = (facebook_profile_uids & fp.facebook_profile_uids).length
+      hash
+    end
+  end
 
   ##############################
   #    Profile Completeness    #

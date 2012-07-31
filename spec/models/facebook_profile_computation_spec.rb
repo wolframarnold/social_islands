@@ -120,6 +120,10 @@ describe FacebookProfile do
         wolf_fp.photo_engagements['comments_uniques'].should == 11
       end
 
+      it 'computes tagged_by unique count' do
+        wolf_fp.photo_engagements['tagged_by_uniques'].should == 6
+      end
+
       it 'computes total co-tags count' do
         wolf_fp.photo_engagements['co_tags_total'].should == 42
       end
@@ -232,6 +236,35 @@ describe FacebookProfile do
       wolf_fp.status_engagements['co_tagged_with'].should be_empty
       wolf_fp.status_engagements['liked_by'].should be_empty
       wolf_fp.status_engagements['commented_by'].should be_empty
+    end
+  end
+
+  context 'top friends' do
+    let!(:wolf_fp) { create(:wolf_facebook_profile) }
+
+    before do
+      VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong', allow_playback_repeats: true) do
+        wolf_fp.import_profile_and_network!([lars_uid,weidong_uid])
+      end
+      wolf_fp.compute_engagements
+    end
+
+    it 'returns an inbound array' do
+      wolf_fp.compute_top_friends.should == [["832020470", 13], ["587635458", 12], ["608745888", 11], ["782729534", 8], ["521041796", 8], ["650931866", 8], ["100001087113319", 8], ["541258410", 7], ["528078050", 7], ["656512960", 5], ["504949372", 4], ["765919154", 4], ["503484735", 4], ["1219906970", 4], ["100000058647979", 4], ["1213494587", 4], ["641972802", 4], ["669325271", 4], ["660028928", 4], ["560982997", 4], ["583780906", 4], ["710238115", 4], ["652163311", 4], ["638342351", 3], ["551816538", 3], ["100002097933898", 3], ["695766745", 3], ["516572943", 3], ["779982939", 2], ["810603905", 2], ["745749751", 2], ["1656423339", 2], ["100001239205614", 2], ["1031110353", 2], ["615925793", 2], ["695005287", 2], ["121993614479282", 2], ["784158908", 2], ["172002898", 2], ["10127062", 2], ["1525875763", 2], ["1295192455", 2], ["519393271", 2], ["593848707", 2], ["1245602573", 2], ["208102217", 2], ["1043526773", 2], ["750445151", 2], ["543570782", 2], ["1518664569", 2], ["1173721181", 2], ["2514847", 2], ["524888626", 2], ["698365044", 2], ["651861838", 1], ["872735293", 1], ["734007489", 1], ["710960310", 1], ["713700928", 1], ["100000058337686", 1], ["663164967", 1], ["100001685490896", 1], ["1016226931", 1], ["688967874", 1], ["524081676", 1], ["516575342", 1], ["1485641307", 1], ["578272712", 1], ["510503354", 1], ["630150873", 1], ["570617660", 1], ["625698267", 1], ["722671792", 1], ["1104350748", 1], ["1261410335", 1], ["100000438595847", 1], ["626054704", 1], ["676875788", 1], ["582031085", 1], ["1751638513", 1], ["579905650", 1], ["519131475", 1]]
+    end
+  end
+
+  context 'mutual friends counts' do
+    let!(:wolf_fp) { create(:wolf_facebook_profile) }
+
+    before do
+      VCR.use_cassette('facebook/wolf_about_me_and_lars_and_weidong', allow_playback_repeats: true) do
+        wolf_fp.import_profile_and_network!([lars_uid,weidong_uid])
+      end
+    end
+
+    it "returns a hash of uid's and friend counts" do
+      wolf_fp.compute_mutual_friends_counts.should == {lars_uid => 5, weidong_uid => 3}
     end
   end
 
