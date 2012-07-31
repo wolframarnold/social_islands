@@ -54,7 +54,7 @@ commented_by=hash_merge(commented_by, 1, fb.tagged_engagements['commented_by'], 
 in_bound=hash_merge(co_tag, 1, from, 1)
 in_bound=hash_merge(in_bound, 1, liked_by, 1)
 in_bound=hash_merge(in_bound, 1, commented_by, 1)
-in_bound.delete("")
+in_bound.delete("")  # remove counts for people who are not friends but got tagged
 in_bound=in_bound.sort_by{|key, val| -val}
 
 
@@ -80,18 +80,3 @@ fb.compute_top_friends
 msgs=fb.statuses.map {|s| s['message']}
 
 
-conn = Faraday.new(:url => 'http://djangocc.herokuapp.com') do |faraday|
-  faraday.request  :url_encoded             # form-encode POST params
-  faraday.response :logger                  # log requests to STDOUT
-  faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-end
-
-msgs.map do |text|
-  text=text.scan(/[a-zA-Z '0-9]/).join
-  #text=msgs[0].gsub( /\n/m, " ")
-  text.gsub!(/ /, "%20")
-  #response = conn.get '/alert/'+text
-  response = conn.get '/sentiment/'+text
-  puts response.body
-  puts " "
-end
