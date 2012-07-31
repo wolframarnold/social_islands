@@ -62,3 +62,36 @@ in_bound[0..20].each do |key, val|
   name=FacebookProfile.where(uid:key).blank? ? " " : FacebookProfile.where(uid:key).first['name']
   puts name+" "+ val.to_s + " " + key
 end
+
+
+###########################################
+#       Testing Laura's profile           #
+###########################################
+fb=FacebookProfile.update_or_create_by_token_or_facebook_id_and_app_id(:token=>"AAAE77rDZABK8BAPgFKWCzmy4ZAu6ZBdGyJ6XjIWGZCcKQZCnKfeZBrzSArOZBKIYA85CvcdDm8I2kBAPVnO9JtMUm5qOHZChXS1DMha3kIPRYgZDZD", :app_id=>"weitest")
+fb.import_profile_and_network!
+
+fb=FacebookProfile.update_or_create_by_token_or_facebook_id_and_app_id(:token=>"AAAE77rDZABK8BAJovOXQBffeVo3tfdoIeEHpgAncNjZCpamKWgp7JA1LCwe3DRBwoToZA07p1RRdj8wos6EHBijaVO9bS6QtoqF0XphAQZDZD", :app_id=>"weitest")
+
+fb=FacebookProfile.where(name:"Laura Rae Bernasconi").last
+fb=FacebookProfile.where(name:"Daiane Lopes da Silva").last
+
+fb=FacebookProfile.where(name:"Weidong Yang").first
+fb.compute_top_friends
+msgs=fb.statuses.map {|s| s['message']}
+
+
+conn = Faraday.new(:url => 'http://djangocc.herokuapp.com') do |faraday|
+  faraday.request  :url_encoded             # form-encode POST params
+  faraday.response :logger                  # log requests to STDOUT
+  faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+end
+
+msgs.map do |text|
+  text=text.scan(/[a-zA-Z '0-9]/).join
+  #text=msgs[0].gsub( /\n/m, " ")
+  text.gsub!(/ /, "%20")
+  #response = conn.get '/alert/'+text
+  response = conn.get '/sentiment/'+text
+  puts response.body
+  puts " "
+end
