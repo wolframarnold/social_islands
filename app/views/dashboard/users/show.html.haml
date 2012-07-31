@@ -46,6 +46,12 @@
 .pseudo-table-striped
   .row-fluid.pseudo-table-row
     .span2
+      %span Photo Engagements
+      %i.hints.icon-question-sign{popover_attrs(:photo_engagements_chart)}
+    .span5#photo-engagements-chart
+    .span5#photo-engagements-chart2
+  .row-fluid.pseudo-table-row
+    .span2
       %span Inbound Engagement Index
       %i.hints.icon-question-sign{popover_attrs(:inbound_engagement_index)}
     .span2 (Need a number here)
@@ -67,5 +73,9 @@
       -#  circles: {data: default_circle, option:{fillColor:"#FF0000"}},
       -#  map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
 
+
+- photo_engagement_attrs = %w(co_tags_uniques likes_uniques comments_uniques from_uniques)
 :javascript
   $('.hints').popover();
+  window.photo_engagement_legend = #{photo_engagement_attrs.map(&:humanize).to_json};
+  window.photo_engagement_data   = #{photo_engagement_attrs.reduce([]){|res,attr| res << @facebook_profile.photo_engagements[attr]}.to_json};

@@ -17,6 +17,9 @@ en:
         (0...100)
         The Trust Score is a measure of the real-world social engagement of the user
         with their community.
+    photo_engagements_chart:
+      title: Photo Engagements
+      content: Coming soon...
     inbound_engagement_index:
       title: Inbound Engagement Index
       content:

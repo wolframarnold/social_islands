@@ -70,3 +70,14 @@ table.table.table-striped {
 .pseudo-table-header {
   padding: 8px;
 }
+
+// ------------
+// Chart Styles
+// ------------
+
+// Source: http://mbostock.github.com/d3/tutorial/bar-1.html
+
+.chart rect {
+  fill: orange;
+  stroke: white;
+};
