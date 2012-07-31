@@ -147,15 +147,18 @@ module ApiHelpers::FacebookApiAccessor
   # Each batch can only hold 50 queries, so that still leaves 360 queries -- too many for now.
   # We can do this maybe on a throttled background job and fill in over time -- later.
   def get_friends_details
+    # NOTE: Facebook permits queries like /photos?ids=uid1,uid2,uid3...
+    # This can also help cut down on queries
+
     friends_raw.each do |friend|
       queue_about_me(friend['uid'])       { |res| friend['about_me']  = res }
-      queue_connection('me', 'photos')    { |res| friend['photos']    = res }
-      queue_connection('me', 'posts')     { |res| friend['posts']     = res }
-      queue_connection('me', 'tagged')    { |res| friend['tagged']    = res }
-      queue_connection('me', 'locations') { |res| friend['locations'] = res }
-      queue_connection('me', 'statuses')  { |res| friend['statuses']  = res }
-      queue_connection('me', 'likes')     { |res| friend['likes']     = res }
-      queue_connection('me', 'feed')      { |res| friend['feed']      = res }
+      queue_connection(friend['uid'], 'photos')    { |res| friend['photos']    = res }
+      queue_connection(friend['uid'], 'posts')     { |res| friend['posts']     = res }
+      queue_connection(friend['uid'], 'tagged')    { |res| friend['tagged']    = res }
+      queue_connection(friend['uid'], 'locations') { |res| friend['locations'] = res }
+      queue_connection(friend['uid'], 'statuses')  { |res| friend['statuses']  = res }
+      queue_connection(friend['uid'], 'likes')     { |res| friend['likes']     = res }
+      queue_connection(friend['uid'], 'feed')      { |res| friend['feed']      = res }
     end
   end
 
