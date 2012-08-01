@@ -30,13 +30,36 @@ $ ->
 
   by_uid                  = ndx.dimension( (d) -> d.uid)
   window.by_uid = by_uid # for debugging; can type 'by_uid' in browser console and interact w/ object
-  by_inbound_score        = ndx.dimension( (d) -> d.inbound_score)
-  by_mutual_friends_count = ndx.dimension( (d) -> d.mutual_friends_count)
+#  by_inbound_score        = ndx.dimension( (d) -> d.inbound_score)
+#  window.by_inbound_score = by_inbound_score
+#  by_mutual_friends_count = ndx.dimension( (d) -> d.mutual_friends_count)
+#  window.by_mutual_friends_count = by_mutual_friends_count
 
   # each "group" represents a filter to apply to the data set. See https://github.com/square/crossfilter/wiki/API-Reference for details
   # our "by_uid_group" filters the records for just one user
-  by_uid_group = by_uid.group()  # no grouping needed the UID is already the group identifier
+  by_uid_group = by_uid.group().reduce((p,v) ->     # no grouping needed the UID is already the group identifier
+    ++p.count
+    p.inbound_score = v.inbound_score
+    p.mutual_friends_count = v.mutual_friends_count
+    p
+
+    #remove
+  , (p, v)->
+    --p.count
+    p.inbound_score = -1
+    p.mutual_friends_count = -1
+    p
+
+    #init
+  , ->
+    inbound_score : 0
+    mutual_friends_count : 0
+    )
   window.by_uid_group = by_uid_group
+#  by_inbound_score_group = by_inbound_score.group()  # no grouping needed the UID is already the group identifier
+#  window.by_inbound_score_group = by_inbound_score_group
+#  by_mutual_friends_count_group = by_mutual_friends_count.group()
+#  window.by_mutual_friends_count_group = by_mutual_friends_count_group
   console.log by_uid_group.size() # should be top friend count in data set (relevant_top_friends method in Ruby)-- number of records/disctinct values in group
 
   # See http://nickqizhu.github.com/dc.js/, Bubble Chart example
@@ -45,13 +68,14 @@ $ ->
     .height(300)
     .dimension(by_uid)
     .group(by_uid_group)
-    .keyRetriever( (d) -> d.mutual_friends_count)
-    .valueRetriever( (d) -> d.inbound_score)
-    .radiusValueRetriever( -> 20)  # hard-coded radius -- we can play with this, e.g. display profile authenticity here
-    .x(d3.scale.linear().domain([0,100]))
-    .y(d3.scale.linear().domain([0,50]))
+    .keyRetriever( (d) -> d.value.mutual_friends_count)
+    .valueRetriever( (d) -> d.value.inbound_score)
+    .radiusValueRetriever( -> 10)  # hard-coded radius -- we can play with this, e.g. display profile authenticity here
+    .x(d3.scale.linear().domain([0,200]))
+    .y(d3.scale.linear().domain([0,30]))
     .r(d3.scale.linear().domain([0,100]))
     .label( (d) -> d.uid )  # we should ship the name and image to display here, for now we display UID in the bubble
     .renderTitle(true)
+    .filterAll
 
   dc.renderAll()
