@@ -15,6 +15,12 @@ class Dashboard::UsersController < Dashboard::BaseController
   def show
     @facebook_profile = FacebookProfile.where(_id: params[:id], app_id: current_api_client.app_id).first
     return redirect_to root_path, alert: 'Record not found!' if @facebook_profile.nil?
+    if @facebook_profile.computed_stats[:top_friends].blank?
+      # This happens as part of the fetcher, but for old records we may not yet have it.
+      @facebook_profile.compute_top_friends_stats
+      @facebook_profile.save
+      @facebook_profile.reload  # this is important to convert symbols in computed_stats to strings; otherwise we can't access by 'top_friends' by only :top_friends
+    end
   end
 
   private

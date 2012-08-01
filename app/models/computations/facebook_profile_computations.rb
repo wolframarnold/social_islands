@@ -199,7 +199,7 @@ module Computations::FacebookProfileComputations
     end
   end
 
-  def compute_top_friends_stats!
+  def compute_top_friends_stats
     # prepare for crossfilter, see, e.g.: https://github.com/square/crossfilter/wiki/API-Reference
     by_inbound_score        = compute_top_friends_by_inbound_score
     by_mutual_friends_count = compute_top_friends_by_mutual_friends_count
@@ -216,7 +216,11 @@ module Computations::FacebookProfileComputations
     # Got a hash like this now: {uid => {inbound_score: 123, mutual_friends_count: 3}, ...}
     # We need an array of hashes like [{uid: uid1, inbound_score: 123, mutual_friends_count: 3}, {...}, ...]
     self.computed_stats[:top_friends] = combined.map{|k,v| v[:uid] = k; v}
-    save!
+  end
+
+  def relevant_top_friends
+    # only pick records with inbound score >= 1 and at least one mutual friends
+    computed_stats['top_friends'].select{|h| h['inbound_score'] >= 1 && h['mutual_friends_count'] >= 1 }
   end
 
   ##############################
@@ -285,6 +289,7 @@ module Computations::FacebookProfileComputations
   def compute_all_scores!
     compute_profile_authenticity
     compute_trust_score
+    compute_top_friends_stats
     save!
   end
 

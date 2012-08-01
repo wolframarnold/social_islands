@@ -44,12 +44,17 @@
 %hr
 
 .pseudo-table-striped
+
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Top Friends
+      %i.hints.icon-question-sign{popover_attrs(:top_friends_chart)}
+    .span10#top-friends-chart
   .row-fluid.pseudo-table-row
     .span2
       %span Photo Engagements
       %i.hints.icon-question-sign{popover_attrs(:photo_engagements_chart)}
-    .span5#photo-engagements-chart
-    .span5#photo-engagements-chart2
+    .span10#photo-engagements-chart
   .row-fluid.pseudo-table-row
     .span2
       %span Inbound Engagement Index
@@ -79,3 +84,4 @@
   $('.hints').popover();
   window.photo_engagement_legend = #{photo_engagement_attrs.map(&:humanize).to_json};
   window.photo_engagement_data   = #{photo_engagement_attrs.reduce([]){|res,attr| res << @facebook_profile.photo_engagements[attr]}.to_json};
+  window.top_friends_data        = #{@facebook_profile.relevant_top_friends.to_json};
