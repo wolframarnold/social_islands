@@ -68,7 +68,7 @@ module Computations::FacebookProfileComputations
   # and (3) times of activity
 
   def need_to_compute?
-    last_computed_at.nil? || last_computed_at > last_fetched_at
+    last_computed_at.nil? || last_computed_at < last_fetched_at
   end
 
   def compute_engagements
@@ -200,8 +200,22 @@ module Computations::FacebookProfileComputations
   end
 
   def compute_top_friends_stats!
-    self.computes_stats[:top_friends_by_inbound_score] = compute_top_friends_by_inbound_score
-    self.computes_stats[:top_friends_by_mutual_friends_count] = compute_top_friends_by_mutual_friends_counts
+    # prepare for crossfilter, see, e.g.: https://github.com/square/crossfilter/wiki/API-Reference
+    by_inbound_score        = compute_top_friends_by_inbound_score
+    by_mutual_friends_count = compute_top_friends_by_mutual_friends_count
+
+    combined = by_inbound_score.reduce({}) do |hash, uid_ibscore|
+      hash[uid_ibscore[0]] = {inbound_score: uid_ibscore[1], mutual_friends_count: 0}
+      hash
+    end
+    by_mutual_friends_count.each do |uid, mfc|
+      combined[uid] ||= {inbound_score: 0}
+      combined[uid][:mutual_friends_count] = mfc
+      combined[uid][:uid] = uid
+    end
+    # Got a hash like this now: {uid => {inbound_score: 123, mutual_friends_count: 3}, ...}
+    # We need an array of hashes like [{uid: uid1, inbound_score: 123, mutual_friends_count: 3}, {...}, ...]
+    self.computed_stats[:top_friends] = combined.map{|k,v| v[:uid] = k; v}
     save!
   end
 
