@@ -63,6 +63,10 @@ module Computations::FacebookProfileComputations
   # Photo & Status Engagements #
   ##############################
 
+  # Note: self.likes are likes a user clicked on themselves; they are purely outbound,
+  # but they can tell us (1) that the user is using the FB acccount; (2) their areas of interest
+  # and (3) times of activity
+
   def compute_engagements
     %w(photos statuses locations tagged).each do |eng_type|
       initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {}, tagged_by: {})
@@ -180,7 +184,7 @@ module Computations::FacebookProfileComputations
 
 
   def compute_mutual_friends_counts
-    FacebookProfile.where(uid: facebook_profile_uids).reduce({}) do |hash, fp|
+    FacebookProfile.any_in(uid: facebook_profile_uids).reduce({}) do |hash, fp|
       hash[fp.uid] = (facebook_profile_uids & fp.facebook_profile_uids).length
       hash
     end

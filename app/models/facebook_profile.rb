@@ -29,27 +29,27 @@ class FacebookProfile
 
   # Computed entities, intermediate scores, etc. -- all (re-)computable from raw data
   # Used by module: Computations::FacebookProfileComputations
-  field :computed_stats,       type: Hash
-  field :photo_engagements,    type: Hash
-  field :status_engagements,   type: Hash
-  field :location_engagements, type: Hash
-  field :tagged_engagements,   type: Hash
+  field :computed_stats,       type: Hash, default: {}
+  field :photo_engagements,    type: Hash, default: {}
+  field :status_engagements,   type: Hash, default: {}
+  field :location_engagements, type: Hash, default: {}
+  field :tagged_engagements,   type: Hash, default: {}
   field :profile_completeness, type: Float
 
   # Raw data fields from Facebook
   # Used by module: ApiHelpers::FacebookApiAccessor
-  field :photos,            type: Array
-  field :tagged,            type: Array
-  field :posts,             type: Array
-  field :locations,         type: Array
-  field :statuses,          type: Array
-  field :likes,             type: Array
-  field :checkins,          type: Array
-  field :feed,              type: Array
-  field :permissions,       type: Array
+  field :photos,            type: Array, default: []
+  field :tagged,            type: Array, default: []
+  field :posts,             type: Array, default: []
+  field :locations,         type: Array, default: []
+  field :statuses,          type: Array, default: []
+  field :likes,             type: Array, default: []
+  field :checkins,          type: Array, default: []
+  field :feed,              type: Array, default: []
+  field :permissions,       type: Array, default: []
   field :joined_on,         type: Date
   field :about_me,          type: Hash
-  field :edge_count,        type: Integer
+  field :edge_count,        type: Integer, default: 0
 
   field :facebook_profile_uids, type: Array, default: []  # for friends
 

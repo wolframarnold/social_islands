@@ -222,7 +222,7 @@ describe FacebookProfile do
     let!(:wolf_fp) { create(:wolf_facebook_profile) }
 
     before do
-      wolf_fp.statuses.should be_nil
+      wolf_fp.statuses.should be_empty
       wolf_fp.compute_engagements
     end
 
@@ -264,7 +264,7 @@ describe FacebookProfile do
     end
 
     it "returns a hash of uid's and friend counts" do
-      wolf_fp.compute_mutual_friends_counts.should == {lars_uid => 5, weidong_uid => 3}
+      wolf_fp.compute_mutual_friends_counts.should == {lars_uid => 1, weidong_uid => 1}
     end
   end
 
