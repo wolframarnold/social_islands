@@ -30,6 +30,7 @@ class FacebookProfile
   # Computed entities, intermediate scores, etc. -- all (re-)computable from raw data
   # Used by module: Computations::FacebookProfileComputations
   field :computed_stats,       type: Hash, default: {}
+  field :last_computed_at,     type: DateTime
   field :photo_engagements,    type: Hash, default: {}
   field :status_engagements,   type: Hash, default: {}
   field :location_engagements, type: Hash, default: {}

@@ -67,7 +67,12 @@ module Computations::FacebookProfileComputations
   # but they can tell us (1) that the user is using the FB acccount; (2) their areas of interest
   # and (3) times of activity
 
+  def need_to_compute?
+    last_computed_at.nil? || last_computed_at > last_fetched_at
+  end
+
   def compute_engagements
+    return unless need_to_compute?
     %w(photos statuses locations tagged).each do |eng_type|
       initial = HashWithIndifferentAccess.new(co_tagged_with: {}, liked_by: {}, commented_by: {}, tagged_by: {})
 
@@ -95,6 +100,7 @@ module Computations::FacebookProfileComputations
       results['tagged_by_total']   = results['tagged_by'].sum {|attr, val| val}
       self.send("#{eng_type.singularize}_engagements=", results)  # assign to photo_engagements, status_engagements
     end
+    self.last_computed_at = Time.now
   end
 
   # adds uid => count hash entries
@@ -123,20 +129,21 @@ module Computations::FacebookProfileComputations
   end
   private :add_engagements
 
+
   ##############################
-  #    Top friends             #
+  #       Top Friends          #
   ##############################
-  def hash_merge(h1, w_h1, h2, w_h2)
+
+  def weighted_merge(hash1, weight_hash1, hash2, weight_hash2)
     new_hash=Hash.new(0)
-    h1.each {|key, val| new_hash[key]+=val*w_h1}
-    h2.each {|key, val| new_hash[key]+=val*w_h2}
-    return new_hash
+    hash1.each {|key, val| new_hash[key.to_i]+=val*weight_hash1}
+    hash2.each {|key, val| new_hash[key.to_i]+=val*weight_hash2}
+    new_hash
   end
+  private :weighted_merge
 
-
-  # returns [ [ UID, inbound_score, mutual_friend_count ], [...], ... ]
-  def compute_top_friends
-    # TODO -- don't recompute every time, track a timestamp to decide whether computation is "fresh"
+  # returns { UID => inbound_score1, UID2 => inbound_score 2, ... }
+  def compute_top_friends_by_inbound_score
     compute_engagements
 
     w_photo_like = 1
@@ -155,27 +162,28 @@ module Computations::FacebookProfileComputations
     w_tagged_tagged_by = 4
 
 
-    co_tag=hash_merge(photo_engagements['co_tagged_with'], w_photo_cotag, location_engagements['co_tagged_with'], w_location_cotag)
+    co_tag=weighted_merge(photo_engagements['co_tagged_with'], w_photo_cotag, location_engagements['co_tagged_with'], w_location_cotag)
 
-    tagged_by=hash_merge(photo_engagements['tagged_by'], w_photo_tagged_by, location_engagements['tagged_by'], w_location_tagged_by)
-    tagged_by=hash_merge(tagged_by, 1, tagged_engagements['tagged_by'], w_tagged_tagged_by)
+    tagged_by=weighted_merge(photo_engagements['tagged_by'], w_photo_tagged_by, location_engagements['tagged_by'], w_location_tagged_by)
+    tagged_by=weighted_merge(tagged_by, 1, tagged_engagements['tagged_by'], w_tagged_tagged_by)
 
-    liked_by=hash_merge(photo_engagements['liked_by'], w_photo_like, status_engagements['liked_by'], w_status_like)
-    liked_by=hash_merge(liked_by, 1, tagged_engagements['liked_by'], w_tagged_like)
+    liked_by=weighted_merge(photo_engagements['liked_by'], w_photo_like, status_engagements['liked_by'], w_status_like)
+    liked_by=weighted_merge(liked_by, 1, tagged_engagements['liked_by'], w_tagged_like)
 
-    commented_by=hash_merge(photo_engagements['commented_by'], w_photo_comment, status_engagements['commented_by'], w_status_comment)
-    commented_by=hash_merge(commented_by, 1, tagged_engagements['commented_by'], w_tagged_comment)
+    commented_by=weighted_merge(photo_engagements['commented_by'], w_photo_comment, status_engagements['commented_by'], w_status_comment)
+    commented_by=weighted_merge(commented_by, 1, tagged_engagements['commented_by'], w_tagged_comment)
 
-    in_bound=hash_merge(co_tag, 1, tagged_by, 1)
-    in_bound=hash_merge(in_bound, 1, liked_by, 1)
-    in_bound=hash_merge(in_bound, 1, commented_by, 1)
+    in_bound=weighted_merge(co_tag, 1, tagged_by, 1)
+    in_bound=weighted_merge(in_bound, 1, liked_by, 1)
+    in_bound=weighted_merge(in_bound, 1, commented_by, 1)
     in_bound.delete("")
-    in_bound=in_bound.sort_by{|key, val| -val}
 
-    # diagnositcs
-    #names = FacebookProfile.where(uid: in_bound.map{|uid,score| uid}).all
-    #in_bound[0..39].each_with_index do |uid_score, index|
-    #  #name=FacebookProfile.where(uid:key).blank? ? " " : FacebookProfile.where(uid:key).first['name']
+    # Sorting is not needed for UI consumption
+
+    # diagnostics
+    # in_bound_sorted=in_bound.sort_by{|key, val| -val}
+    #names = FacebookProfile.where(uid: in_bound_sorted.map{|uid,score| uid}).all
+    #in_bound_sorted[0..39].each_with_index do |uid_score, index|
     #  puts "#{names[index]} UID: #{uid_score[0]} Score: #{uid_score[1]}"
     #end
 
@@ -183,11 +191,18 @@ module Computations::FacebookProfileComputations
   end
 
 
-  def compute_mutual_friends_counts
+  # returns {uid1 => mutual_friends1, uid2 => mutual_friends2, ...}
+  def compute_top_friends_by_mutual_friends_count
     FacebookProfile.any_in(uid: facebook_profile_uids).reduce({}) do |hash, fp|
       hash[fp.uid] = (facebook_profile_uids & fp.facebook_profile_uids).length
       hash
     end
+  end
+
+  def compute_top_friends_stats!
+    self.computes_stats[:top_friends_by_inbound_score] = compute_top_friends_by_inbound_score
+    self.computes_stats[:top_friends_by_mutual_friends_count] = compute_top_friends_by_mutual_friends_counts
+    save!
   end
 
   ##############################
