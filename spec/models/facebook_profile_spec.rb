@@ -33,6 +33,9 @@ describe FacebookProfile do
         end
 
         it 'returns an error if update fails' do
+          api_client_mock = mock('ApiClient',postback_domain: 'http://api.example.com', update_from_api_manager: nil)
+          ApiClient.stub_chain :where, first: api_client_mock
+
           fp = FacebookProfile.update_or_create_by_token_or_facebook_id_and_app_id(
               token: wolf_fp.token, app_id: wolf_fp.app_id, postback_url: 'http://joe_smith.example.com')
           fp.should_not be_valid
@@ -85,6 +88,9 @@ describe FacebookProfile do
         }.to change{wolf_fp.postback_url}.from(nil).to('http://api.example.com/postback')
       end
       it 'returns an error if update fails' do
+        api_client_mock = mock('ApiClient',postback_domain: 'http://api.example.com', update_from_api_manager: nil)
+        ApiClient.stub_chain :where, first: api_client_mock
+
         fp = FacebookProfile.update_or_create_by_facebook_id_and_app_id(
             facebook_id: wolf_fp.uid, app_id: wolf_fp.app_id, postback_url: 'http://joe_smith.example.com')
         fp.should_not be_valid

@@ -12,7 +12,7 @@ describe ApiClient do
   end
 
   after :all do
-    VCR.eject_cassette('3scale/rubyfocus_developer_app')
+    VCR.eject_cassette
   end
 
   shared_examples_for '3Scale update' do
