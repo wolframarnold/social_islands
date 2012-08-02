@@ -41,6 +41,7 @@ $ ->
     ++p.count
     p.inbound_score = v.inbound_score
     p.mutual_friends_count = v.mutual_friends_count
+    p.uid = v.uid
     p
 
     #remove
@@ -48,12 +49,14 @@ $ ->
     --p.count
     p.inbound_score = -1
     p.mutual_friends_count = -1
+    p.uid = -1
     p
 
     #init
   , ->
     inbound_score : 0
     mutual_friends_count : 0
+    uid : 0
     )
   window.by_uid_group = by_uid_group
 #  by_inbound_score_group = by_inbound_score.group()  # no grouping needed the UID is already the group identifier
@@ -74,7 +77,7 @@ $ ->
     .x(d3.scale.linear().domain([0,200]))
     .y(d3.scale.linear().domain([0,30]))
     .r(d3.scale.linear().domain([0,100]))
-    .label( (d) -> d.uid )  # we should ship the name and image to display here, for now we display UID in the bubble
+    .label( (d) -> d.value.uid )  # we should ship the name and image to display here, for now we display UID in the bubble
     .renderTitle(true)
     .filterAll
 
