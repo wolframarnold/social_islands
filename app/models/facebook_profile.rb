@@ -94,7 +94,7 @@ class FacebookProfile
   end
 
   def self.updatable_attributes
-    %w(facebook_id uid token name image token_expires token_expires_at postback_url fetching_directly)
+    %w(facebook_id uid token name image token_expires token_expires_at postback_url fetching_directly last_fetched_at)
   end
 
   # required params:
@@ -119,6 +119,7 @@ class FacebookProfile
         fp
       else
         params.merge! self.get_facebook_id_name_image(params[:token])  # FB API call to get UID, name, image from token
+        params[:last_fetched_at] = nil
         self.update_or_create_by_facebook_id_and_app_id(params)
       end
     end
@@ -135,6 +136,7 @@ class FacebookProfile
   # token_expires:    From FB OAuth response (boolean, optional)
   # token_expires_at: From OmniAuth (DateTime, optional)
   # postback_url:     From client, Where to post back to when score is computed
+  # last_fetched_at:  Can be set to nil for new tokens on known record to force re-fetch
   def self.update_or_create_by_facebook_id_and_app_id(params)
     params = params.with_indifferent_access
     params[:facebook_id] = params[:uid] if params[:facebook_id].blank? && params[:uid].present?

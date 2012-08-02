@@ -47,6 +47,20 @@ describe FacebookProfile do
               token: wolf_fp.token, app_id: wolf_fp.app_id, junk_param: 'store me')
           fp['junk_param'].should be_nil
         end
+
+        it 'sets last_fetched_at to nil when token is not found but record exists' do
+          FacebookProfile.should_receive(:get_facebook_id_name_image).with('my_new_token').
+              and_return('uid' => wolf_fp.uid, 'name' => 'John Smith', 'image' => 'http://example.com/john_smith.jpg')
+          wolf_fp.update_attribute(:last_fetched_at, Time.now)
+          wolf_fp.should_fetch?.should be_false
+
+          fp = FacebookProfile.update_or_create_by_token_or_facebook_id_and_app_id(
+              token: 'my_new_token', app_id: wolf_fp.app_id)
+
+          fp.should == wolf_fp
+          wolf_fp.reload.last_fetched_at.should be_nil
+          wolf_fp.should_fetch?.should be_true
+        end
       end
 
       it_behaves_like 'FB Profile for token and APP ID does not exist' do

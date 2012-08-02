@@ -1,5 +1,8 @@
 source 'https://rubygems.org'
 
+# Tell Heroku to use Ruby 1.9.3; Heroku's default on Cedar is 1.9.2
+ruby '1.9.3'  # if this line causes an error, upgrade the bundler gem with:  gem install bundler
+
 gem 'rails', '3.2.6'
 
 # Bundle edge Rails instead:
