@@ -9,12 +9,15 @@ class ApiController < ApplicationController
   def trust_check
     @facebook_profile = FacebookProfile.update_or_create_by_token_or_facebook_id_and_app_id(params.merge(fetching_directly: true))
     if @facebook_profile.valid? and !@facebook_profile.changed? # it was saved
+
+      # Fetch if we need to, e.g. new record or existing record with new token
+      if @facebook_profile.should_fetch?
+        # Reque.inline is set for development environment
+        Resque.enqueue(FacebookFetcher, @facebook_profile.to_param, 'scoring', @facebook_profile.postback_url)
+      end
       if @facebook_profile.has_scores?
         render 'score_ready'
       else
-        # To run synchronously, just comment out the Resque line and uncomment the following one instead
-        #FacebookFetcher.perform @facebook_profile.to_param, 'scoring', @facebook_profile.postback_url
-        Resque.enqueue(FacebookFetcher, @facebook_profile.to_param, 'scoring', @facebook_profile.postback_url)
         render 'score_not_ready', status: :accepted
       end
     else

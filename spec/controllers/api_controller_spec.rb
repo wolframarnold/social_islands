@@ -136,15 +136,28 @@ describe ApiController do
       end
       context 'params: facebook_token and app_id -- existing record, token changed, UID matches' do
         let(:post_params) { post_params_valid.merge(token: 'abcef_new_token') }
-        before            { FacebookProfile.should_receive(:get_facebook_id_name_image).with('abcef_new_token').and_return('name'=>fp.name, 'image'=>fp.image, 'uid'=>fp.uid) }
+        before do
+          FacebookProfile.should_receive(:get_facebook_id_name_image).with('abcef_new_token').and_return('name'=>fp.name, 'image'=>fp.image, 'uid'=>fp.uid)
+          Resque.should_receive(:enqueue)  # we rec-ompute the score
+        end
         it 'updates token' do
           post :trust_check, post_params
           assigns(:facebook_profile).token.should == 'abcef_new_token'
           assigns(:facebook_profile).should_not be_changed  # was saved
         end
-        it_behaves_like 'score not ready'
-        it_behaves_like 'score ready'
-        it_behaves_like 'can update postback_url'
+        it 'sends score not ready if no scores for some reason' do
+          post :trust_check, post_params
+          response.status.should == 202
+        end
+        it 'sends score ready if available' do
+          wolf_fp.trust_score = 90
+          wolf_fp.profile_authenticity = 89
+          wolf_fp.save
+
+          post :trust_check, post_params
+          response.status.should == 200
+          JSON.parse(response.body).should include('trust_score' => 90.0, 'profile_authenticity' => 89.0)
+        end
       end
       context 'params: facebook_id and app_id no token -- matching record' do
         let(:post_params) { post_params_valid.except(:token).merge(facebook_id: fp.uid) }

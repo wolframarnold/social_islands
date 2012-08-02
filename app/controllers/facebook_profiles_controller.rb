@@ -11,12 +11,8 @@ class FacebookProfilesController < ApplicationController
     # otherwise it does what's necessary
     @has_graph = current_facebook_profile.has_graph?
 
-    # Hack for dev environment: run direct w/o resque queue for easier setup and debugging
-    if Rails.env.development?
-      FacebookFetcher.perform(current_facebook_profile.to_param, 'viz', push_to_web_graph_ready_url)
-    else
-      Resque.enqueue(FacebookFetcher, current_facebook_profile.to_param, 'viz', push_to_web_graph_ready_url)
-    end
+    # Reque.inline is set for development environment
+    Resque.enqueue(FacebookFetcher, current_facebook_profile.to_param, 'viz', push_to_web_graph_ready_url)
   end
 
   def graph
