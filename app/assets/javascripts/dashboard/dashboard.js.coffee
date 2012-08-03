@@ -30,10 +30,6 @@ $ ->
 
   by_uid                  = ndx.dimension( (d) -> d.uid)
   window.by_uid = by_uid # for debugging; can type 'by_uid' in browser console and interact w/ object
-#  by_inbound_score        = ndx.dimension( (d) -> d.inbound_score)
-#  window.by_inbound_score = by_inbound_score
-#  by_mutual_friends_count = ndx.dimension( (d) -> d.mutual_friends_count)
-#  window.by_mutual_friends_count = by_mutual_friends_count
 
   # each "group" represents a filter to apply to the data set. See https://github.com/square/crossfilter/wiki/API-Reference for details
   # our "by_uid_group" filters the records for just one user
@@ -59,10 +55,15 @@ $ ->
     uid : 0
     )
   window.by_uid_group = by_uid_group
-#  by_inbound_score_group = by_inbound_score.group()  # no grouping needed the UID is already the group identifier
-#  window.by_inbound_score_group = by_inbound_score_group
-#  by_mutual_friends_count_group = by_mutual_friends_count.group()
-#  window.by_mutual_friends_count_group = by_mutual_friends_count_group
+
+  by_inbound_score        = ndx.dimension( (d) -> d.inbound_score)
+  window.by_inbound_score = by_inbound_score
+  by_inbound_score_group = by_inbound_score.group()  # no grouping needed the UID is already the group identifier
+  window.by_inbound_score_group = by_inbound_score_group
+  by_mutual_friends_count = ndx.dimension( (d) -> d.mutual_friends_count)
+  window.by_mutual_friends_count = by_mutual_friends_count
+  by_mutual_friends_count_group = by_mutual_friends_count.group()
+  window.by_mutual_friends_count_group = by_mutual_friends_count_group
   console.log by_uid_group.size() # should be top friend count in data set (relevant_top_friends method in Ruby)-- number of records/disctinct values in group
 
   # See http://nickqizhu.github.com/dc.js/, Bubble Chart example
@@ -80,5 +81,25 @@ $ ->
     .label( (d) -> d.value.uid )  # we should ship the name and image to display here, for now we display UID in the bubble
     .renderTitle(true)
     .filterAll
+
+  dc.barChart("#inbound-score-histogram")
+    .width(300)
+    .height(250)
+    .dimension(by_inbound_score)
+    .group(by_inbound_score_group)
+    .elasticY(true)
+    .round(dc.round.floor)
+    .x(d3.scale.linear().domain([0, 40]))
+    .xAxis()
+
+  dc.barChart("#mutual-friends-count-histogram")
+    .width(300)
+    .height(250)
+    .dimension(by_mutual_friends_count)
+    .group(by_mutual_friends_count_group)
+    .elasticY(true)
+    .round(dc.round.floor)
+    .x(d3.scale.linear().domain([0, 200]))
+    .xAxis()
 
   dc.renderAll()
