@@ -43,49 +43,51 @@
 
 %hr
 
-.pseudo-table-striped
-
-  .row-fluid.pseudo-table-row
-    .span2
-      %span Top Friends
-      %i.hints.icon-question-sign{popover_attrs(:top_friends_chart)}
-    .span10#top-friends-chart
-  .row-fluid.pseudo-table-row
-    .span2
-      %span Inbound Score
-      %i.hints.icon-question-sign{popover_attrs(:inbound_score_histogram_chart)}
-    .span5#inbound-score-histogram
-    .span2
-      %span Mutual Friends
-      %i.hints.icon-question-sign{popover_attrs(:mutual_friends_count_histogram_chart)}
-    .span5#mutual-friends-count-histogram
-  .row-fluid.pseudo-table-row
-    .span2
-      %span Photo Engagements
-      %i.hints.icon-question-sign{popover_attrs(:photo_engagements_chart)}
-    .span10#photo-engagements-chart
-  .row-fluid.pseudo-table-row
-    .span2
-      %span Inbound Engagement Index
-      %i.hints.icon-question-sign{popover_attrs(:inbound_engagement_index)}
-    .span2 (Need a number here)
-  .row-fluid.pseudo-table-row
-    .span2
-      %span Outbound Engagement Index
-      %i.hints.icon-question-sign{popover_attrs(:outbound_engagement_index)}
-    .span2 (Need a number here)
-  .row-fluid.pseudo-table-row
-    .span2
-      %span Engagement Ratio
-      %i.hints.icon-question-sign{popover_attrs(:engagement_ratio)}
-    .span2 (Need a number here)
-  .row-fluid.pseudo-table-row
-    .span2 Location
-    .span2
-      Map here
-      -#= gmaps(markers: { data: friend_location},
-      -#  circles: {data: default_circle, option:{fillColor:"#FF0000"}},
-      -#  map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
+.content
+  .pseudo-table-striped
+    %div
+      %a{:href=>"javascript:dc.filterAll(); dc.renderAll();"} Reset All
+    .row-fluid.pseudo-table-row
+      .span2
+        %span Top Friends
+        %i.hints.icon-question-sign{popover_attrs(:top_friends_chart)}
+      .span10#top-friends-chart.chart
+    .row-fluid.pseudo-table-row
+      .span2
+        %span Inbound Score
+        %i.hints.icon-question-sign{popover_attrs(:inbound_score_histogram_chart)}
+      .span5#inbound-score-histogram.chart
+      .span2
+        %span Mutual Friends
+        %i.hints.icon-question-sign{popover_attrs(:mutual_friends_count_histogram_chart)}
+      .span5#mutual-friends-count-histogram.chart
+    .row-fluid.pseudo-table-row
+      .span2
+        %span Photo Engagements
+        %i.hints.icon-question-sign{popover_attrs(:photo_engagements_chart)}
+      .span10#photo-engagements-chart
+    .row-fluid.pseudo-table-row
+      .span2
+        %span Inbound Engagement Index
+        %i.hints.icon-question-sign{popover_attrs(:inbound_engagement_index)}
+      .span2 (Need a number here)
+    .row-fluid.pseudo-table-row
+      .span2
+        %span Outbound Engagement Index
+        %i.hints.icon-question-sign{popover_attrs(:outbound_engagement_index)}
+      .span2 (Need a number here)
+    .row-fluid.pseudo-table-row
+      .span2
+        %span Engagement Ratio
+        %i.hints.icon-question-sign{popover_attrs(:engagement_ratio)}
+      .span2 (Need a number here)
+    .row-fluid.pseudo-table-row
+      .span2 Location
+      .span2
+        Map here
+        -#= gmaps(markers: { data: friend_location},
+        -#  circles: {data: default_circle, option:{fillColor:"#FF0000"}},
+        -#  map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
 
 
 - photo_engagement_attrs = %w(co_tags_uniques likes_uniques comments_uniques from_uniques)

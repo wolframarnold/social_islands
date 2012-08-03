@@ -1,0 +1,6 @@
+compute_engagements =>
+
+photo_engagements    #co_tagged_with, liked_by, commented_by, tagged_by
+status_engagements   #liked_by commented_by
+location_engagements #co_tagged_with, tagged_by
+tagged_engagements   #liked_by, commented_by, tagged_by
