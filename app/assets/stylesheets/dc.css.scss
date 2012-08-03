@@ -1,4 +1,3 @@
-//grab from http://nickqizhu.github.com/dc.js/dc.css
 body {
   font-size: 0.9em;
   font-family: Lucida; }
@@ -50,7 +49,7 @@ a {
 
 .axis {
   path, line {
-    fill: none;
+    fill: #aaa;
     stroke: #000;
     shape-rendering: crispEdges; }
   text {
@@ -86,6 +85,11 @@ a {
       fill: green; }
     &.stack2 path.area {
       fill: red; } } }
+
+.line {
+  fill: none;
+  stoke: steelblue;
+  stroke-width: 2px;}
 
 .node {
   font-size: 0.7em;
