@@ -52,6 +52,15 @@
     .span10#top-friends-chart
   .row-fluid.pseudo-table-row
     .span2
+      %span Inbound Score
+      %i.hints.icon-question-sign{popover_attrs(:inbound_score_histogram_chart)}
+    .span5#inbound-score-histogram
+    .span2
+      %span Mutual Friends
+      %i.hints.icon-question-sign{popover_attrs(:mutual_friends_count_histogram_chart)}
+    .span5#mutual-friends-count-histogram
+  .row-fluid.pseudo-table-row
+    .span2
       %span Photo Engagements
       %i.hints.icon-question-sign{popover_attrs(:photo_engagements_chart)}
     .span10#photo-engagements-chart
