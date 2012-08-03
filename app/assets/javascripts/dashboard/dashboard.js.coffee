@@ -62,7 +62,7 @@ $ ->
   window.by_inbound_score_group = by_inbound_score_group
   by_mutual_friends_count = ndx.dimension( (d) -> d.mutual_friends_count)
   window.by_mutual_friends_count = by_mutual_friends_count
-  by_mutual_friends_count_group = by_mutual_friends_count.group()
+  by_mutual_friends_count_group = by_mutual_friends_count.group((d) -> Math.floor(d/10)*10+5)
   window.by_mutual_friends_count_group = by_mutual_friends_count_group
   console.log by_uid_group.size() # should be top friend count in data set (relevant_top_friends method in Ruby)-- number of records/disctinct values in group
 
