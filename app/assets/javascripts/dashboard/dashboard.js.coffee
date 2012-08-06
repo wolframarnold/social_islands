@@ -8,22 +8,6 @@
 #    loadData(collapsible) unless $(collapsible)
 
 $ ->
-  photo_eng_chart = d3.select('#photo-engagements-chart')
-                      .append('svg').attr('class','chart')
-                      .attr('width', 400)
-                      .attr('height', 20 * window.photo_engagement_data.length)
-
-  x = d3.scale.linear()
-    .domain([0, d3.max(window.photo_engagement_data)])
-    .range([0 ,400])
-
-  photo_eng_chart.selectAll('rect')
-                 .data(window.photo_engagement_data)
-                 .enter().append('rect')
-                 .attr('y', (d,i) -> i * 20)
-                 .attr('width', x)
-                 .attr('height', 20)
-
   ndx = crossfilter(window.top_friends_data)
 
   all = ndx.groupAll()
@@ -66,6 +50,23 @@ $ ->
   window.by_mutual_friends_count_group = by_mutual_friends_count_group
   console.log by_uid_group.size() # should be top friend count in data set (relevant_top_friends method in Ruby)-- number of records/disctinct values in group
 
+  average_user=ndx.dimension((d)->d.uid)
+  average_user_group=average_user.group((d)->1).reduce((p,v)->
+    p[0]+= v.inbound_score
+    p[1]+=v.mutual_friends_count
+    p
+
+    #remove
+  , (p,v)->
+    p
+
+    #init
+  , ->
+    [0,0]
+  )
+  window.average_user=average_user
+  window.average_user_group=average_user_group
+
   # See http://nickqizhu.github.com/dc.js/, Bubble Chart example
   dc.bubbleChart('#top-friends-chart')
     .width(600)
@@ -97,9 +98,30 @@ $ ->
     .height(250)
     .dimension(by_mutual_friends_count)
     .group(by_mutual_friends_count_group)
+#    .dimension(average_user)
+#    .group(average_user_group)
     .elasticY(true)
     .round(dc.round.floor)
     .x(d3.scale.linear().domain([0, 200]))
     .xAxis()
+
+  photo_eng_chart = d3.select('#photo-engagements-chart')
+    .append('svg').attr('class','chart')
+    .attr('width', 400)
+    .attr('height', 20 * window.photo_engagement_data.length)
+
+  x = d3.scale.linear()
+  #    .domain([0, d3.max(window.photo_engagement_data)])
+    .domain([0, 600])
+    .range([0 ,400])
+
+  photo_eng_chart.selectAll('rect')
+  #                 .data(window.photo_engagement_data)
+    .data(average_user_group.all()[0].value)
+    .enter().append('rect')
+    .attr('y', (d,i) -> i * 20)
+    .attr('width', x)
+    .attr('height', 20)
+
 
   dc.renderAll()
