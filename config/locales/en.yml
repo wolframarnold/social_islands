@@ -19,7 +19,8 @@ en:
         with their community.
     top_friends_chart:
       title: Top Friends
-      content: Explore who is best connected to this user along several different dimensions.
+      content: "Explore who is best connected to this user along two dimensions:
+        communication intensity (x-axis) and mutual friend count (y-axis)"
     photo_engagements_chart:
       title: Photo Engagements
       content: Coming soon...

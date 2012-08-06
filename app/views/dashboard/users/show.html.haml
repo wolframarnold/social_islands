@@ -30,7 +30,7 @@
     .span2= distance_of_time_in_words_to_now(@facebook_profile.last_fetched_at) + ' ago'
   .row-fluid.pseudo-table-row
     .span2 Profile Completeness
-    .span2 123
+    .span2= @facebook_profile.profile_completeness
     -#.span2= facebook_profile.user_stat['profile_completeness'].blank? ? '&mdash;'.html_safe : facebook_profile.user_stat['profile_completeness'].to_s+'%'
   .row-fluid.pseudo-table-row
     .span2 Current Location
@@ -38,7 +38,7 @@
     -#.span2= facebook_profile.current_location_name
   .row-fluid.pseudo-table-row
     .span2 Friend Count
-    .span2 123
+    .span2= @facebook_profile.facebook_profile_uids.length
     -#.span2= facebook_profile.user_stat['num_friend']
 
 %hr
@@ -69,24 +69,24 @@
     .span2
       %span Inbound Engagement Index
       %i.hints.icon-question-sign{popover_attrs(:inbound_engagement_index)}
-    .span2 (Need a number here)
+    .span2 Coming Soon...
   .row-fluid.pseudo-table-row
     .span2
       %span Outbound Engagement Index
       %i.hints.icon-question-sign{popover_attrs(:outbound_engagement_index)}
-    .span2 (Need a number here)
+    .span2 Coming Soon...
   .row-fluid.pseudo-table-row
     .span2
       %span Engagement Ratio
       %i.hints.icon-question-sign{popover_attrs(:engagement_ratio)}
-    .span2 (Need a number here)
-  .row-fluid.pseudo-table-row
-    .span2 Location
-    .span2
-      Map here
-      -#= gmaps(markers: { data: friend_location},
-      -#  circles: {data: default_circle, option:{fillColor:"#FF0000"}},
-      -#  map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
+    .span2 Coming Soon...
+  -#.row-fluid.pseudo-table-row
+  -#  .span2 Location
+  -#  .span2
+  -#    Map here
+  -#    = gmaps(markers: { data: friend_location},
+  -#      circles: {data: default_circle, option:{fillColor:"#FF0000"}},
+  -#      map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
 
 
 - photo_engagement_attrs = %w(co_tags_uniques likes_uniques comments_uniques from_uniques)
