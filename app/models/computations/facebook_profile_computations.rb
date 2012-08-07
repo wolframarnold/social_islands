@@ -193,7 +193,7 @@ module Computations::FacebookProfileComputations
 
   # returns {uid1 => mutual_friends1, uid2 => mutual_friends2, ...}
   def compute_top_friends_by_mutual_friends_count
-    FacebookProfile.any_in(uid: facebook_profile_uids).reduce({}) do |hash, fp|
+    FacebookProfile.where(app_id: app_id).in(uid: facebook_profile_uids).reduce({}) do |hash, fp|
       hash[fp.uid] = (facebook_profile_uids & fp.facebook_profile_uids).length
       hash
     end

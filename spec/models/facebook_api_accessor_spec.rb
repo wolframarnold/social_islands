@@ -184,6 +184,13 @@ describe FacebookProfile do
       wei.token.should be_nil
     end
 
+    it 'clears friends that were attached before (i.e. overwrite on update)' do
+      wolf_fp.facebook_profile_uids = [123,456]
+      wolf_fp.create_friends_records_and_save_stats!
+
+      wolf_fp.facebook_profile_uids.should_not include(123,456)
+    end
+
     context '#gather_friends_by_uid_from_raw_data' do
       before do
         class << wolf_fp; public :gather_friends_by_uid_from_raw_data; end

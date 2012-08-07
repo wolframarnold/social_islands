@@ -83,6 +83,7 @@ module ApiHelpers::FacebookApiAccessor
   def create_friends_records_and_save_stats!
     mutual_friends_ids = gather_friends_by_uid_from_raw_data
     self.edge_count = 0
+    self.facebook_profile_uids = []
     friends_raw.each do |friend_raw|
       fp = self.class.update_or_create_by_facebook_id_and_app_id friend_raw.merge(app_id: app_id)
       fp.friend_raw_to_attributes(friend_raw)
