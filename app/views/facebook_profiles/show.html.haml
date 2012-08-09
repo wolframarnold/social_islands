@@ -5,6 +5,17 @@
   .span2
     #button-group
       = render 'labels', facebook_profile: current_facebook_profile if @has_graph
+    #stats-group
+      %h3 Stats
+      Number of Friends: #{current_facebook_profile.facebook_profile_uids.length}
+      %br
+      Profile Completeness: #{current_facebook_profile.profile_completeness}
+      %br
+      Joined around #{current_facebook_profile.joined_on}
+      %br
+      Location: #{current_facebook_profile.about_me['location']['name']}
+    #see-trust
+      %button.btn.btn-info See your Score
 
 :javascript
   window.facebook_profile_id_sha1 = '#{Digest::SHA1.hexdigest(current_facebook_profile.to_param)}';
