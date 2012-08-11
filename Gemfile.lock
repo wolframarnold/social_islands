@@ -127,7 +127,7 @@ GEM
     mime-types (1.19)
     mongo (1.6.2)
       bson (~> 1.6.2)
-    mongoid (2.4.11)
+    mongoid (2.4.12)
       activemodel (~> 3.1)
       mongo (<= 1.6.2)
       tzinfo (~> 0.3.22)
@@ -268,7 +268,7 @@ DEPENDENCIES
   jbuilder (~> 0.4.0)
   jquery-rails (~> 2.0.2)
   koala!
-  mongoid (~> 2.4.11)
+  mongoid (~> 2.4.12)
   mongoid_rails_migrations!
   newrelic_rpm (~> 3.4.0.1)
   omniauth (~> 1.1.0)

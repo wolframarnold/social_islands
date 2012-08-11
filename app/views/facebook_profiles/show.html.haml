@@ -1,7 +1,4 @@
 .row-fluid.full-height
-  .span10.full-height
-    #graph
-
   .span2
     #button-group
       = render 'labels', facebook_profile: current_facebook_profile if @has_graph
@@ -17,6 +14,9 @@
     #see-trust
       %button.btn.btn-info See your Score
 
+  .span10.full-height
+    #graph
+
 :javascript
   window.facebook_profile_id_sha1 = '#{Digest::SHA1.hexdigest(current_facebook_profile.to_param)}';
   window.graph_ready = #{@has_graph};
@@ -31,3 +31,26 @@
       = image_tag 'squirrel_crunching.jpg', alt: credits, title: credits
     .progress.progress-striped.active
       .bar{style: "width: 0%;"}
+
+#island-feed.row-fluid.overlay.slide-out
+  %button.close &times
+  .span9
+    %p
+      Island Feed here
+    %p
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mattis nisl ut velit lobortis aliquet. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut sit amet massa diam. Integer tristique sodales lacinia. Donec quis lacus mi, quis iaculis nisi. Cras convallis eros ac enim euismod non dictum sem auctor. Duis id erat velit. Praesent ultricies neque vitae elit laoreet dictum. Sed quis purus purus, quis lobortis justo. Maecenas pellentesque ullamcorper metus bibendum accumsan. Aenean tempus, mi fermentum auctor tristique, lorem arcu gravida urna, ut egestas urna sem bibendum mi. Maecenas luctus ante at neque euismod non lobortis tellus varius.
+    %p
+      Fusce id interdum nisl. Nulla dictum tellus ac mauris varius et mollis sem sagittis. Vestibulum semper, leo non feugiat malesuada, nunc dui consectetur sem, ac sagittis lectus metus quis est. In in lacus ante. Pellentesque egestas facilisis ante. Curabitur mi nibh, consectetur id pulvinar non, volutpat ac mi. Aenean congue justo vitae nunc iaculis varius ultricies justo accumsan. Curabitur ut erat sed nulla fringilla malesuada. Ut sagittis facilisis molestie.
+    %p
+      Praesent egestas leo nec nulla fringilla at consectetur augue posuere. Aliquam erat volutpat. Phasellus scelerisque, velit vitae ornare ultrices, velit ligula interdum tellus, non rutrum mi est posuere ipsum. Nam a ultrices nibh. Vivamus elementum nunc in erat suscipit facilisis. Vivamus congue ligula eget tortor elementum sit amet imperdiet neque lacinia. Quisque non leo diam. Praesent ut magna vel diam facilisis varius. Integer purus elit, aliquet ut tincidunt nec, commodo nec nisl. Quisque viverra semper sapien eu rutrum. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    %p
+      Suspendisse vitae nibh erat. Aenean vestibulum porta egestas. Phasellus elementum ipsum eget dolor iaculis tincidunt. Aliquam ornare neque ante. Morbi urna augue, suscipit vel ullamcorper nec, elementum sed sem. Curabitur ullamcorper lacus vitae lacus suscipit lobortis. Nam eu sapien ligula, et lobortis ipsum. Aenean mollis mauris non arcu euismod fermentum.
+    %p
+      Vivamus convallis, metus at viverra auctor, enim tellus luctus dui, quis tempor erat purus et mi. Duis placerat condimentum auctor. Duis placerat arcu a erat faucibus mattis. Nulla tristique blandit velit, cursus mattis odio pulvinar dignissim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis eu turpis vitae nisl laoreet pulvinar a non felis. Aliquam vel felis metus. Proin arcu metus, pretium vel ullamcorper quis, scelerisque non ante.
+
+#stats.row-fluid.overlay.slide-out
+  %button.close &times
+  .span9
+    Stats here
+
+
