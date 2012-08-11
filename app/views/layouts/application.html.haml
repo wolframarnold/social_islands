@@ -22,7 +22,19 @@
     .navbar
       .navbar-inner
         .container-fluid
-          = link_to 'Social Islands', root_path, class: 'brand'
+          %ul.nav
+            %li
+              = link_to 'Social Islands', root_path, class: 'brand'
+            - if signed_in?
+              %li
+                = link_to 'Island Feed', '#', id: 'island-feed-link'
+              %li
+                = link_to 'Stats', '#', id: 'stats-link'
+
+          %span.share-buttons.pull-right
+            = link_to image_tag('facebook_32.png', title: 'Share on Facebook'), '#'
+            = link_to image_tag('twitter_32.png', title: 'Share on Twitter'), '#'
+
           %ul.nav.pull-right
             %li
               = link_to 'About Us', '#'
@@ -30,5 +42,7 @@
               = link_to 'FAQ', faq_path
             %li
               = login_logout_links
+
+
     .container-fluid.full-height
       = yield

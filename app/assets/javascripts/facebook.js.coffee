@@ -114,6 +114,18 @@ $ ->
 
   setupESHQ();
 
+  # Triggers for transition effects for overlays
+  $('#island-feed-link').click ->
+    slide_in_overlays()
+    $('#island-feed').removeClass('slide-out').addClass('slide-in')
+  $('#stats-link').click ->
+    slide_in_overlays()
+    $('#stats').removeClass('slide-out').addClass('slide-in')
+
+  $('.overlay .close').click(slide_in_overlays)
+
+slide_in_overlays = ->
+  $('.overlay.slide-in').removeClass('slide-in').addClass('slide-out')
 
 showLabelRenameLink = (elem) ->
   elem.find('a.rename').show();

@@ -4,6 +4,8 @@
 
 @import "bootswatch/cyborg/bootswatch";
 
+$buttonColor: white;
+
 html {
   height: 100%;
 }
@@ -15,7 +17,8 @@ html {
 body {
   position: relative;
   height: 100%;
-  @include gradient-vertical ($bodyBackground, $bodyBackground);
+  background-image: none;
+  background-color: $bodyBackground;
 }
 
 .full-height {
@@ -50,4 +53,44 @@ body {
 
 #modal-spinner .modal-header {
   text-align: left;
+}
+
+
+.navbar-inner .share-buttons {
+  padding-top: ($navbarHeight - 32)/2;
+  padding-left: 10px;
+}
+
+.overlay {
+  position: fixed;
+  top: $navbarHeight + 5px;
+  background-color: rgba(0,0,0,.7);
+  border-left: 2px solid $grayLight;
+  height: 100%;
+  width: 70%;
+  padding: 10px;
+  @include box-sizing(border-box);
+  $transition: left .5s ease-out;
+  @include transition($transition);
+
+  &.slide-in {
+    left: 30%;   // left border at 30% --> visible
+  }
+  &.slide-out {
+    left: 100%;  // left border at 100% --> not visible
+  }
+}
+
+.overlay .close {
+  float: right;
+  font-size: 30px;
+  color: $buttonColor;
+  text-shadow: 0 1px 0 rgba(255,255,255,1);
+  @include opacity(0.7);
+  &:hover {
+    color: $buttonColor;
+    text-decoration: none;
+    cursor: pointer;
+    @include opacity(1.0);
+  }
 }
