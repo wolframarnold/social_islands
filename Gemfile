@@ -24,7 +24,7 @@ group :assets do
 end
 
 gem 'jquery-rails', '~> 2.0.2'
-gem 'mongoid', '~> 2.4.11'
+gem 'mongoid', '~> 2.4.12'
 gem 'bson_ext', '~> 1.6.2'
 gem 'haml', '~> 3.1.6'
 gem 'haml-rails', '~> 0.3.4'

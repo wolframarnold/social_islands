@@ -19,6 +19,10 @@ class FacebookProfilesController < ApplicationController
     render :text => FacebookGraph.where(facebook_profile_id: current_facebook_profile.id).first.gexf, :content_type => 'application/gexf+xml', :layout => false
   end
 
+  def png
+    send_data FacebookGraph.where(facebook_profile_id: current_facebook_profile.id).first.png, :type => 'image/png'#,:disposition => 'inline'
+  end
+
   def label
     # label attr's come in as nested attr's, like label: { '1' => {name: 'abc', group_index: 123}, ...}
     # this code is currently handling only one
