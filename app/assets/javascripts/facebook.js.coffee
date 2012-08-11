@@ -8,13 +8,13 @@ $ ->
       defaultLabelSize: 14,
       defaultLabelBGColor: '#fff',
       defaultLabelHoverColor: '#000',
-      labelThreshold: 6,
+      labelThreshold: 9,
       defaultEdgeType: 'curve'
       }).graphProperties({
-        minNodeSize: 0.5,
-        maxNodeSize: 5,
-        minEdgeSize: 0.6,
-        maxEdgeSize: 0.6
+        minNodeSize: 0.3,
+        maxNodeSize: 8,
+        minEdgeSize: 0.5,
+        maxEdgeSize: 0.5
         }).mouseProperties({
           maxRatio: 4
         });

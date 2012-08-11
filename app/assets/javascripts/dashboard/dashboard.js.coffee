@@ -123,5 +123,15 @@ $ ->
     .attr('width', x)
     .attr('height', 20)
 
+  window.photo_eng_chart = photo_eng_chart
+
+  dc.dataTable('#engagements-table')
+    .dimension(average_user)
+    .group(average_user_group)
+    .size(10)
+    .columns([
+      (d)->d.value[0],
+      (d)->d.value[1]])
+
 
   dc.renderAll()

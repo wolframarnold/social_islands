@@ -60,7 +60,10 @@ User ID override
 In development mode only (for security reasons), you can append a query parameter to override
 the user_id of the profile being rendered. Default is the currently logged in user.
 
-    http://localhost:3000/facebook?user_id=123456789abc
+    http://localhost:3000/facebook?facebook_profile_id=123456789abc
+    http://localhost:3000/facebook/png?facebook_profile_id=123456789abc     # png file
+    http://localhost:3000/facebook/gexf?facebook_profile_id=123456789abc    # gexf file
+
 
 EventSource HQ (ESHQ)
 =====================
