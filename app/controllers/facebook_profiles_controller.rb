@@ -20,7 +20,7 @@ class FacebookProfilesController < ApplicationController
   end
 
   def png
-    send_data FacebookGraph.where(facebook_profile_id: current_facebook_profile.id).first.png, :type => 'image/png'#,:disposition => 'inline'
+    send_data FacebookGraph.where(facebook_profile_id: current_facebook_profile.id).first.png, :type => 'image/png', :disposition => 'inline'
   end
 
   def label
