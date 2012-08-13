@@ -24,21 +24,23 @@ Rails.application.config.middleware.use OmniAuth::Builder do
                 user_videos
                 user_website
                 user_work_history
-                friends_likes
-                friends_hometown
-                friends_location
-                friends_about_me
-                friends_status
-                friends_relationships
-                friends_interests
-                friends_religion_politics
-                friends_birthday
-                friends_hometown
-                friends_website
-                friends_work_history
-                friends_education_history
                 email
                 read_stream]
+
+  # Removed permissions, per Whit.li drop-off is significant when asking for friends' data
+  #  friends_likes
+  #  friends_hometown
+  #  friends_location
+  #  friends_about_me
+  #  friends_status
+  #  friends_relationships
+  #  friends_interests
+  #  friends_religion_politics
+  #  friends_birthday
+  #  friends_hometown
+  #  friends_website
+  #  friends_work_history
+  #  friends_education_history
 
 
   # Use Heroku-configured APP ID and SECRET for production (pointing to Social Islands)
