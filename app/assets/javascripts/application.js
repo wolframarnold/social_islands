@@ -13,6 +13,5 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap
-//= require_tree ./vendor
+//= require vendor/sigma.js/main
 //= require facebook
-
