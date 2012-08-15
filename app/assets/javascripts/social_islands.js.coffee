@@ -1,3 +1,6 @@
+######################
+#      On Load       #
+######################
 $ ->
   sigRoot = $('#graph')
   if sigRoot.length > 0
@@ -123,6 +126,40 @@ $ ->
     $('#stats').removeClass('slide-out').addClass('slide-in')
 
   $('.overlay .close').click(slide_in_overlays)
+
+  # Social Sharing Facebook
+  $('#share-on-facebook-button').click ->
+    FB.getLoginStatus (resp) ->
+      post_obj = null
+      switch resp.status
+        when 'connected'
+          if window.graph_ready isnt true
+            $('#alert-info').text("Still computing... try again when graph appears.").fadeIn(500).delay(1000).fadeOut(1000)
+          else
+            post_obj =
+              picture: window.protocol_host_port+'/facebook/png'
+              caption: 'My Islands'
+        when 'not_authorized'  # logged into FB, but app not authorized--> can still post to wall
+          post_obj = {}
+        when 'unknown'  # not logged into FB
+          $('#alert-info').text("Please sign in first.").fadeIn(500).delay(1000).fadeOut(1000)
+
+      if post_obj
+        post_obj.method      = 'feed'
+        post_obj.link        = 'http://socialislands.org'
+        post_obj.name        = 'Social Islands'
+        post_obj.description = "What's happening on each of your Social Islands? Find out."
+        # ref: 'logged_in_with_graph' -> causes FB error in pop up window; perhaps we have to configure this key in Insights first?
+
+        FB.ui post_obj, (response) ->
+          if response['post_id']?
+            console.log response['post_id']
+            $('#alert-success').text("Post Successful").fadeIn(500).delay(1000).fadeOut(1000)
+
+
+########################
+#      Functions       #
+########################
 
 slide_in_overlays = ->
   $('.overlay.slide-in').removeClass('slide-in').addClass('slide-out')
@@ -250,6 +287,7 @@ setupESHQ = ->
 
   eshq.onmessage = (e) ->
     # called when a new message with no specific type has been received
+    window.graph_ready = true
     loadAndDrawGraph() unless window.graph_is_loaded?
     updateLabels(JSON.parse(e.data).labels_html)
 

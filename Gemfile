@@ -42,6 +42,7 @@ gem 'bootstrap-will_paginate', '~> 0.0.7'
 gem 'geocoder', '~> 1.1.2'
 gem 'gmaps4rails', '~> 1.5.2'
 gem 'mongoid_rails_migrations', git: 'https://github.com/adacosta/mongoid_rails_migrations.git', ref: '3994d38f26de305271e5c73cb459b3f68aad38cc'
+gem 'fb-channel-file', '~> 0.0.1'  # for FB Channel file, see: http://stackoverflow.com/questions/8336878/how-to-write-a-channel-html-file-in-rails-for-facebook and https://developers.facebook.com/docs/reference/javascript/
 
 gem '3scale_client', '~> 2.2.10'
 

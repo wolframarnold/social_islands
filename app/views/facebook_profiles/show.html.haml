@@ -10,7 +10,7 @@
       %br
       Joined around #{current_facebook_profile.joined_on}
       %br
-      Location: #{current_facebook_profile.about_me['location']['name']}
+      Location: #{current_facebook_profile.about_me['location'].try(:[],'name')}
     #see-trust
       %button.btn.btn-info See your Score
 

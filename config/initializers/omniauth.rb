@@ -45,10 +45,10 @@ Rails.application.config.middleware.use OmniAuth::Builder do
 
   # Use Heroku-configured APP ID and SECRET for production (pointing to Social Islands)
   # or use Social Islands Dev app locally. This matters for redirect URL.
-  fb_app_id      = Rails.env.production? ? ENV['FACEBOOK_APP_ID'] : '398796910145811'
-  fb_app_secret  = Rails.env.production? ? ENV['FACEBOOK_SECRET'] : '71e24820b766e844985e9ff92e1ba119'
+  FB_APP_ID      = Rails.env.production? ? ENV['FACEBOOK_APP_ID'] : '398796910145811'
+  FB_APP_SECRET  = Rails.env.production? ? ENV['FACEBOOK_SECRET'] : '71e24820b766e844985e9ff92e1ba119'
 
   # See https://developers.facebook.com/docs/reference/api/permissions/ for a list of scopes
-  provider :facebook, fb_app_id, fb_app_secret, scope: fb_perms.join(',')
+  provider :facebook, FB_APP_ID, FB_APP_SECRET, scope: fb_perms.join(',')
 
 end

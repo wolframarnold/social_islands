@@ -16,7 +16,9 @@
     = render 'shared/google_analytics'
 
   %body
+    = render 'shared/facebook_js_init'
     #alerts
+      .alert.alert-info.fade.in#alert-info{style: 'display:none'}
       .alert.alert-error.fade.in#alert-error{style: 'display:none'}
       .alert.alert-success.fade.in#alert-success{style: 'display:none'}
     .navbar
@@ -32,8 +34,8 @@
                 = link_to 'Stats', '#', id: 'stats-link'
 
           %span.share-buttons.pull-right
-            = link_to image_tag('facebook_32.png', title: 'Share on Facebook'), '#'
-            = link_to image_tag('twitter_32.png', title: 'Share on Twitter'), '#'
+            = link_to image_tag('facebook_32.png', title: 'Share on Facebook'), '#', id: 'share-on-facebook-button'
+            -#= link_to image_tag('twitter_32.png', title: 'Share on Twitter'), '#'
 
           %ul.nav.pull-right
             %li

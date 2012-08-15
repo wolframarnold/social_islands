@@ -14,4 +14,4 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require vendor/sigma.js/main
-//= require facebook
+//= require social_islands
