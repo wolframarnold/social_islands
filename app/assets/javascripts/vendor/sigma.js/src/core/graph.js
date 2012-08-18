@@ -430,9 +430,11 @@ function Graph() {
     });
 
     sizeMax = sizeMax || 1;
-    weightMax = weightMax || 1;
+    //weightMax = weightMax || 1;
+    weightMax = 1;          //Weidong, allow edge[size] to control real display size. edge[size] is from [0..1]
 
-    // Recenter the nodes:
+
+      // Recenter the nodes:
     var xMin, xMax, yMin, yMax;
     parseNodes && self.nodes.forEach(function(node) {
       xMax = Math.max(node['x'], xMax || node['x']);

@@ -2,6 +2,9 @@
 #      On Load       #
 ######################
 $ ->
+  window.overlayNodeID = 0;   #used for overlaying nodes and edges for photo stream
+  window.overlayEdgeID=100000000;
+
   sigRoot = $('#graph')
   if sigRoot.length > 0
     window.sigInst = sigma.init(document.getElementById('graph'))
@@ -16,8 +19,8 @@ $ ->
       }).graphProperties({
         minNodeSize: 0.3,
         maxNodeSize: 8,
-        minEdgeSize: 0.5,
-        maxEdgeSize: 0.5
+        minEdgeSize: 0.0,
+        maxEdgeSize: 10.0,
         }).mouseProperties({
           maxRatio: 4
         });
@@ -265,9 +268,18 @@ showModalSpinner = (progress_max_secs) ->
 cancelModalSpinner = ->
   $('#modal-spinner').modal('hide')
 
+setDefaultEdgeColorSize = ->
+  sigInst._core.plotter.p.edgeColor="default"
+  nodes = sigInst._core.graph.nodesIndex
+  edges = sigInst._core.graph.edges
+  for edge in edges
+    edge.color = nodes[edge.source.id].color
+    edge.size= 0.1
+
 loadAndDrawGraph = ->
   # import GEXF file
   sigInst.parseGexf('/facebook/graph.gexf')
+  setDefaultEdgeColorSize()
   window.graph_is_loaded = true
 
   # kill the spinner message/progress bar
@@ -294,3 +306,37 @@ setupESHQ = ->
   eshq.onerror = (e) ->
     # callback called on errror
 
+window.addOverlay = (sID, tIDs) ->
+  if sigInst._core.graph.nodesIndex[sID]
+    sourceNode = sigInst.getNodes(sID)
+    sourceNode.label = ""
+    sourceNode.color = "#ffffff"
+    overlayNodeID++
+    sigInst.addNode overlayNodeID.toString(), sourceNode
+    for tID in tIDs
+      if sigInst._core.graph.nodesIndex[tID]
+        targetNode = sigInst.getNodes(tID)
+        targetNode.label = ""
+        targetNode.color = "#ffffff"
+        overlayNodeID++
+        sigInst.addNode overlayNodeID.toString(), targetNode
+        overlayEdgeID++
+        edge =
+          id: overlayEdgeID
+          sourceID: "1"
+          targetID: overlayNodeID
+          size: 0.5
+          label: null
+          color: "#ffffff"
+
+        sigInst.addEdge overlayEdgeID, "1", overlayNodeID, edge
+  sigInst.draw 2, 2, 2
+
+window.removeOverlay = ->
+  while overlayEdgeID > 100000000
+    sigInst.dropEdge overlayEdgeID
+    overlayEdgeID--
+  while overlayNodeID > 0
+    sigInst.dropNode overlayNodeID
+    overlayNodeID--
+  sigInst.draw 2, 2, 2
