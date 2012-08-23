@@ -15,6 +15,11 @@ class FacebookProfilesController < ApplicationController
     Resque.enqueue(FacebookFetcher, current_facebook_profile.to_param, 'viz', push_to_web_graph_ready_url)
   end
 
+  # Temporary action / URL for testing the gallery view
+  def animation
+
+  end
+
   def graph
     render :text => FacebookGraph.where(facebook_profile_id: current_facebook_profile.id).first.gexf, :content_type => 'application/gexf+xml', :layout => false
   end

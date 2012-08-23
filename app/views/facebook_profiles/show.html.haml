@@ -1,21 +1,37 @@
-.row-fluid.full-height
-  .span2
-    #button-group
-      = render 'labels', facebook_profile: current_facebook_profile if @has_graph
-    #stats-group
-      %h3 Stats
-      Number of Friends: #{current_facebook_profile.facebook_profile_uids.length}
-      %br
-      Profile Completeness: #{current_facebook_profile.profile_completeness}
-      %br
-      Joined around #{current_facebook_profile.joined_on}
-      %br
-      Location: #{current_facebook_profile.about_me['location'].try(:[],'name')}
-    #see-trust
-      %button.btn.btn-info See your Score
+#legend
+  #button-group
+    = render 'labels', facebook_profile: current_facebook_profile if @has_graph
+  #stats-group
+    %h3 Stats
+    Number of Friends: #{current_facebook_profile.facebook_profile_uids.length}
+    %br
+    Profile Completeness: #{current_facebook_profile.profile_completeness}
+    %br
+    Joined around #{current_facebook_profile.joined_on}
+    %br
+    Location: #{current_facebook_profile.about_me['location'].try(:[],'name')}
+  #see-trust
+    %button.btn.btn-info See your Score
 
-  .span10.full-height
-    #graph
+#graph
+
+
+-# pics = ["https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash4/391447_10151964545175471_1036799696_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc7/376910_10150945411170216_935205936_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc7/376253_10151913251515471_1697154025_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/546266_10151569118820471_1566241588_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash4/423456_333796190005018_1190634626_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc6/208869_211641242181185_4355929_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc6/207522_211641222181187_7411174_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc6/189279_10150119617820889_6136151_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash4/200173_10150119617755889_684949_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc6/200669_10150119617705889_8034580_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc6/196865_10150119617660889_1963606_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash4/184363_10150119617300889_1959923_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc6/190577_10150119617015889_420886_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc6/196248_10150119616970889_969786_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash4/189561_10150119616860889_5120739_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-prn1/67442_10150319348675651_6838736_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/33912_10150268166360459_5270598_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/67200_10150268166340459_2925433_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-prn1/65947_10150268166330459_5551661_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-prn1/67011_10150268166290459_5521707_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/37952_10150268166265459_1499896_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-prn1/44959_10150268166235459_6401939_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/37175_10150268166210459_1329636_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/67494_10150268166165459_1258407_s.jpg", "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-prn1/67761_10150268166140459_4111445_s.jpg"]
+- pics = Dir[Rails.root.join(*%w(app assets images fb_photos *))].map {|f| 'fb_photos/' + Pathname.new(f).basename.to_s}
+
+-#carousel.carousel.slide
+-#  .carousel-inner
+-#    - pics.each_with_index do |pic,i|
+-#      .item{style: "width: 130px;"}
+-#        = image_tag pic
+  -#%a.carousel-control.left{'href' => '#carousel','data-slide' => 'prev'} &lsaquo;
+  -#%a.carousel-control.right{'href' => '#carousel','data-slide' => 'next'} &rsaquo;
+
+#carousel
+  .banner
+    - pics.each_with_index do |pic, i|
+      .img-wrapper{class: i.zero? ? 'first' : nil}
+        = image_tag pic
 
 :javascript
   window.facebook_profile_id_sha1 = '#{Digest::SHA1.hexdigest(current_facebook_profile.to_param)}';

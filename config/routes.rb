@@ -17,6 +17,7 @@ SocialIslands::Application.routes.draw do
   resource :facebook_profile, path: 'facebook', only: 'show' do
     collection do
       get :graph
+      get :animation
       get :png
       put :label
     end

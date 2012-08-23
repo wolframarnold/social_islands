@@ -2,30 +2,30 @@
 #      On Load       #
 ######################
 $ ->
-  sigRoot = $('#graph')
-  if sigRoot.length > 0
-    window.sigInst = sigma.init(document.getElementById('graph'))
-
-    sigInst.drawingProperties({
-      defaultLabelColor: '#fff',
-      defaultLabelSize: 14,
-      defaultLabelBGColor: '#fff',
-      defaultLabelHoverColor: '#000',
-      labelThreshold: 9,
-      defaultEdgeType: 'curve'
-      }).graphProperties({
-        minNodeSize: 0.3,
-        maxNodeSize: 8,
-        minEdgeSize: 0.5,
-        maxEdgeSize: 0.5
-        }).mouseProperties({
-          maxRatio: 4
-        });
-
-    if window.graph_ready is true
-      loadAndDrawGraph()
-    else
-      showModalSpinner(30)
+#  sigRoot = $('#graph')
+#  if sigRoot.length > 0
+#    window.sigInst = sigma.init(document.getElementById('graph'))
+#
+#    sigInst.drawingProperties({
+#      defaultLabelColor: '#fff',
+#      defaultLabelSize: 14,
+#      defaultLabelBGColor: '#fff',
+#      defaultLabelHoverColor: '#000',
+#      labelThreshold: 9,
+#      defaultEdgeType: 'curve'
+#      }).graphProperties({
+#        minNodeSize: 0.3,
+#        maxNodeSize: 8,
+#        minEdgeSize: 0.5,
+#        maxEdgeSize: 0.5
+#        }).mouseProperties({
+#          maxRatio: 4
+#        });
+#
+#    if window.graph_ready is true
+#      loadAndDrawGraph()
+#    else
+#      showModalSpinner(30)
 
 #  window.highLightedGroup = -1
 #  window.tthis = null
@@ -115,7 +115,7 @@ $ ->
   $('#button-group').on 'blur', '.island-label-edit input[name*=name]', ->
     hideLabelEdit $(this).parents('.island-form')
 
-  setupESHQ();
+#  setupESHQ();
 
   # Triggers for transition effects for overlays
   $('#island-feed-link').click ->
@@ -155,6 +155,8 @@ $ ->
           if response['post_id']?
             console.log response['post_id']
             $('#alert-success').text("Post Successful").fadeIn(500).delay(1000).fadeOut(1000)
+
+  showCarousel() if document.location.pathname == '/facebook'  # don't do it for sign-in page
 
 
 ########################
@@ -294,3 +296,5 @@ setupESHQ = ->
   eshq.onerror = (e) ->
     # callback called on errror
 
+#showCarousel = ->
+#  $('#carousel').carousel()

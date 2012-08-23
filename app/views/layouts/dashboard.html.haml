@@ -35,7 +35,7 @@
               = f.text_field :uid, class: 'search-query', placeholder: 'Search by Facebook UID'
             = simple_form_for @query || Query.new, url: search_dashboard_users_path, html: { class: 'navbar-search', id: 'new_query_by_user_id' } do |f|
               = f.text_field :user_id, class: 'search-query', placeholder: 'Search by MongoDB user_id'
-    .container-fluid.full-height
+    .container-fluid
       = yield
 
 :javascript

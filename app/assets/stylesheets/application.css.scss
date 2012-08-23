@@ -5,6 +5,12 @@
 @import "bootswatch/cyborg/bootswatch";
 
 $buttonColor: white;
+$graphTop: $navbarHeight + 18px;
+$legendTop: $navbarHeight + 23px;
+$carouselHeight: 130px;
+$fb_image_height: 130px;
+$fb_image_width:  130px;
+$image_count:     3;  // This will fill a max. width of 12*130=2600 pixels, displays wider than this may see odd effects
 
 html {
   height: 100%;
@@ -21,11 +27,6 @@ body {
   background-color: $bodyBackground;
 }
 
-.full-height {
-  position: relative;
-  height: 100%;
-}
-
 .rename {
   font-size: smaller;
 }
@@ -38,12 +39,81 @@ body {
   text-align: center;
 }
 
+#legend {
+  position: absolute;
+  left: 20px;
+  top: $legendTop;
+  width: 20%;
+}
+
 #graph {
   position: absolute;
-  top: 15px;
-  left: 0;
+  top: $graphTop;
+  left: 20%;
+  //heigh: 100%;
   right: 0;
-  bottom: 62px + 15px;  // top bar is 44 pix + 18 margin = 62
+  min-width: 300px;
+  bottom: $carouselHeight;
+  //top: 15px;
+  //left: 0;
+  //right: 0;
+  //bottom: 62px + 15px;  // top bar is 44 pix + 18 margin = 62
+  //height: auto;
+}
+
+#carousel {
+  position: absolute;
+  height: $carouselHeight;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  overflow: hidden;
+}
+
+.banner {
+  width: 3550px;
+  > .img-wrapper {
+    display: inline-block;
+    text-align: center;
+    width: $fb_image_width;
+    height: $fb_image_height;
+    > img {
+      margin: auto;
+    }
+  }
+}
+
+.centered {
+  text-align: center;
+  width: 200px;
+  border: solid white 2px;
+}
+
+// Animation inspired by http://designshack.net/articles/css/infinitephotobanner/
+.img-wrapper.first {
+  animation: gallery_slide 30s linear infinite;
+  -webkit-animation: gallery_slide 30s linear infinite;
+}
+
+@keyframes "gallery_slide" {
+  0%   { margin-left: 0px;     }
+  100% { margin-left: -$image_count * $fb_image_width; }
+}
+@-webkit-keyframes "gallery_slide" {
+  0%   { margin-left: 0px;     }
+  100% { margin-left: -$image_count * $fb_image_width; }
+}
+@-moz-keyframes {
+  0%   { margin-left: 0px;     }
+  100% { margin-left: -$image_count * $fb_image_width; }
+}
+@-ms-keyframes {
+  0%   { margin-left: 0px;     }
+  100% { margin-left: -$image_count * $fb_image_width; }
+}
+@-o-keyframes {
+  0%   { margin-left: 0px;     }
+  100% { margin-left: -$image_count * $fb_image_width; }
 }
 
 #modal-spinner {
