@@ -1,4 +1,4 @@
-module Computations::FacebookProfileComputations
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  module Computations::FacebookProfileComputations
 
   extend ActiveSupport::Concern
 
@@ -293,67 +293,70 @@ module Computations::FacebookProfileComputations
     save!
   end
 
-  #def collect_friends_location_stats
-  #  friends = FacebookProfile.unscoped.friends_only.find(self.id).friends
-  #
-  #  num_friends=friends.count
-  #
-  #  location_hash = Hash.new()
-  #
-  #  friends.each do |friend|
-  #    location = ""
-  #    if not(friend["current_location"].nil?)
-  #      fb_location = friend["current_location"]
-  #      country = fb_location["country"] || ""
-  #      if country == "United States"
-  #        name = fb_location["name"] || ""
-  #        if name.blank?
-  #          city = fb_location["city"] || ""
-  #          state = fb_location["state"] || ""
-  #          location = city+", " + state + ", " + country
-  #        else
-  #          location = name + ", " + country
-  #        end
-  #      else # foreign country
-  #        name = fb_location["name"] || ""
-  #        if name.length==0
-  #          city = fb_location["city"] || ""
-  #          state = fb_location["state"] || ""
-  #          location = city+", " + state + ", " + country
-  #        else
-  #          location = name
-  #        end
-  #      end
-  #      #puts fb_location;
-  #      #puts location;
-  #    end
-  #
-  #    if location.present?
-  #      if location_hash[location].nil?
-  #        location_hash[location]=1
-  #      else
-  #        location_hash[location] = location_hash[location]+1
-  #      end
-  #    end
-  #  end
-  #
-  #  location_hash.sort_by {|name, count| count}.reverse
-  #end
-  #
-  #def geolocation_coordiates_for_friends_locations(location_hash)
-  #  coordinate_hash = Hash.new()
-  #  num_location = location_hash.length
-  #
-  #  num_loc = num_location > 5 ? 4 : numlocation
-  #  (0..num_loc).each do |i|
-  #    location = location_hash[i][0]
-  #    coordinate_hash[location] = Geocoder.coordinates(location)
-  #    if i>0
-  #      cord0 = coordinate_hash[location_hash[0][0]]
-  #      cord1 = coordinate_hash[location_hash[i][0]]
-  #      puts Geocoder::Calculations.distance_between(cord0, cord1)
-  #    end
-  #  end
-  #end
+  def collect_friends_location_stats
+    #friends = FacebookProfile.unscoped.friends_only.find(self.id).friends
+    #fb=FacebookProfile.where("name"=>"Weidong Yang").last
+    fb=FacebookProfile.find(self.id)
+    friend_uids = fb.facebook_profile_uids
+
+    num_friends=friend_uids.count
+
+    location_hash = Hash.new()
+
+    friend_uids.each do |friend|
+      location=""
+      fb_location=FacebookProfile.where("uid"=>friend).last["current_location"]
+      if not(fb_location.nil?)
+        country = fb_location["country"] || ""
+        if country == "United States"
+          name = fb_location["name"] || ""
+          if name.blank?
+            city = fb_location["city"] || ""
+            state = fb_location["state"] || ""
+            location = city+", " + state + ", " + country
+          else
+            location = name + ", " + country
+          end
+        else # foreign country
+          name = fb_location["name"] || ""
+          if name.length==0
+            city = fb_location["city"] || ""
+            state = fb_location["state"] || ""
+            location = city+", " + state + ", " + country
+          else
+            location = name
+          end
+        end
+        #puts fb_location;
+        #puts location;
+      end
+
+      if location.present?
+        if location_hash[location].nil?
+          location_hash[location]=1
+        else
+          location_hash[location] = location_hash[location]+1
+        end
+      end
+    end
+
+    location_hash.sort_by {|name, count| count}.reverse
+  end
+
+  def geolocation_coordiates_for_friends_locations(location_hash)
+    coordinate_hash = Hash.new()
+    num_location = location_hash.length
+
+    num_loc = num_location > 5 ? 4 : numlocation
+    (0..num_loc).each do |i|
+      location = location_hash[i][0]
+      coordinate_hash[location] = Geocoder.coordinates(location)
+      if i>0
+        cord0 = coordinate_hash[location_hash[0][0]]
+        cord1 = coordinate_hash[location_hash[i][0]]
+        puts Geocoder::Calculations.distance_between(cord0, cord1)
+      end
+    end
+  end
 
 end

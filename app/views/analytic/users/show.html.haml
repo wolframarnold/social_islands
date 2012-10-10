@@ -94,8 +94,8 @@
     .span2
       Map here
       -#= gmaps(markers: { data: friend_location},
-      = gmaps(markers: { data: user_location},
-        circles: {data: default_circle, option:{fillColor:"#FF0000"}},
+      = gmaps(markers: { data: friend_location},
+        circles: {data: user_location_with_circle, option:{fillColor:"#FF0000"}},
         map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
 
 
