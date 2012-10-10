@@ -66,6 +66,8 @@ module ApiHelpers::FacebookApiAccessor
 
     execute_as_batch_query do
       get_about_me_and_friends(only_uids)
+      #add friends details here
+      #get_friends_details
     end
 
     execute_as_batch_query do
@@ -78,6 +80,27 @@ module ApiHelpers::FacebookApiAccessor
 
   def koala_client
     @koala_client ||= Koala::Facebook::API.new(self.token)
+  end
+
+  #get all the feeds (max at 5000) from history and save
+  def get_all_feeds
+    self.long_feed=[]
+    feedpage=@koala_client.get_connections(self.uid, "feed", {"limit"=>"100"})
+    self.long_feed+=feedpage
+    (1..50).map do |page|
+      puts "pulling first #{page}00 feeds, new"
+      begin
+        feedpage=feedpage.next_page
+      rescue
+        puts "==== Koala facebook error occurred"
+        bread
+      end
+
+      break if feedpage.empty?
+      self.long_feed+=feedpage
+    end
+    puts "======pulled #{self.long_feed.length} feeds"
+    save!
   end
 
   def create_friends_records_and_save_stats!
@@ -197,9 +220,9 @@ module ApiHelpers::FacebookApiAccessor
   # Returns array of hashes of all the friends
   def queue_friends(friend_uids, &block)
     if friend_uids.nil?
-      fql = 'SELECT uid,name,pic,mutual_friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me())'
+      fql = 'SELECT uid,name,pic,mutual_friend_count,sex,birthday_date,current_location,about_me,locale,friend_count FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me())'
     else
-      fql = "SELECT uid,name,pic,mutual_friend_count FROM user WHERE uid IN (#{friend_uids.join(',')})"
+      fql = "SELECT uid,name,pic,mutual_friend_count,sex,birthday_date,current_location,about_me,locale,friend_count FROM user WHERE uid IN (#{friend_uids.join(',')})"
     end
     # batch_client.fql_query fql, &block
     # Koala issue workaround: https://github.com/arsduo/koala/issues/237
