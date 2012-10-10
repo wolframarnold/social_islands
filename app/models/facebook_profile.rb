@@ -47,10 +47,19 @@ class FacebookProfile
   field :likes,             type: Array, default: []
   field :checkins,          type: Array, default: []
   field :feed,              type: Array, default: []
+  field :long_feed,         type: Array, default: [] #saves all (max 5000) feeds from the past
   field :permissions,       type: Array, default: []
   field :joined_on,         type: Date
   field :about_me,          type: Hash
   field :edge_count,        type: Integer, default: 0
+
+  #uniq fields of frineds added by Weidong
+  field :sex,               type: String
+  field :current_location,  type: Hash
+  field :birthday_date,     type: String
+  field :locale,            type: String
+  field :friend_count,      type: Integer, default: 0
+
 
   field :facebook_profile_uids, type: Array, default: []  # for friends
 
