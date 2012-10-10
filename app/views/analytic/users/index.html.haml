@@ -1,0 +1,33 @@
+.row-fluid
+
+  %h1= @query.nil? ? 'Users' : 'Search Results'
+
+  - if @query.present? && @query.errors.present?
+    %b= @query.errors
+  - else
+
+    = will_paginate @facebook_profiles unless @query.present?
+
+    %table.table.table-striped
+      %thead
+        %tr
+          %th Picture
+          %th Name
+          %th Facebook UserID
+          %th Last Refreshed At
+          %th Profile Authenticity / Trust Score
+      %tbody
+        - @facebook_profiles.each do |facebook_profile|
+          %tr{class: score_color_class(facebook_profile)}
+            %td
+              = best_picture_tag(facebook_profile)
+            %td
+              = link_to facebook_profile.name, analytic_user_path(facebook_profile.to_param), title: 'Drill down'
+            %td
+              = link_to facebook_profile.uid, "http://facebook.com/#{facebook_profile.uid}"
+            %td
+              = distance_of_time_in_words_to_now(facebook_profile.last_fetched_at) + ' ago'
+            %td
+              = facebook_profile.profile_authenticity.blank? ? '&mdash;'.html_safe : "#{facebook_profile.profile_authenticity} / #{facebook_profile.trust_score}"
+
+    = will_paginate @facebook_profiles unless @query.present?

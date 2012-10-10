@@ -1,0 +1,86 @@
+// Place all the styles related to the Scoring controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+//= require gmaps4rails
+
+@import "bootstrap";
+
+//@import "bootswatch/journal/bootswatch";
+@import "bootstrap_extension";
+
+//grab from http://nickqizhu.github.com/dc.js/dc.css
+@import "dc";
+
+.red-green-bar {
+  @include gradient-horizontal(#f00, #0f0);
+  width: auto;
+  height: 20px;
+}
+
+.green-red-bar {
+  @include gradient-horizontal(#0f0, #f00);
+  width: auto;
+  height: 20px;
+}
+
+.red-green-red-bar {
+  @include gradient-horizontal-three-colors(#f00, #0f0, 50%, #f00);
+  position: relative;
+  width: auto;
+  height: 20px;
+}
+
+table.table.table-striped {
+  tr.green td {
+    background-color: #5fff5f;
+  }
+  tr.green:hover td {
+      background-color: #58f858;
+  }
+  tr.yellow td {
+    background-color: #ffff00;
+  }
+  tr.yellow:hover td {
+    background-color: #f8f800;
+  }
+  tr.red td {
+    background-color: #ff3f3f;
+  }
+  tr.red:hover td {
+    background-color: #f83838;
+  }
+}
+
+.pseudo-table-striped {
+  .pseudo-table-row:nth-child(odd) {
+    background-color: $tableBackgroundAccent;
+  }
+  .pseudo-table-header {
+    padding: 8px;
+  }
+
+  .pseudo-table-row {
+    border-top: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  .pseudo-table-row:hover {
+    background-color: $tableBackgroundHover;
+  }
+}
+
+.pseudo-table-header {
+  padding: 8px;
+}
+
+// ------------
+// Chart Styles
+// ------------
+
+// Source: http://mbostock.github.com/d3/tutorial/bar-1.html
+
+.chart rect {
+  fill: orange;
+  stroke: white;
+};
