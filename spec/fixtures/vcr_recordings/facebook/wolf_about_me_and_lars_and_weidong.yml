@@ -1507,4 +1507,145 @@ http_interactions:
         01 Jan 2000 00:00:00 GMT"},{"name":"Pragma","value":"no-cache"}],"body":"{\"data\":[{\"uid1\":\"553647753\",\"uid2\":\"503484735\"},{\"uid1\":\"553647753\",\"uid2\":\"1466344023\"},{\"uid1\":\"553647753\",\"uid2\":\"697626226\"},{\"uid1\":\"553647753\",\"uid2\":\"563900754\"},{\"uid1\":\"553647753\",\"uid2\":\"642633629\"},{\"uid1\":\"563900754\",\"uid2\":\"746870400\"},{\"uid1\":\"563900754\",\"uid2\":\"656512960\"},{\"uid1\":\"563900754\",\"uid2\":\"781849541\"},{\"uid1\":\"563900754\",\"uid2\":\"100000549325522\"},{\"uid1\":\"563900754\",\"uid2\":\"641972802\"},{\"uid1\":\"563900754\",\"uid2\":\"1519692151\"},{\"uid1\":\"563900754\",\"uid2\":\"1050211056\"},{\"uid1\":\"563900754\",\"uid2\":\"553647753\"},{\"uid1\":\"563900754\",\"uid2\":\"1200385\"},{\"uid1\":\"563900754\",\"uid2\":\"223888\"},{\"uid1\":\"563900754\",\"uid2\":\"532933782\"},{\"uid1\":\"563900754\",\"uid2\":\"538362618\"},{\"uid1\":\"563900754\",\"uid2\":\"567455648\"},{\"uid1\":\"563900754\",\"uid2\":\"633819791\"}]}"}]'
     http_version: 
   recorded_at: Thu, 19 Jul 2012 08:46:38 GMT
+- request:
+    method: post
+    uri: https://graph.facebook.com/
+    body:
+      encoding: US-ASCII
+      string: batch=%5B%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22me%3Ffields%3Dname%252Cfirst_name%252Clast_name%252Cgender%252Clocale%252Clanguages%252Clink%252Cusername%252Ctimezone%252Cverified%252Cbio%252Cbirthday%252Ccover%252Cdevices%252Ceducation%252Cemail%252Chometown%252Clocation%252Cpolitical%252Cpicture%252Creligion%252Csignificant_other%252Cwebsite%252Cwork%22%7D%2C%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22fql%3Fq%3DSELECT%2Buid%252Cname%252Cpic%252Cmutual_friend_count%252Csex%252Cbirthday_date%252Ccurrent_location%252Cabout_me%252Clocale%252Cfriend_count%2BFROM%2Buser%2BWHERE%2Buid%2BIN%2B%2528553647753%252C563900754%2529%22%7D%5D&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Cache-Control:
+      - no-store
+      Content-Type:
+      - text/javascript; charset=UTF-8
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Www-Authenticate:
+      - ! 'OAuth "Facebook Platform" "invalid_token" "Error validating access token:
+        Session has expired at unix time 1353110419. The current unix time is 1358137333."'
+      X-Fb-Rev:
+      - '711202'
+      X-Fb-Debug:
+      - P4WljLW+rNkMI2ZPfhW+xM4zW205Vx2v6oSwO8njyMA=
+      Date:
+      - Mon, 14 Jan 2013 04:22:13 GMT
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '191'
+    body:
+      encoding: US-ASCII
+      string: ! '{"error":{"message":"Error validating access token: Session has expired
+        at unix time 1353110419. The current unix time is 1358137333.","type":"OAuthException","code":190,"error_subcode":463}}'
+    http_version: 
+  recorded_at: Mon, 14 Jan 2013 04:22:13 GMT
+- request:
+    method: post
+    uri: https://graph.facebook.com/
+    body:
+      encoding: US-ASCII
+      string: batch=%5B%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22me%3Ffields%3Dname%252Cfirst_name%252Clast_name%252Cgender%252Clocale%252Clanguages%252Clink%252Cusername%252Ctimezone%252Cverified%252Cbio%252Cbirthday%252Ccover%252Cdevices%252Ceducation%252Cemail%252Chometown%252Clocation%252Cpolitical%252Cpicture%252Creligion%252Csignificant_other%252Cwebsite%252Cwork%22%7D%2C%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22fql%3Fq%3DSELECT%2Buid%252Cname%252Cpic%252Cmutual_friend_count%252Csex%252Cbirthday_date%252Ccurrent_location%252Cabout_me%252Clocale%252Cfriend_count%2BFROM%2Buser%2BWHERE%2Buid%2BIN%2B%2528553647753%252C563900754%2529%22%7D%5D&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Cache-Control:
+      - no-store
+      Content-Type:
+      - text/javascript; charset=UTF-8
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Www-Authenticate:
+      - ! 'OAuth "Facebook Platform" "invalid_token" "Error validating access token:
+        Session has expired at unix time 1353110419. The current unix time is 1358137333."'
+      X-Fb-Rev:
+      - '711202'
+      X-Fb-Debug:
+      - oNesgog2gUivuBDwznsh+Oxqr7l+TDMLM+4qm0iIlIo=
+      Date:
+      - Mon, 14 Jan 2013 04:22:13 GMT
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '191'
+    body:
+      encoding: US-ASCII
+      string: ! '{"error":{"message":"Error validating access token: Session has expired
+        at unix time 1353110419. The current unix time is 1358137333.","type":"OAuthException","code":190,"error_subcode":463}}'
+    http_version: 
+  recorded_at: Mon, 14 Jan 2013 04:22:13 GMT
+- request:
+    method: post
+    uri: https://graph.facebook.com/
+    body:
+      encoding: US-ASCII
+      string: batch=%5B%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22me%3Ffields%3Dname%252Cfirst_name%252Clast_name%252Cgender%252Clocale%252Clanguages%252Clink%252Cusername%252Ctimezone%252Cverified%252Cbio%252Cbirthday%252Ccover%252Cdevices%252Ceducation%252Cemail%252Chometown%252Clocation%252Cpolitical%252Cpicture%252Creligion%252Csignificant_other%252Cwebsite%252Cwork%22%7D%2C%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22fql%3Fq%3DSELECT%2Buid%252Cname%252Cpic%252Cmutual_friend_count%252Csex%252Cbirthday_date%252Ccurrent_location%252Cabout_me%252Clocale%252Cfriend_count%2BFROM%2Buser%2BWHERE%2Buid%2BIN%2B%2528553647753%252C563900754%2529%22%7D%5D&access_token=AAAFqtCQqsRMBADDjEPcCWxI61aaSZBM2fBDCnwoe9vuZCZBUPwJkNM8vIyU4metjsr4zwdYzNZCI9tZBDH8WPh7D7lrdSGaVwWQuJNcZB7EQZDZD
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Cache-Control:
+      - no-store
+      Content-Type:
+      - text/javascript; charset=UTF-8
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Www-Authenticate:
+      - ! 'OAuth "Facebook Platform" "invalid_token" "Error validating access token:
+        Session has expired at unix time 1353110419. The current unix time is 1358137333."'
+      X-Fb-Rev:
+      - '711202'
+      X-Fb-Debug:
+      - zo9ZUa00YAaMPmU275UU106ZvCo3QGmuTzseR03NxsQ=
+      Date:
+      - Mon, 14 Jan 2013 04:22:13 GMT
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '191'
+    body:
+      encoding: US-ASCII
+      string: ! '{"error":{"message":"Error validating access token: Session has expired
+        at unix time 1353110419. The current unix time is 1358137333.","type":"OAuthException","code":190,"error_subcode":463}}'
+    http_version: 
+  recorded_at: Mon, 14 Jan 2013 04:22:14 GMT
 recorded_with: VCR 2.2.2
