@@ -1,4 +1,4 @@
-module DashboardHelper
+module AnalyticHelper
 
   def default_location
     [{lat: 38.7749295, lng: -122.4194155}, {lat: 37.8043, lng: -122.2711}].to_json
@@ -9,15 +9,15 @@ module DashboardHelper
   end
 
   def user_location
-    if @facebook_profile.about_me["location"]["name"].present?
-      loc = Geocoder.coordinates(@facebook_profile.about_me["location"]["name"])
+    if @facebook_profile.info["location"]["name"].present?
+      loc = Geocoder.coordinates(@user.facebook_profile.info["location"]["name"])
       [{lat:loc[0], lng:loc[1]}].to_json
     end
   end
 
   def user_location_with_circle
-    if @facebook_profile.about_me["location"]["name"].present?
-      loc = Geocoder.coordinates(@facebook_profile.about_me["location"]["name"])
+    if @facebook_profile.info["location"]["name"].present?
+      loc = Geocoder.coordinates(@user.facebook_profile.info["location"]["name"])
       [{lat:loc[0], lng:loc[1], radius:10000}].to_json
     end
   end
@@ -39,8 +39,8 @@ module DashboardHelper
   end
 
   def popover_attrs(key)
-    { 'data-original-title' => t("dashboard.#{key}.title") || key.to_s.humanize,
-      'data-content' => t("dashboard.#{key}.content") }
+    { 'data-original-title' => t("analytic.#{key}.title") || key.to_s.humanize,
+      'data-content' => t("analytic.#{key}.content") }
   end
 
   def score_color_class(facebook_profile)

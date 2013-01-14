@@ -1,0 +1,107 @@
+.row-fluid.pseudo-table-header{class: score_color_class(@facebook_profile)}
+  .span2
+    %h2= @facebook_profile.name
+  .span2
+    = image_tag @facebook_profile.image
+
+.pseudo-table-striped
+  .row-fluid.pseudo-table-row
+    .span2 Facebook UID
+    .span2= link_to @facebook_profile.uid, "http://facebook.com/#{@facebook_profile.uid}"
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Profile Authenticity
+      %i.hints.icon-question-sign{popover_attrs(:profile_authenticity)}
+    = render 'color_bar', score: @facebook_profile.profile_authenticity
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Trust Score
+      %i.hints.icon-question-sign{popover_attrs(:trust_score)}
+    = render 'color_bar', score: @facebook_profile.trust_score
+
+%hr
+
+.pseudo-table-striped
+  .row-fluid.pseudo-table-row
+    .span2 Joined around
+    .span2= @facebook_profile.joined_on || '&mdash;'.html_safe
+  .row-fluid.pseudo-table-row
+    .span2 Last Refreshed
+    .span2= distance_of_time_in_words_to_now(@facebook_profile.last_fetched_at) + ' ago'
+  .row-fluid.pseudo-table-row
+    .span2 Profile Completeness
+    .span2= @facebook_profile.profile_completeness
+    -#.span2= facebook_profile.user_stat['profile_completeness'].blank? ? '&mdash;'.html_safe : facebook_profile.user_stat['profile_completeness'].to_s+'%'
+  .row-fluid.pseudo-table-row
+    .span2 Current Location
+    .span2 SF
+    -#.span2= facebook_profile.current_location_name
+  .row-fluid.pseudo-table-row
+    .span2 Friend Count
+    .span2= @facebook_profile.facebook_profile_uids.length
+    -#.span2= facebook_profile.user_stat['num_friend']
+
+%hr
+
+.pseudo-table-striped
+  %div
+    %a{:href=>"javascript:dc.filterAll(); dc.renderAll();"} Reset All
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Top Friends
+      %i.hints.icon-question-sign{popover_attrs(:top_friends_chart)}
+    .span10#top-friends-chart.chart
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Inbound Score
+      %i.hints.icon-question-sign{popover_attrs(:inbound_score_histogram_chart)}
+    .span5#inbound-score-histogram.chart
+    .span2
+      %span Mutual Friends
+      %i.hints.icon-question-sign{popover_attrs(:mutual_friends_count_histogram_chart)}
+    .span5#mutual-friends-count-histogram.chart
+  .row-fluid.pseudo-table-row
+    #data-table
+      / create a custom header
+      .header
+        %span Date
+        %span Open
+        %span Close
+        %span Change
+        %span Volume
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Photo Engagements
+      %i.hints.icon-question-sign{popover_attrs(:photo_engagements_chart)}
+    .span10#photo-engagements-chart
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Inbound Engagement Index
+      %i.hints.icon-question-sign{popover_attrs(:inbound_engagement_index)}
+    .span2 Coming Soon...
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Outbound Engagement Index
+      %i.hints.icon-question-sign{popover_attrs(:outbound_engagement_index)}
+    .span2 Coming Soon...
+  .row-fluid.pseudo-table-row
+    .span2
+      %span Engagement Ratio
+      %i.hints.icon-question-sign{popover_attrs(:engagement_ratio)}
+    .span2 Coming Soon...
+  .row-fluid.pseudo-table-row
+    .span2 Location
+    .span2
+      Map here
+      -#= gmaps(markers: { data: friend_location},
+      = gmaps(markers: { data: friend_location},
+        circles: {data: user_location_with_circle, option:{fillColor:"#FF0000"}},
+        map_options: { bounds: [{lat: 37, lng: -121}, {lat: 38, lng: -123}].to_json, auto_adjust: true })
+
+
+- photo_engagement_attrs = %w(co_tags_uniques likes_uniques comments_uniques from_uniques)
+:javascript
+  $('.hints').popover();
+  window.photo_engagement_legend = #{photo_engagement_attrs.map(&:humanize).to_json};
+  window.photo_engagement_data   = #{photo_engagement_attrs.reduce([]){|res,attr| res << @facebook_profile.photo_engagements[attr]}.to_json};
+  window.top_friends_data        = #{@facebook_profile.relevant_top_friends.to_json};

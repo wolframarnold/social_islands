@@ -31,6 +31,16 @@ SocialIslands::Application.routes.draw do
     end
   end
 
+  namespace :analytic do
+    root to: 'users#index'
+    resources :users, only: %w(show index) do
+      collection do
+        post :search
+      end
+    end
+  end
+
+
   post '/eshq/socket' =>  'push_to_web#socket'
   post '/push_to_web/graph_ready' =>  'push_to_web#graph_ready'
 
