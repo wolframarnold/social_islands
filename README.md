@@ -1,4 +1,7 @@
 Social Islands
+==============
+
+Copyright 20012-2015 by Wolfram Arnold & Weidong Yang. Released under BSD licence.
 
 Visualization of social groups of your Facebook network.
 
