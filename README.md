@@ -12,7 +12,7 @@ Engagement Stats
 
 To get the engagement stats computed for a specific user, you can use this rake task
 
-    rake stats:engagements FACEBOOK_UID=595045215
+    rake stats:engagements FACEBOOK_UID=<fb user_id>
 
 where the `FACEBOOK_PROFILE_ID` is the MongoDB ID for the given user. Instead of `FACEBOOK_PROFILE_ID` you can also
 specify `FACEBOOK_UID=xxx` which is the Facebook UID.
